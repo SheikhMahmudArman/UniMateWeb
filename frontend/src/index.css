@@ -1,3 +1,86 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0a0a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #60a5fa, #22d3ee);
+    border-radius: 10px;
+  }
+}
+
+/* Premium glassmorphism - lighter for dark theme */
+.glass-premium {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* Glow animation with cyan/blue */
+@keyframes glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(96, 165, 250, 0.05), 0 0 40px rgba(34, 211, 238, 0.02);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(96, 165, 250, 0.1), 0 0 60px rgba(34, 211, 238, 0.05);
+  }
+}
+
+.glow-animate {
+  animation: glow 3s ease-in-out infinite;
+}
+
+/* Shimmer effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.shimmer {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Subtle pulse for accents */
+@keyframes pulseAccent {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.pulse-accent {
+  animation: pulseAccent 3s ease-in-out infinite;
+}
