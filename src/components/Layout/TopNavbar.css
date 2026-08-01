@@ -1,0 +1,25 @@
+.top-navbar {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 10px 0;
+}
+
+.sidebar-toggle {
+    font-size: 1.5rem;
+    color: #0B4F6C;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.nav-icon-btn {
+    color: #0B4F6C;
+    font-size: 1.2rem;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.nav-icon-btn:hover {
+    color: #1A759F;
+}
