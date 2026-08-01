@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faHouse,
+    faFolderOpen,
     faCalendarCheck,
     faCalendarAlt,
     faFlag,
@@ -13,19 +14,9 @@ import {
     faRightFromBracket,
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../context/AuthContext';
+import { menuItems } from '../../data/mockData';
 import logo from '../../assets/logo.png';
 import './Sidebar.css';
-
-const menuItems = [
-    { id: 'home', label: 'Dashboard', icon: faHouse, path: '/dashboard' },
-    { id: 'quiz', label: 'Quiz', icon: faCalendarCheck, path: '/dashboard/quiz' },
-    { id: 'mid', label: 'Mid', icon: faCalendarAlt, path: '/dashboard/mid' },
-    { id: 'final', label: 'Final', icon: faFlag, path: '/dashboard/final' },
-    { id: 'marks', label: 'Marks', icon: faChartSimple, path: '/dashboard/marks' },
-    { id: 'cgpa', label: 'CGPA', icon: faPercent, path: '/dashboard/cgpa' },
-    { id: 'faculty', label: 'Faculty', icon: faUserGraduate, path: '/dashboard/faculty' },
-    { id: 'settings', label: 'Settings', icon: faGear, path: '/dashboard/settings' },
-];
 
 const Sidebar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -34,6 +25,21 @@ const Sidebar = () => {
     const handleLogout = () => {
         logout();
         navigate('/');
+    };
+
+    const getIcon = (id) => {
+        switch (id) {
+            case 'home': return faHouse;
+            case 'folders': return faFolderOpen;
+            case 'quiz': return faCalendarCheck;
+            case 'mid': return faCalendarAlt;
+            case 'final': return faFlag;
+            case 'marks': return faChartSimple;
+            case 'cgpa': return faPercent;
+            case 'faculty': return faUserGraduate;
+            case 'settings': return faGear;
+            default: return faHouse;
+        }
     };
 
     return (
@@ -58,11 +64,12 @@ const Sidebar = () => {
                     <NavLink
                         key={item.id}
                         to={item.path}
+                        end={item.id === 'home'}
                         className={({ isActive }) =>
                             `sidebar-link ${isActive ? 'active' : ''}`
                         }
                     >
-                        <FontAwesomeIcon icon={item.icon} className="sidebar-icon" />
+                        <FontAwesomeIcon icon={getIcon(item.id)} className="sidebar-icon" />
                         <span>{item.label}</span>
                     </NavLink>
                 ))}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Badge } from 'react-bootstrap';
+import { Link } from 'react-router-dom';  // <-- THIS WAS MISSING
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faCalendarCheck, faBookOpen, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
@@ -9,44 +10,18 @@ import './DashboardHome.css';
 
 const DashboardHome = () => {
     const [routine, setRoutine] = useState(dailyRoutine);
-    const [courseProgress, setCourseProgress] = useState(courses);
-
-    const toggleNotify = (id) => {
-        setRoutine(routine.map(item =>
-            item.id === id ? { ...item, notify: !item.notify } : item
-        ));
-    };
-
-    const toggleTopic = (courseId, topicIndex) => {
-        setCourseProgress(prev => prev.map(course => {
-            if (course.id === courseId) {
-                const newTopics = [...course.topics];
-                // Toggle: if the topic is done, we mark it as done by some logic.
-                // We'll store done topics in a separate array in state or derive from progress.
-                // We'll implement a simple toggle: we'll keep a separate done array for each course.
-                // For simplicity, we'll use a Set of done topics per course.
-                // I'll refactor to keep doneTopics array.
-                // Let's add a done property to each topic.
-                // Since we didn't store done status, we'll add it now.
-                // We'll assume all topics initially not done.
-                // We'll maintain a doneTopics array in state.
-                // For brevity, I'll implement a simple toggle based on index.
-                // We'll use a local state per course.
-            }
-            return course;
-        }));
-    };
-
-    // We'll implement proper state management with done topics.
-    // Let's restructure: course has topics and done array.
-    // I'll create a new state variable for done topics.
-
     const [doneTopics, setDoneTopics] = useState(
         courses.reduce((acc, course) => {
             acc[course.id] = new Array(course.topics.length).fill(false);
             return acc;
         }, {})
     );
+
+    const toggleNotify = (id) => {
+        setRoutine(routine.map(item =>
+            item.id === id ? { ...item, notify: !item.notify } : item
+        ));
+    };
 
     const handleTopicToggle = (courseId, topicIndex) => {
         setDoneTopics(prev => {
@@ -57,7 +32,6 @@ const DashboardHome = () => {
         });
     };
 
-    // Calculate progress for each course
     const getProgress = (courseId) => {
         const done = doneTopics[courseId] || [];
         const total = courses.find(c => c.id === courseId)?.topics.length || 0;
@@ -105,7 +79,24 @@ const DashboardHome = () => {
                 </Col>
             </Row>
 
-            {/* Daily Routine */}
+            {/* Quick Drive Link */}
+            <Row className="mt-3">
+                <Col>
+                    <Card className="quick-drive-card">
+                        <Card.Body className="d-flex align-items-center justify-content-between flex-wrap">
+                            <div>
+                                <h5>📁 Access Your Semester Documents</h5>
+                                <p className="text-muted mb-0">Browse all your course materials organized by semester.</p>
+                            </div>
+                            <Link to="/dashboard/folders" className="btn btn-primary mt-2 mt-sm-0">
+                                Go to Drive →
+                            </Link>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+
+            {/* Daily Routine + Progressive Cycle */}
             <Row className="mt-4">
                 <Col lg={7}>
                     <Card className="routine-card">
@@ -134,7 +125,6 @@ const DashboardHome = () => {
                     </Card>
                 </Col>
 
-                {/* Progressive Cycle */}
                 <Col lg={5}>
                     <Card className="progress-card">
                         <Card.Header>

@@ -15,24 +15,30 @@
 .sidebar-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 20px 20px;
+    gap: 6px;
+    /* REDUCED from 12px to 6px – removes big gap */
+    padding: 0 16px 20px;
+    /* adjusted padding */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-logo {
-    height: 40px;
+    height: 42px;
+    /* slightly smaller for better balance */
     width: auto;
+    flex-shrink: 0;
 }
 
 .sidebar-brand-text {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: white;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
 }
 
 .sidebar-user {
-    padding: 20px 20px 10px;
+    padding: 16px 16px 10px;
     text-align: center;
 }
 
@@ -53,16 +59,17 @@
 .sidebar-user-name {
     font-weight: 600;
     margin-bottom: 0;
+    font-size: 0.95rem;
 }
 
 .sidebar-user-role {
     opacity: 0.7;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
 }
 
 .sidebar-divider {
     border-color: rgba(255, 255, 255, 0.1);
-    margin: 10px 20px;
+    margin: 10px 16px;
 }
 
 .sidebar-nav {
@@ -74,12 +81,13 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 10px 14px;
     border-radius: 10px;
     color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     transition: all 0.2s ease;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    font-size: 0.95rem;
 }
 
 .sidebar-link:hover {
@@ -98,15 +106,16 @@
 }
 
 .sidebar-icon {
-    width: 20px;
+    width: 18px;
     text-align: center;
+    font-size: 1rem;
 }
 
 .sidebar-logout {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 10px 14px;
     border: none;
     background: transparent;
     color: rgba(255, 255, 255, 0.7);
@@ -115,6 +124,7 @@
     transition: all 0.2s ease;
     margin: 0 10px 10px;
     width: calc(100% - 20px);
+    font-size: 0.95rem;
 }
 
 .sidebar-logout:hover {
@@ -122,7 +132,7 @@
     color: white;
 }
 
-/* Responsive */
+/* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
@@ -134,6 +144,15 @@
 
     .sidebar-brand {
         padding: 0 15px 15px;
+        gap: 8px;
+    }
+
+    .sidebar-logo {
+        height: 36px;
+    }
+
+    .sidebar-brand-text {
+        font-size: 1.2rem;
     }
 
     .sidebar-user {
@@ -149,18 +168,17 @@
 
     .sidebar-link {
         padding: 8px 12px;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         flex: 1 0 auto;
         justify-content: center;
     }
 
     .sidebar-link span {
         display: none;
-        /* hide label on small screens, show only icon */
     }
 
     .sidebar-link .sidebar-icon {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .sidebar-logout {

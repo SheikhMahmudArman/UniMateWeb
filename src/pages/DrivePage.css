@@ -1,0 +1,132 @@
+.drive-page {
+    padding: 20px;
+}
+
+.drive-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    margin-right: 10px;
+}
+
+.drive-title {
+    flex: 1;
+    font-weight: 700;
+    color: #0B4F6C;
+    margin: 0;
+}
+
+.drive-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.offline-toggle {
+    margin: 0;
+}
+
+.drive-search {
+    margin-bottom: 20px;
+}
+
+.search-wrapper {
+    position: relative;
+    max-width: 400px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+.search-input {
+    padding-left: 40px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+}
+
+.drive-tabs {
+    margin-top: 10px;
+}
+
+.doc-list {
+    margin-top: 15px;
+}
+
+.doc-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f1f1;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.doc-item:hover {
+    background: #f8f9fa;
+}
+
+.doc-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.doc-icon {
+    font-size: 1.8rem;
+}
+
+.doc-name {
+    font-weight: 500;
+}
+
+.doc-badge {
+    font-size: 0.7rem;
+}
+
+.doc-actions {
+    display: flex;
+    gap: 5px;
+}
+
+@media (max-width: 768px) {
+    .drive-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .back-btn {
+        align-self: flex-start;
+    }
+
+    .drive-controls {
+        justify-content: space-between;
+    }
+
+    .search-wrapper {
+        max-width: 100%;
+    }
+
+    .doc-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .doc-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

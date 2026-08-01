@@ -6,6 +6,8 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardLayout from './pages/DashboardLayout';
 import DashboardHome from './pages/DashboardHome';
+import FolderPage from './pages/FolderPage';        // NEW
+import DrivePage from './pages/DrivePage';          // NEW
 import QuizPage from './pages/QuizPage';
 import MidPage from './pages/MidPage';
 import FinalPage from './pages/FinalPage';
@@ -33,6 +35,8 @@ function App() {
           }
         >
           <Route index element={<DashboardHome />} />
+          <Route path="folders" element={<FolderPage />} />          {/* NEW */}
+          <Route path="drive/:semesterId" element={<DrivePage />} /> {/* NEW */}
           <Route path="quiz" element={<QuizPage />} />
           <Route path="mid" element={<MidPage />} />
           <Route path="final" element={<FinalPage />} />
@@ -42,7 +46,7 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 
-        {/* Catch-all 404 - optional */}
+        {/* 404 */}
         <Route path="*" element={<h1 className="text-center mt-5">404 - Page Not Found</h1>} />
       </Routes>
     </AuthProvider>
