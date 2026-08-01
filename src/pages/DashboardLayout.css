@@ -126,3 +126,102 @@
         padding: 15px;
     }
 }
+
+/* Page transitions */
+.content-area>* {
+    animation: fadeSlideIn 0.4s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ensure smooth transitions for dark mode */
+.dashboard-layout {
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.dashboard-layout.dark {
+    background-color: #121212;
+}
+
+/* ---- Responsive improvements ---- */
+
+@media (max-width: 992px) {
+    .content-area {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-area {
+        padding: 12px;
+    }
+
+    /* Cards stack properly */
+    .row>[class*="col-"] {
+        margin-bottom: 16px;
+    }
+
+    /* Smaller fonts on mobile */
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .display-4 {
+        font-size: 2rem !important;
+    }
+
+    .display-5 {
+        font-size: 1.6rem !important;
+    }
+
+    .display-6 {
+        font-size: 1.3rem !important;
+    }
+
+    /* Better touch targets */
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 0.9rem;
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .content-area {
+        padding: 8px;
+    }
+
+    /* Full-width buttons on mobile */
+    .btn-lg {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Stack flex items properly */
+    .d-flex.gap-3 {
+        gap: 8px !important;
+    }
+
+    .flex-wrap {
+        flex-direction: column;
+    }
+
+    .flex-wrap .btn {
+        width: 100%;
+    }
+}

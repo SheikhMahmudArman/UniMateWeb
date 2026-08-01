@@ -1,39 +1,255 @@
-:root {
-    --primary: #0B4F6C;
-    --primary-light: #1A759F;
-    --secondary: #F4A261;
-    --accent: #F8F9FA;
-    --dark: #1A1A2E;
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    background: var(--accent);
-}
+/* ========================================
+   GLOBAL CSS VARIABLES – Premium Theme
+   ======================================== */
 
 :root {
+    /* Primary Colors – Teal & Peach */
     --primary: #0B4F6C;
     --primary-light: #1A759F;
+    --primary-dark: #083A52;
     --secondary: #F4A261;
+    --secondary-light: #F7C59F;
     --accent: #F8F9FA;
     --dark: #1A1A2E;
-    --bg: #f8f9fa;
-    --text: #212529;
-    --card-bg: white;
-    --border-color: #e9ecef;
+    --dark-light: #2D2D44;
+
+    /* Text Colors */
+    --text-primary: #1A1A2E;
+    --text-secondary: #555;
+    --text-muted: #888;
+    --text-light: #f8f9fa;
+
+    /* Backgrounds */
+    --bg-body: #f8f9fa;
+    --bg-card: #ffffff;
+    --bg-sidebar: #0B4F6C;
+
+    /* Borders & Shadows */
+    --border-radius: 16px;
+    --border-radius-sm: 10px;
+    --border-radius-lg: 24px;
+    --box-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --box-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+    --box-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Typography */
+    --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-size-base: 1rem;
+    --line-height-base: 1.6;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
 }
+
+/* ========================================
+   DARK THEME OVERRIDES
+   ======================================== */
 
 [data-theme="dark"] {
-    --bg: #121212;
-    --text: #e0e0e0;
-    --card-bg: #2d2d2d;
-    --border-color: #444;
+    --bg-body: #121212;
+    --bg-card: #1e1e1e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-muted: #888;
+    --border-color: #333;
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --box-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4);
+    --box-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    transition: background 0.3s ease, color 0.3s ease;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    transition: background-color var(--transition), color var(--transition);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-body);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* Links */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--primary-light);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 50px;
+    font-weight: 500;
+    padding: 10px 24px;
+    transition: all var(--transition);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: var(--primary);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+    box-shadow: 0 8px 25px rgba(11, 79, 108, 0.3);
+}
+
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    background: var(--bg-card);
+    box-shadow: var(--box-shadow);
+    transition: all var(--transition);
+}
+
+.card:hover {
+    box-shadow: var(--box-shadow-lg);
+}
+
+/* Badges */
+.badge {
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-weight: 500;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+}
+
+.bg-gradient-secondary {
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+}
+
+.shadow-hover {
+    transition: all var(--transition);
+}
+
+.shadow-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--box-shadow-lg);
+}
+
+/* Glass-morphism */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .glass {
+    background: rgba(30, 30, 30, 0.7);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
 }
