@@ -1,0 +1,109 @@
+.dashboard-home {
+    padding: 0;
+}
+
+.page-title {
+    font-weight: 700;
+    color: #0B4F6C;
+}
+
+.stats-row .stat-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.stats-row .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: #0B4F6C;
+    margin-bottom: 10px;
+}
+
+.stat-card h2 {
+    font-weight: 700;
+    color: #0B4F6C;
+    margin-bottom: 0;
+}
+
+.routine-card,
+.progress-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.routine-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.routine-item:last-child {
+    border-bottom: none;
+}
+
+.routine-time {
+    font-weight: 600;
+    color: #0B4F6C;
+    width: 90px;
+    flex-shrink: 0;
+}
+
+.routine-details {
+    flex: 1;
+}
+
+.routine-notify {
+    margin-left: auto;
+}
+
+.course-progress {
+    border-bottom: 1px solid #f1f1f1;
+    padding-bottom: 15px;
+}
+
+.course-progress:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.topic-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+}
+
+.topic-check {
+    flex: 0 0 auto;
+}
+
+.quick-drive-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: white;
+}
+
+@media (max-width: 768px) {
+    .routine-item {
+        flex-wrap: wrap;
+    }
+
+    .routine-time {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+
+    .routine-notify {
+        margin-left: 0;
+        margin-top: 4px;
+    }
+}

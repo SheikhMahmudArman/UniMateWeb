@@ -1,0 +1,227 @@
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f8f9fa;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* --- Dark theme --- */
+.dashboard-layout.dark {
+    background: #121212;
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .content-area {
+    background: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .top-navbar {
+    background: #1e1e1e;
+    border-bottom: 1px solid #333;
+}
+
+.dashboard-layout.dark .top-navbar .navbar-brand,
+.dashboard-layout.dark .top-navbar .nav-icon-btn {
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .top-navbar .nav-icon-btn:hover {
+    color: white;
+}
+
+.dashboard-layout.dark .stat-card,
+.dashboard-layout.dark .routine-card,
+.dashboard-layout.dark .progress-card,
+.dashboard-layout.dark .course-mark-card,
+.dashboard-layout.dark .cgpa-summary,
+.dashboard-layout.dark .quick-drive-card {
+    background: #2d2d2d;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+.dashboard-layout.dark .stat-card h5,
+.dashboard-layout.dark .stat-card h2 {
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .routine-item {
+    border-bottom-color: #444;
+}
+
+.dashboard-layout.dark .routine-time {
+    color: #4fc3f7;
+}
+
+.dashboard-layout.dark .text-muted {
+    color: #aaa !important;
+}
+
+.dashboard-layout.dark .page-title {
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .form-control,
+.dashboard-layout.dark .form-select {
+    background: #333;
+    color: #e0e0e0;
+    border-color: #555;
+}
+
+.dashboard-layout.dark .form-control:focus,
+.dashboard-layout.dark .form-select:focus {
+    background: #333;
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .form-check-label {
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .bg-secondary-custom {
+    background: #f4a261;
+    color: #1a1a2e;
+}
+
+/* ---- Sidebar in dark mode is already dark, keep as is ---- */
+
+.sidebar-wrapper {
+    flex-shrink: 0;
+}
+
+.main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-area {
+    flex: 1;
+    padding: 20px;
+    background: #f8f9fa;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1050;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-wrapper.closed {
+        transform: translateX(-100%);
+    }
+
+    .sidebar-wrapper.open {
+        transform: translateX(0);
+    }
+
+    .content-area {
+        padding: 15px;
+    }
+}
+
+/* Page transitions */
+.content-area>* {
+    animation: fadeSlideIn 0.4s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ensure smooth transitions for dark mode */
+.dashboard-layout {
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.dashboard-layout.dark {
+    background-color: #121212;
+}
+
+/* ---- Responsive improvements ---- */
+
+@media (max-width: 992px) {
+    .content-area {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-area {
+        padding: 12px;
+    }
+
+    /* Cards stack properly */
+    .row>[class*="col-"] {
+        margin-bottom: 16px;
+    }
+
+    /* Smaller fonts on mobile */
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .display-4 {
+        font-size: 2rem !important;
+    }
+
+    .display-5 {
+        font-size: 1.6rem !important;
+    }
+
+    .display-6 {
+        font-size: 1.3rem !important;
+    }
+
+    /* Better touch targets */
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 0.9rem;
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .content-area {
+        padding: 8px;
+    }
+
+    /* Full-width buttons on mobile */
+    .btn-lg {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Stack flex items properly */
+    .d-flex.gap-3 {
+        gap: 8px !important;
+    }
+
+    .flex-wrap {
+        flex-direction: column;
+    }
+
+    .flex-wrap .btn {
+        width: 100%;
+    }
+}
