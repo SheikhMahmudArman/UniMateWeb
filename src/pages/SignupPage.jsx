@@ -2,19 +2,22 @@ import React, { useState, useContext } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faUser, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faUser, faEnvelope, faLock, faIdCard } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../context/AuthContext';
 import logo from '../assets/logo.png';
-import './LoginPage.css';
+import './SignupPage.css';
 
-const LoginPage = () => {
+const SignupPage = () => {
     const [studentId, setStudentId] = useState('');
+    const [fullName, setFullName] = useState('');
     const [gmail, setGmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
 
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -22,16 +25,23 @@ const LoginPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setError('');
+        setSuccess('');
         setLoading(true);
 
         // Validation
-        if (!studentId || !gmail || !password) {
+        if (!studentId || !fullName || !gmail || !password || !confirmPassword) {
             setError('Please fill in all fields.');
             setLoading(false);
             return;
         }
 
-        if (!gmail.includes('@')) {
+        if (studentId.length < 5) {
+            setError('Student ID must be at least 5 characters.');
+            setLoading(false);
+            return;
+        }
+
+        if (!gmail.includes('@') || !gmail.includes('.')) {
             setError('Please enter a valid email address.');
             setLoading(false);
             return;
@@ -43,62 +53,59 @@ const LoginPage = () => {
             return;
         }
 
-        // Mock authentication
-        setTimeout(() => {
-            // Student credentials
-            if (
-                studentId === '2023-12345' &&
-                gmail === 'student@austmate.com' &&
-                password === 'student123'
-            ) {
-                const user = {
-                    id: studentId,
-                    email: gmail,
-                    name: 'Student User',
-                    role: 'student',
-                };
-                login(user);
-                navigate('/dashboard');
-                return;
-            }
-
-            // Editor credentials
-            if (
-                studentId === '2023-99999' &&
-                gmail === 'editor@austmate.com' &&
-                password === 'editor123'
-            ) {
-                const user = {
-                    id: studentId,
-                    email: gmail,
-                    name: 'Editor User',
-                    role: 'editor',
-                };
-                login(user);
-                navigate('/dashboard');
-                return;
-            }
-
-            setError('Invalid credentials. Please try again.');
+        if (password !== confirmPassword) {
+            setError('Passwords do not match.');
             setLoading(false);
-        }, 800);
+            return;
+        }
+
+        // Check if user already exists
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        if (users.some(user => user.email === gmail)) {
+            setError('User with this email already exists. Please login.');
+            setLoading(false);
+            return;
+        }
+
+        // Save user to localStorage
+        const newUser = {
+            id: studentId,
+            name: fullName,
+            email: gmail,
+            password: password,
+            role: 'student',
+            createdAt: new Date().toISOString(),
+        };
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+
+        // Auto-login the user
+        const loggedInUser = {
+            id: studentId,
+            name: fullName,
+            email: gmail,
+            role: 'student',
+        };
+        login(loggedInUser);
+        setSuccess('Account created successfully! Redirecting...');
+        setTimeout(() => {
+            navigate('/dashboard');
+        }, 1500);
     };
 
     return (
-        <div className="login-page">
+        <div className="signup-page">
             <Container>
                 <Row className="justify-content-center align-items-center min-vh-100">
-                    <Col md={6} lg={5} xl={4}>
-                        <Card className="login-card shadow-lg">
+                    <Col md={8} lg={6} xl={5}>
+                        <Card className="signup-card shadow-lg">
                             <Card.Body className="p-4 p-md-5">
                                 {/* Logo */}
                                 <div className="text-center mb-4">
-                                    <img src={logo} alt="AUSTMATE" className="login-logo" />
-                                    <h1 className="login-brand">AUSTMATE</h1>
-                                    <p className="text-muted">Your Ultimate Academic Partner</p>
+                                    <img src={logo} alt="AUSTMATE" className="signup-logo" />
+                                    <h1 className="signup-brand">AUSTMATE</h1>
+                                    <p className="text-muted">Create Your Account</p>
                                 </div>
-
-                                <h5 className="text-center mb-4">Welcome Back!</h5>
 
                                 {error && (
                                     <Alert variant="danger" className="text-center">
@@ -106,11 +113,31 @@ const LoginPage = () => {
                                     </Alert>
                                 )}
 
+                                {success && (
+                                    <Alert variant="success" className="text-center">
+                                        {success}
+                                    </Alert>
+                                )}
+
                                 <Form onSubmit={handleSubmit}>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Full Name</Form.Label>
+                                        <div className="input-icon-wrapper">
+                                            <FontAwesomeIcon icon={faUser} className="input-icon" />
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="John Doe"
+                                                value={fullName}
+                                                onChange={(e) => setFullName(e.target.value)}
+                                                className="ps-5"
+                                            />
+                                        </div>
+                                    </Form.Group>
+
                                     <Form.Group className="mb-3">
                                         <Form.Label>Student ID</Form.Label>
                                         <div className="input-icon-wrapper">
-                                            <FontAwesomeIcon icon={faUser} className="input-icon" />
+                                            <FontAwesomeIcon icon={faIdCard} className="input-icon" />
                                             <Form.Control
                                                 type="text"
                                                 placeholder="e.g., 2023-12345"
@@ -141,7 +168,7 @@ const LoginPage = () => {
                                             <FontAwesomeIcon icon={faLock} className="input-icon" />
                                             <Form.Control
                                                 type={showPassword ? 'text' : 'password'}
-                                                placeholder="••••••••"
+                                                placeholder="Min 6 characters"
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 className="ps-5"
@@ -156,35 +183,46 @@ const LoginPage = () => {
                                         </div>
                                     </Form.Group>
 
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <Form.Check
-                                            type="checkbox"
-                                            label="Remember Me"
-                                            checked={rememberMe}
-                                            onChange={(e) => setRememberMe(e.target.checked)}
-                                        />
-                                        <Link to="#" className="text-decoration-none small">
-                                            Forgot Password?
-                                        </Link>
-                                    </div>
+                                    <Form.Group className="mb-4">
+                                        <Form.Label>Confirm Password</Form.Label>
+                                        <div className="input-icon-wrapper">
+                                            <FontAwesomeIcon icon={faLock} className="input-icon" />
+                                            <Form.Control
+                                                type={showConfirmPassword ? 'text' : 'password'}
+                                                placeholder="Confirm your password"
+                                                value={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                                className="ps-5"
+                                            />
+                                            <Button
+                                                variant="link"
+                                                className="password-toggle"
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            >
+                                                <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
+                                            </Button>
+                                        </div>
+                                    </Form.Group>
 
                                     <Button
                                         type="submit"
-                                        className="w-100 btn-login"
+                                        className="w-100 btn-signup"
                                         disabled={loading}
                                     >
-                                        {loading ? 'Logging in...' : 'Login'}
+                                        {loading ? 'Creating Account...' : 'Create Account'}
                                     </Button>
                                 </Form>
+
                                 <div className="text-center mt-3">
                                     <small className="text-muted">
-                                        Don't have an account?{' '}
-                                        <Link to="/signup" className="text-decoration-none">
-                                            Sign Up
+                                        Already have an account?{' '}
+                                        <Link to="/login" className="text-decoration-none">
+                                            Login here
                                         </Link>
                                     </small>
                                 </div>
-                                <div className="text-center mt-4">
+
+                                <div className="text-center mt-3">
                                     <Link to="/" className="text-decoration-none">
                                         ← Back to Home
                                     </Link>
@@ -198,4 +236,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default SignupPage;

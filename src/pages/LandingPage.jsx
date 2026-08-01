@@ -37,7 +37,7 @@ const LandingPage = () => {
                         </Col>
                         <Col className="text-end">
                             <Link to="/login" className="btn btn-outline-primary me-2 me-md-3">Login</Link>
-                            <Link to="/login" className="btn btn-primary">Get Started</Link>
+                            <Link to="/signup" className="btn btn-primary">Get Started</Link>
                         </Col>
                     </Row>
                 </Container>
@@ -61,12 +61,17 @@ const LandingPage = () => {
                                 into one powerful, easy-to-use dashboard.
                             </p>
                             <div className="mt-4 d-flex flex-wrap gap-3">
-                                <Link to="/login" className="btn btn-primary btn-lg">
+                                <Link to="/signup" className="btn btn-primary btn-lg">
                                     Get Started <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
                                 </Link>
-                                <Button variant="outline-secondary" className="btn-lg">
-                                    Learn More
-                                </Button>
+                                <Link to="/login" className="btn btn-outline-secondary btn-lg">
+                                    Login
+                                </Link>
+                            </div>
+                            <div className="mt-3">
+                                <small className="text-muted">
+                                    Already have an account? <Link to="/login" className="text-decoration-none">Login here</Link>
+                                </small>
                             </div>
                             <div className="mt-4 d-flex gap-4 stats-mini">
                                 <span><strong>42k+</strong> Students</span>
@@ -214,7 +219,7 @@ const LandingPage = () => {
                                     <span>Join 42,000+ students who have simplified their university journey</span>
                                 </li>
                             </ul>
-                            <Link to="/login" className="btn btn-primary mt-3">
+                            <Link to="/signup" className="btn btn-primary mt-3">
                                 Join Now <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
                             </Link>
                         </Col>
@@ -229,7 +234,7 @@ const LandingPage = () => {
                                 <div className="testimonial-author">
                                     <div className="author-avatar">JD</div>
                                     <div>
-                                        <strong>Jawadul Dawood</strong>
+                                        <strong>John Doe</strong>
                                         <p className="text-muted small mb-0">CSE Student, Class of 2026</p>
                                     </div>
                                 </div>
@@ -244,9 +249,14 @@ const LandingPage = () => {
                 <Container className="text-center">
                     <h2 className="display-5 fw-bold mb-3">Ready to Simplify Your Academic Life?</h2>
                     <p className="lead mb-4">Join thousands of students who are already using AUSTMATE.</p>
-                    <Link to="/login" className="btn btn-primary-custom btn-lg">
+                    <Link to="/signup" className="btn btn-primary-custom btn-lg">
                         Get Started Now <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
                     </Link>
+                    <div className="mt-3">
+                        <small className="text-white-50">
+                            Already have an account? <Link to="/login" className="text-white text-decoration-underline">Login</Link>
+                        </small>
+                    </div>
                 </Container>
             </section>
 
@@ -265,6 +275,7 @@ const LandingPage = () => {
                             <h6>Quick Links</h6>
                             <ul className="list-unstyled">
                                 <li><Link to="/" className="text-muted small">Home</Link></li>
+                                <li><Link to="/signup" className="text-muted small">Sign Up</Link></li>
                                 <li><Link to="/login" className="text-muted small">Login</Link></li>
                                 <li><Link to="#" className="text-muted small">About Us</Link></li>
                                 <li><Link to="#" className="text-muted small">Contact Us</Link></li>
