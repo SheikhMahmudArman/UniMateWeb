@@ -130,3 +130,31 @@ export const menuItems = [
     { id: 'faculty', label: 'Faculty', icon: 'faUserGraduate', path: '/dashboard/faculty' },
     { id: 'settings', label: 'Settings', icon: 'faGear', path: '/dashboard/settings' },
 ];
+// ---- Marks & CGPA data ----
+export const marksData = {
+    '1.1': {
+        courses: [
+            { code: 'CSE 1101', name: 'Intro to Programming', credits: 3, marks: { quiz: 0, mid: 0, online: 0, final: 0 } },
+            { code: 'CSE 1103', name: 'Discrete Math', credits: 3, marks: { quiz: 0, mid: 0, online: 0, final: 0 } },
+            { code: 'CSE 1105', name: 'Physics', credits: 3, marks: { quiz: 0, mid: 0, online: 0, final: 0 } },
+        ],
+        cgpa: 0,
+    },
+    '1.2': {
+        courses: [
+            { code: 'CSE 1201', name: 'OOP', credits: 3, marks: { quiz: 0, mid: 0, online: 0, final: 0 } },
+            { code: 'CSE 1203', name: 'Data Structures', credits: 3, marks: { quiz: 0, mid: 0, online: 0, final: 0 } },
+        ],
+        cgpa: 0,
+    },
+    '2.1': {
+        courses: [
+            { code: 'CSE 2101', name: 'Algorithms', credits: 3, marks: { quiz: 0, mid: 0, online: 0, final: 0 } },
+            { code: 'CSE 2103', name: 'Database', credits: 3, marks: { quiz: 0, mid: 0, online: 0, final: 0 } },
+        ],
+        cgpa: 0,
+    },
+    // ... add more semesters if needed
+};
+
+export const semestersList = ['1.1', '1.2', '2.1', '2.2', '3.1', '3.2', '4.1', '4.2'];

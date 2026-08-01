@@ -23,3 +23,56 @@
 .nav-icon-btn:hover {
     color: #1A759F;
 }
+
+.top-navbar {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 10px 0;
+    transition: background 0.3s ease;
+}
+
+.top-navbar.dark {
+    background: #1e1e1e;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-toggle {
+    font-size: 1.5rem;
+    color: #0B4F6C;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.top-navbar.dark .sidebar-toggle {
+    color: #e0e0e0;
+}
+
+.nav-icon-btn {
+    color: #0B4F6C;
+    font-size: 1.2rem;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.top-navbar.dark .nav-icon-btn {
+    color: #e0e0e0;
+}
+
+.nav-icon-btn:hover {
+    color: #1A759F;
+}
+
+.top-navbar.dark .nav-icon-btn:hover {
+    color: white;
+}
+
+.top-navbar .navbar-brand {
+    color: #0B4F6C;
+    font-weight: 600;
+}
+
+.top-navbar.dark .navbar-brand {
+    color: #e0e0e0;
+}

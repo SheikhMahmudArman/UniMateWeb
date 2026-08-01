@@ -6,7 +6,7 @@ import './TopNavbar.css';
 
 const TopNavbar = ({ toggleSidebar, theme, toggleTheme }) => {
     return (
-        <Navbar className="top-navbar" expand="lg">
+        <Navbar className={`top-navbar ${theme}`} expand="lg">
             <Container fluid>
                 <Button
                     variant="link"

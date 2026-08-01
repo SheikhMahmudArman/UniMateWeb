@@ -2,7 +2,89 @@
     display: flex;
     min-height: 100vh;
     background: #f8f9fa;
+    transition: background 0.3s ease, color 0.3s ease;
 }
+
+/* --- Dark theme --- */
+.dashboard-layout.dark {
+    background: #121212;
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .content-area {
+    background: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .top-navbar {
+    background: #1e1e1e;
+    border-bottom: 1px solid #333;
+}
+
+.dashboard-layout.dark .top-navbar .navbar-brand,
+.dashboard-layout.dark .top-navbar .nav-icon-btn {
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .top-navbar .nav-icon-btn:hover {
+    color: white;
+}
+
+.dashboard-layout.dark .stat-card,
+.dashboard-layout.dark .routine-card,
+.dashboard-layout.dark .progress-card,
+.dashboard-layout.dark .course-mark-card,
+.dashboard-layout.dark .cgpa-summary,
+.dashboard-layout.dark .quick-drive-card {
+    background: #2d2d2d;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+.dashboard-layout.dark .stat-card h5,
+.dashboard-layout.dark .stat-card h2 {
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .routine-item {
+    border-bottom-color: #444;
+}
+
+.dashboard-layout.dark .routine-time {
+    color: #4fc3f7;
+}
+
+.dashboard-layout.dark .text-muted {
+    color: #aaa !important;
+}
+
+.dashboard-layout.dark .page-title {
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .form-control,
+.dashboard-layout.dark .form-select {
+    background: #333;
+    color: #e0e0e0;
+    border-color: #555;
+}
+
+.dashboard-layout.dark .form-control:focus,
+.dashboard-layout.dark .form-select:focus {
+    background: #333;
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .form-check-label {
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .bg-secondary-custom {
+    background: #f4a261;
+    color: #1a1a2e;
+}
+
+/* ---- Sidebar in dark mode is already dark, keep as is ---- */
 
 .sidebar-wrapper {
     flex-shrink: 0;
@@ -18,23 +100,10 @@
     flex: 1;
     padding: 20px;
     background: #f8f9fa;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Dark theme (basic) */
-.dashboard-layout.dark {
-    background: #1A1A2E;
-}
-
-.dashboard-layout.dark .content-area {
-    background: #1A1A2E;
-}
-
-.dashboard-layout.dark .top-navbar {
-    background: #2D2D44;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Responsive sidebar toggle */
+/* Responsive */
 @media (max-width: 768px) {
     .sidebar-wrapper {
         position: fixed;

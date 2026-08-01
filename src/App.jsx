@@ -44,6 +44,7 @@ function App() {
           <Route path="cgpa" element={<CGPAPage />} />
           <Route path="faculty" element={<FacultyPage />} />
           <Route path="settings" element={<SettingsPage />} />
+
         </Route>
 
         {/* 404 */}

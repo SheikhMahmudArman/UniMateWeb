@@ -1,0 +1,113 @@
+.marks-page {
+    padding: 20px;
+}
+
+.semester-select {
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+}
+
+.cgpa-display {
+    text-align: right;
+}
+
+.cgpa-badge {
+    font-size: 1.2rem;
+    padding: 8px 16px;
+    background: #0B4F6C;
+    border-radius: 50px;
+}
+
+.course-mark-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: white;
+}
+
+.course-code {
+    font-weight: 700;
+    color: #0B4F6C;
+}
+
+.course-name {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+.credits {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.mark-input {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.mark-input:focus {
+    border-color: #0B4F6C;
+    box-shadow: 0 0 0 0.2rem rgba(11, 79, 108, 0.25);
+}
+
+.progress-wrapper {
+    margin-top: 8px;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 10px;
+    background: #e9ecef;
+}
+
+.progress-bar {
+    background: #0B4F6C;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.result-summary {
+    margin-top: 8px;
+    text-align: center;
+}
+
+.result-summary div {
+    flex: 1;
+}
+
+.result-summary small {
+    display: block;
+    color: #6c757d;
+    font-size: 0.75rem;
+}
+
+.result-summary strong {
+    font-size: 1.1rem;
+    color: #0B4F6C;
+}
+
+.cgpa-summary {
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #0B4F6C, #1A759F);
+    color: white;
+    margin-top: 20px;
+}
+
+.cgpa-number {
+    font-weight: 700;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .cgpa-display {
+        text-align: left;
+        margin-top: 10px;
+    }
+
+    .result-summary {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}

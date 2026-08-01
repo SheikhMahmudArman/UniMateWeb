@@ -9,7 +9,12 @@ const DashboardLayout = () => {
     const [theme, setTheme] = useState('light');
 
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-    const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
+    const toggleTheme = () => {
+        const newTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+        // Apply class to body or root for global theme
+        document.documentElement.setAttribute('data-theme', newTheme);
+    };
 
     return (
         <div className={`dashboard-layout ${theme}`}>

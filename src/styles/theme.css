@@ -11,3 +11,29 @@ body {
     margin: 0;
     background: var(--accent);
 }
+
+:root {
+    --primary: #0B4F6C;
+    --primary-light: #1A759F;
+    --secondary: #F4A261;
+    --accent: #F8F9FA;
+    --dark: #1A1A2E;
+    --bg: #f8f9fa;
+    --text: #212529;
+    --card-bg: white;
+    --border-color: #e9ecef;
+}
+
+[data-theme="dark"] {
+    --bg: #121212;
+    --text: #e0e0e0;
+    --card-bg: #2d2d2d;
+    --border-color: #444;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background 0.3s ease, color 0.3s ease;
+}
