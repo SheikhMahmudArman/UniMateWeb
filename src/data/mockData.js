@@ -158,3 +158,88 @@ export const marksData = {
 };
 
 export const semestersList = ['1.1', '1.2', '2.1', '2.2', '3.1', '3.2', '4.1', '4.2'];
+// ---- Faculty data ----
+export const facultyData = [
+    {
+        id: 1,
+        name: 'Dr. Ahmed Hasan',
+        department: 'CSE',
+        designation: 'Professor & Head',
+        email: 'ahmed.hasan@austmate.edu',
+        room: 'Room 401',
+        consultationHours: 'Mon/Wed 2:00 PM – 4:00 PM',
+        avatar: 'AH',
+    },
+    {
+        id: 2,
+        name: 'Dr. Fatima Rahman',
+        department: 'CSE',
+        designation: 'Associate Professor',
+        email: 'fatima.rahman@austmate.edu',
+        room: 'Room 402',
+        consultationHours: 'Tue/Thu 10:00 AM – 12:00 PM',
+        avatar: 'FR',
+    },
+    {
+        id: 3,
+        name: 'Mr. Kamal Hossain',
+        department: 'EEE',
+        designation: 'Assistant Professor',
+        email: 'kamal.hossain@austmate.edu',
+        room: 'Room 501',
+        consultationHours: 'Sun/Wed 3:00 PM – 5:00 PM',
+        avatar: 'KH',
+    },
+    {
+        id: 4,
+        name: 'Ms. Sharmin Akter',
+        department: 'CSE',
+        designation: 'Senior Lecturer',
+        email: 'sharmin.akter@austmate.edu',
+        room: 'Room 403',
+        consultationHours: 'Mon/Thu 11:00 AM – 1:00 PM',
+        avatar: 'SA',
+    },
+    {
+        id: 5,
+        name: 'Dr. Rashed Khan',
+        department: 'ME',
+        designation: 'Professor',
+        email: 'rashed.khan@austmate.edu',
+        room: 'Room 601',
+        consultationHours: 'Tue/Thu 2:00 PM – 4:00 PM',
+        avatar: 'RK',
+    },
+    {
+        id: 6,
+        name: 'Ms. Nusrat Jahan',
+        department: 'EEE',
+        designation: 'Lecturer',
+        email: 'nusrat.jahan@austmate.edu',
+        room: 'Room 502',
+        consultationHours: 'Sun/Wed 10:00 AM – 12:00 PM',
+        avatar: 'NJ',
+    },
+    {
+        id: 7,
+        name: 'Dr. M. Shahidul Islam',
+        department: 'CSE',
+        designation: 'Professor',
+        email: 'shahidul.islam@austmate.edu',
+        room: 'Room 404',
+        consultationHours: 'Mon/Wed 9:00 AM – 11:00 AM',
+        avatar: 'MS',
+    },
+    {
+        id: 8,
+        name: 'Mr. Tanvir Ahmed',
+        department: 'ME',
+        designation: 'Assistant Professor',
+        email: 'tanvir.ahmed@austmate.edu',
+        room: 'Room 602',
+        consultationHours: 'Tue/Thu 11:00 AM – 1:00 PM',
+        avatar: 'TA',
+    },
+];
+
+export const departments = ['All', 'CSE', 'EEE', 'ME'];
