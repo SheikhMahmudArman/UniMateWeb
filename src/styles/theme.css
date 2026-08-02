@@ -253,3 +253,100 @@ a:hover {
 .pulse {
     animation: pulse 2s ease-in-out infinite;
 }
+
+/* ========================================
+   GLOBAL DARK MODE FOR LOGIN & SIGNUP
+   ======================================== */
+
+[data-theme="dark"] .login-page,
+[data-theme="dark"] .signup-page {
+    background: #121212;
+}
+
+[data-theme="dark"] .login-card,
+[data-theme="dark"] .signup-card {
+    background: #1e1e1e;
+    color: #e0e0e0;
+    border: 1px solid #333;
+}
+
+[data-theme="dark"] .login-brand,
+[data-theme="dark"] .signup-brand {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .login-card .text-muted,
+[data-theme="dark"] .signup-card .text-muted {
+    color: #aaa !important;
+}
+
+[data-theme="dark"] .login-card .form-control,
+[data-theme="dark"] .signup-card .form-control {
+    background: #333;
+    color: #e0e0e0;
+    border-color: #555;
+}
+
+[data-theme="dark"] .login-card .form-control:focus,
+[data-theme="dark"] .signup-card .form-control:focus {
+    background: #333;
+    color: #e0e0e0;
+    border-color: #4fc3f7;
+    box-shadow: 0 0 0 0.2rem rgba(79, 195, 247, 0.25);
+}
+
+[data-theme="dark"] .login-card .form-label,
+[data-theme="dark"] .signup-card .form-label {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .login-card .input-icon,
+[data-theme="dark"] .signup-card .input-icon {
+    color: #aaa;
+}
+
+[data-theme="dark"] .login-card .password-toggle,
+[data-theme="dark"] .signup-card .password-toggle {
+    color: #aaa;
+}
+
+[data-theme="dark"] .login-card .password-toggle:hover,
+[data-theme="dark"] .signup-card .password-toggle:hover {
+    color: #4fc3f7;
+}
+
+[data-theme="dark"] .login-card .btn-login,
+[data-theme="dark"] .signup-card .btn-signup {
+    background: #1A759F;
+    border: none;
+}
+
+[data-theme="dark"] .login-card .btn-login:hover,
+[data-theme="dark"] .signup-card .btn-signup:hover {
+    background: #4fc3f7;
+    color: #1a1a2e;
+}
+
+[data-theme="dark"] .login-card a,
+[data-theme="dark"] .signup-card a {
+    color: #4fc3f7;
+}
+
+[data-theme="dark"] .login-card a:hover,
+[data-theme="dark"] .signup-card a:hover {
+    color: #81d4fa;
+}
+
+[data-theme="dark"] .login-card .alert-danger,
+[data-theme="dark"] .signup-card .alert-danger {
+    background: #2d1a1a;
+    border-color: #5a2a2a;
+    color: #f8d7da;
+}
+
+[data-theme="dark"] .login-card .alert-success,
+[data-theme="dark"] .signup-card .alert-success {
+    background: #1a2d1a;
+    border-color: #2a5a2a;
+    color: #d4edda;
+}

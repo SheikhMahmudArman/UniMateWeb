@@ -17,6 +17,13 @@ import MarksPage from './pages/MarksPage';
 import CGPAPage from './pages/CGPAPage';
 import FacultyPage from './pages/FacultyPage';
 import SettingsPage from './pages/SettingsPage';
+// Admin pages
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import ManageCourses from './pages/Admin/ManageCourses';
+import ManageStudents from './pages/Admin/ManageStudents';
+import ManageFaculty from './pages/Admin/ManageFaculty';
+import ManageDocuments from './pages/Admin/ManageDocuments';
+import ManageMarks from './pages/Admin/ManageMarks';
 
 function App() {
   return (
@@ -45,8 +52,15 @@ function App() {
               <Route path="cgpa" element={<CGPAPage />} />
               <Route path="faculty" element={<FacultyPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              {/* Admin routes */}
+              <Route path="admin" element={<AdminDashboard />} />
+              <Route path="admin/courses" element={<ManageCourses />} />
+              <Route path="admin/students" element={<ManageStudents />} />
+              <Route path="admin/faculty" element={<ManageFaculty />} />
+              <Route path="admin/documents" element={<ManageDocuments />} />
+              <Route path="admin/marks" element={<ManageMarks />} />
             </Route>
-            <Route path="*" element={<h1 className="text-center mt-5">404 - Page Not Found</h1>} />
+
           </Routes>
         </NotificationProvider>
       </ThemeProvider>
