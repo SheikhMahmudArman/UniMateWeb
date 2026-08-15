@@ -17,6 +17,10 @@ import MarksPage from './pages/MarksPage';
 import CGPAPage from './pages/CGPAPage';
 import FacultyPage from './pages/FacultyPage';
 import SettingsPage from './pages/SettingsPage';
+import NoticeBoardPage from './pages/NoticeBoardPage';
+import AttendancePage from './pages/AttendancePage';
+import ProfilePage from './pages/ProfilePage';
+import LibraryPage from './pages/LibraryPage';
 // Admin pages
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import ManageCourses from './pages/Admin/ManageCourses';
@@ -24,6 +28,7 @@ import ManageStudents from './pages/Admin/ManageStudents';
 import ManageFaculty from './pages/Admin/ManageFaculty';
 import ManageDocuments from './pages/Admin/ManageDocuments';
 import ManageMarks from './pages/Admin/ManageMarks';
+import ManageNotices from './pages/Admin/ManageNotices';
 
 function App() {
   return (
@@ -43,6 +48,8 @@ function App() {
               }
             >
               <Route index element={<DashboardHome />} />
+              <Route path="notice-board" element={<NoticeBoardPage />} /> 
+              <Route path="attendance" element={<AttendancePage />} />
               <Route path="folders" element={<FolderPage />} />
               <Route path="drive/:semesterId" element={<DrivePage />} />
               <Route path="quiz" element={<QuizPage />} />
@@ -51,6 +58,8 @@ function App() {
               <Route path="marks" element={<MarksPage />} />
               <Route path="cgpa" element={<CGPAPage />} />
               <Route path="faculty" element={<FacultyPage />} />
+              <Route path="library" element={<LibraryPage />} /> 
+              <Route path="profile" element={<ProfilePage />} />
               <Route path="settings" element={<SettingsPage />} />
               {/* Admin routes */}
               <Route path="admin" element={<AdminDashboard />} />
@@ -59,6 +68,7 @@ function App() {
               <Route path="admin/faculty" element={<ManageFaculty />} />
               <Route path="admin/documents" element={<ManageDocuments />} />
               <Route path="admin/marks" element={<ManageMarks />} />
+               <Route path="admin/notices" element={<ManageNotices />} />
             </Route>
 
           </Routes>
