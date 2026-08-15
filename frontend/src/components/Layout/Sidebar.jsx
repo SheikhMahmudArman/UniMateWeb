@@ -23,6 +23,8 @@ const Sidebar = () => {
     const getIcon = (id) => {
         const map = {
             home: faHouse,
+            'notice-board': faBullhorn,
+            attendance: faCalendarCheck,
             folders: faFolderOpen,
             quiz: faCalendarCheck,
             mid: faCalendarAlt,
@@ -30,6 +32,8 @@ const Sidebar = () => {
             marks: faChartSimple,
             cgpa: faPercent,
             faculty: faUserGraduate,
+            library: faBook,
+            profile: faUser,
             settings: faGear,
             'admin-dashboard': faShield,
             'manage-courses': faBook,
@@ -37,6 +41,7 @@ const Sidebar = () => {
             'manage-faculty': faChalkboardUser,
             'manage-documents': faFile,
             'manage-marks': faPen,
+            'manage-notices': faBullhorn,
         };
         return map[id] || faHouse;
     };

@@ -102,8 +102,11 @@ export const notifications = [
 ];
 
 // ---- Menu Items ----
+
 export const menuItems = [
     { id: 'home', label: 'Dashboard', icon: 'faHouse', path: '/dashboard', roles: ['student', 'admin'] },
+    { id: 'notice-board', label: 'Notice Board', icon: 'faBullhorn', path: '/dashboard/notice-board', roles: ['student', 'admin'] }, // নতুন
+    { id: 'attendance', label: 'Attendance', icon: 'faCalendarCheck', path: '/dashboard/attendance', roles: ['student', 'admin'] }, // নতুন
     { id: 'folders', label: 'Drive', icon: 'faFolderOpen', path: '/dashboard/folders', roles: ['student', 'admin'] },
     { id: 'quiz', label: 'Quiz', icon: 'faCalendarCheck', path: '/dashboard/quiz', roles: ['student', 'admin'] },
     { id: 'mid', label: 'Mid', icon: 'faCalendarAlt', path: '/dashboard/mid', roles: ['student', 'admin'] },
@@ -111,6 +114,8 @@ export const menuItems = [
     { id: 'marks', label: 'Marks', icon: 'faChartSimple', path: '/dashboard/marks', roles: ['student', 'admin'] },
     { id: 'cgpa', label: 'CGPA', icon: 'faPercent', path: '/dashboard/cgpa', roles: ['student', 'admin'] },
     { id: 'faculty', label: 'Faculty', icon: 'faUserGraduate', path: '/dashboard/faculty', roles: ['student', 'admin'] },
+    { id: 'library', label: 'Library', icon: 'faBook', path: '/dashboard/library', roles: ['student', 'admin'] }, 
+    { id: 'profile', label: 'Profile', icon: 'faUser', path: '/dashboard/profile', roles: ['student', 'admin'] }, 
     { id: 'settings', label: 'Settings', icon: 'faGear', path: '/dashboard/settings', roles: ['student', 'admin'] },
     // Admin-only
     { id: 'admin-dashboard', label: 'Admin Panel', icon: 'faShield', path: '/dashboard/admin', roles: ['admin'] },
@@ -119,4 +124,5 @@ export const menuItems = [
     { id: 'manage-faculty', label: 'Manage Faculty', icon: 'faChalkboardUser', path: '/dashboard/admin/faculty', roles: ['admin'] },
     { id: 'manage-documents', label: 'Manage Documents', icon: 'faFile', path: '/dashboard/admin/documents', roles: ['admin'] },
     { id: 'manage-marks', label: 'Manage Marks', icon: 'faPen', path: '/dashboard/admin/marks', roles: ['admin'] },
+    { id: 'manage-notices', label: 'Manage Notices', icon: 'faBullhorn', path: '/dashboard/admin/notices', roles: ['admin'] }, 
 ];

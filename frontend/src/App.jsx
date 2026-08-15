@@ -68,7 +68,6 @@ function App() {
               <Route path="admin/faculty" element={<ManageFaculty />} />
               <Route path="admin/documents" element={<ManageDocuments />} />
               <Route path="admin/marks" element={<ManageMarks />} />
-              <Route path="admin/notices" element={<ManageNotices />} />
             </Route>
 
           </Routes>

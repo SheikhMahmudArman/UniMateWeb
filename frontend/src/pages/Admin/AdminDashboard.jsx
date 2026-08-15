@@ -15,6 +15,7 @@ const AdminDashboard = () => {
         { title: 'Manage Faculty', icon: faChalkboardUser, path: '/dashboard/admin/faculty', color: '#F4A261' },
         { title: 'Manage Documents', icon: faFile, path: '/dashboard/admin/documents', color: '#E76F51' },
         { title: 'Manage Marks', icon: faPen, path: '/dashboard/admin/marks', color: '#2A9D8F' },
+        { title: 'Manage Notices', icon: faBullhorn, path: '/dashboard/admin/notices', color: '#6c757d' },
     ];
 
     return (
