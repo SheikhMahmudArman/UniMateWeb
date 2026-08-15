@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    faHouse, faFolderOpen, faCalendarCheck, faCalendarAlt, faFlag,
-    faChartSimple, faPercent, faUserGraduate, faGear, faRightFromBracket,
+    faHouse, faFolderOpen, faCalendarCheck, faBullhorn, faCalendarAlt, faFlag,
+    faChartSimple, faUser, faPercent, faUserGraduate, faGear, faRightFromBracket,
     faShield, faBook, faUserGroup, faChalkboardUser, faFile, faPen
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../context/AuthContext';
