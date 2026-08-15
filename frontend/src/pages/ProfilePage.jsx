@@ -29,10 +29,10 @@ const ProfilePage = () => {
             return;
         }
 
-        // প্রোফাইল আপডেট করার লজিক (শুধু মক)
+        
         const updatedUser = { ...user, name: formData.name, email: formData.email };
         localStorage.setItem('user', JSON.stringify(updatedUser));
-        login(updatedUser); // কনটেক্সট আপডেট
+        login(updatedUser); 
         setSuccess('Profile updated successfully!');
         setTimeout(() => setSuccess(''), 3000);
     };
