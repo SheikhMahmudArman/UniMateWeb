@@ -27,7 +27,7 @@ const AttendancePage = () => {
         else return <Badge bg="danger">Absent</Badge>;
     };
 
-    // উপস্থিতির পরিসংখ্যান
+    
     const totalClasses = attendanceData.length;
     const presentClasses = attendanceData.filter(item => item.status === 'present').length;
     const absentClasses = totalClasses - presentClasses;

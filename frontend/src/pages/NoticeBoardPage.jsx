@@ -7,12 +7,12 @@ const NoticeBoardPage = () => {
     const [notices, setNotices] = useState([]);
 
     useEffect(() => {
-        // মক ডাটা থেকে বা লোকাল স্টোরেজ থেকে নোটিশ লোড করা
+        
         const storedNotices = localStorage.getItem('notices');
         if (storedNotices) {
             setNotices(JSON.parse(storedNotices));
         } else {
-            // ডিফল্ট নোটিশ
+            
             const defaultNotices = [
                 { id: 1, title: 'Midterm Exam Schedule', content: 'Midterm exams will start from 15th August. Please check the detailed schedule on the notice board.', date: '2026-08-10', type: 'exam' },
                 { id: 2, title: 'Library Renovation', content: 'The library will remain closed from 20th to 25th August for renovation.', date: '2026-08-08', type: 'general' },
