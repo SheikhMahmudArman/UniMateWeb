@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useNotification } from '../context/NotificationContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun, faDesktop, faBell, faClock, faLock, faSave } from '@fortawesome/free-solid-svg-icons';
+import api from '../services/api';
 import './SettingsPage.css';
 
 const SettingsPage = () => {
@@ -16,6 +17,7 @@ const SettingsPage = () => {
     const [passwordError, setPasswordError] = useState('');
     const [passwordSuccess, setPasswordSuccess] = useState('');
     const [showToast, setShowToast] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleThemeChange = (newTheme) => {
         changeTheme(newTheme);
@@ -29,30 +31,48 @@ const SettingsPage = () => {
         updateNotificationPrefs(notificationsEnabled, e.target.value);
     };
 
-    const handlePasswordSubmit = (e) => {
+    const handlePasswordSubmit = async (e) => {
         e.preventDefault();
         setPasswordError('');
         setPasswordSuccess('');
+        setLoading(true);
 
         if (!currentPassword || !newPassword || !confirmPassword) {
             setPasswordError('All password fields are required.');
+            setLoading(false);
             return;
         }
         if (newPassword.length < 8) {
             setPasswordError('New password must be at least 8 characters.');
+            setLoading(false);
             return;
         }
         if (newPassword !== confirmPassword) {
             setPasswordError('Passwords do not match.');
+            setLoading(false);
             return;
         }
-        // Mock success
-        setPasswordSuccess('Password changed successfully! (mock)');
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
+
+        try {
+            const response = await api.put('/profile/change-password', {
+                current_password: currentPassword,
+                new_password: newPassword,
+                new_password_confirmation: confirmPassword,
+            });
+
+            if (response.data.success) {
+                setPasswordSuccess('Password changed successfully!');
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+                setShowToast(true);
+                setTimeout(() => setShowToast(false), 3000);
+            }
+        } catch (error) {
+            setPasswordError(error.response?.data?.message || 'Failed to change password');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -173,8 +193,9 @@ const SettingsPage = () => {
                                 </Form.Group>
                             </Col>
                         </Row>
-                        <Button type="submit" variant="primary" className="save-btn">
-                            <FontAwesomeIcon icon={faSave} className="me-2" /> Update Password
+                        <Button type="submit" variant="primary" className="save-btn" disabled={loading}>
+                            <FontAwesomeIcon icon={faSave} className="me-2" /> 
+                            {loading ? 'Updating...' : 'Update Password'}
                         </Button>
                     </Form>
                 </Card.Body>

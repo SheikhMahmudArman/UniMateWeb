@@ -2,76 +2,93 @@ import React, { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import api from '../../services/api';
 
 const ManageNotices = () => {
     const [notices, setNotices] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editingNotice, setEditingNotice] = useState(null);
-    const [formData, setFormData] = useState({ title: '', content: '', type: 'general' });
+    const [formData, setFormData] = useState({ title: '', content: '', type: 'general', date: '' });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const stored = localStorage.getItem('notices');
-        if (stored) {
-            setNotices(JSON.parse(stored));
-        } else {
-            const initial = [
-                { id: 1, title: 'Midterm Exam Schedule', content: 'Midterm exams will start from 15th August.', date: '2026-08-10', type: 'exam' },
-                { id: 2, title: 'Library Renovation', content: 'The library will remain closed from 20th to 25th August.', date: '2026-08-08', type: 'general' },
-            ];
-            setNotices(initial);
-            localStorage.setItem('notices', JSON.stringify(initial));
-        }
+        fetchNotices();
     }, []);
 
-    const saveNotices = (newNotices) => {
-        setNotices(newNotices);
-        localStorage.setItem('notices', JSON.stringify(newNotices));
+    const fetchNotices = async () => {
+        try {
+            const response = await api.get('/notices');
+            if (response.data.success) {
+                setNotices(response.data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching notices:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleAdd = () => {
         setEditingNotice(null);
-        setFormData({ title: '', content: '', type: 'general' });
+        setFormData({ title: '', content: '', type: 'general', date: new Date().toISOString().split('T')[0] });
         setError('');
         setShowModal(true);
     };
 
     const handleEdit = (notice) => {
         setEditingNotice(notice);
-        setFormData({ title: notice.title, content: notice.content, type: notice.type });
+        setFormData({ title: notice.title, content: notice.content, type: notice.type, date: notice.date });
         setError('');
         setShowModal(true);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this notice?')) {
-            const newNotices = notices.filter(n => n.id !== id);
-            saveNotices(newNotices);
-            setSuccess('Notice deleted.');
-            setTimeout(() => setSuccess(''), 3000);
+            try {
+                await api.delete(`/notices/${id}`);
+                setSuccess('Notice deleted.');
+                fetchNotices();
+                setTimeout(() => setSuccess(''), 3000);
+            } catch (error) {
+                setError('Failed to delete notice.');
+            }
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        setLoading(true);
+
         if (!formData.title || !formData.content) {
             setError('Title and content are required.');
+            setLoading(false);
             return;
         }
-        if (editingNotice) {
-            const updated = notices.map(n => n.id === editingNotice.id ? { ...n, ...formData, date: new Date().toISOString().split('T')[0] } : n);
-            saveNotices(updated);
-            setSuccess('Notice updated.');
-        } else {
-            const newId = notices.length ? Math.max(...notices.map(n => n.id)) + 1 : 1;
-            const newNotice = { id: newId, ...formData, date: new Date().toISOString().split('T')[0] };
-            saveNotices([...notices, newNotice]);
-            setSuccess('Notice added.');
+
+        try {
+            if (editingNotice) {
+                await api.put(`/notices/${editingNotice.id}`, formData);
+                setSuccess('Notice updated.');
+            } else {
+                await api.post('/notices', formData);
+                setSuccess('Notice added.');
+            }
+            setShowModal(false);
+            fetchNotices();
+            setTimeout(() => setSuccess(''), 3000);
+        } catch (error) {
+            setError(error.response?.data?.message || 'Operation failed.');
+        } finally {
+            setLoading(false);
         }
-        setShowModal(false);
-        setTimeout(() => setSuccess(''), 3000);
     };
+
+    if (loading && notices.length === 0) {
+        return <div className="text-center py-5">Loading...</div>;
+    }
 
     return (
         <Container fluid className="manage-notices" style={{ padding: '20px' }}>
@@ -117,6 +134,7 @@ const ManageNotices = () => {
                     <Modal.Body>
                         <Form.Group className="mb-3"><Form.Label>Title</Form.Label><Form.Control type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Content</Form.Label><Form.Control as="textarea" rows={3} value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} required /></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Date</Form.Label><Form.Control type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Type</Form.Label>
                             <Form.Select value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })}>
                                 <option value="general">General</option>
@@ -127,7 +145,7 @@ const ManageNotices = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-                        <Button variant="primary" type="submit">Save</Button>
+                        <Button variant="primary" type="submit" disabled={loading}>Save</Button>
                     </Modal.Footer>
                 </Form>
             </Modal>

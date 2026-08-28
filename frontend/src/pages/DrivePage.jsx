@@ -12,7 +12,7 @@ import {
     faEye,
     faSearch
 } from '@fortawesome/free-solid-svg-icons';
-import { documents } from '../data/mockData';
+import api from '../services/api';
 import './DrivePage.css';
 
 const DrivePage = () => {
@@ -20,20 +20,26 @@ const DrivePage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [offlineMode, setOfflineMode] = useState(false);
     const [activeTab, setActiveTab] = useState('theory');
-    const [filteredDocs, setFilteredDocs] = useState([]);
-
-    const semesterData = documents[semesterId];
-    const theoryDocs = semesterData?.theory || [];
-    const labDocs = semesterData?.lab || [];
+    const [documents, setDocuments] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Filter based on search term
-        const docs = activeTab === 'theory' ? theoryDocs : labDocs;
-        const filtered = docs.filter(doc =>
-            doc.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredDocs(filtered);
-    }, [searchTerm, activeTab, semesterId]);
+        fetchDocuments();
+    }, [semesterId]);
+
+    const fetchDocuments = async () => {
+        setLoading(true);
+        try {
+            const response = await api.get(`/documents?semester=${semesterId}`);
+            if (response.data.success) {
+                setDocuments(response.data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching documents:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const getFileIcon = (type) => {
         switch (type) {
@@ -53,20 +59,16 @@ const DrivePage = () => {
         }
     };
 
-    if (!semesterData) {
-        return (
-            <Container className="drive-page">
-                <h2>Semester not found</h2>
-                <Link to="/dashboard/folders" className="btn btn-primary">
-                    <FontAwesomeIcon icon={faArrowLeft} /> Back to Folders
-                </Link>
-            </Container>
-        );
+    const filteredDocs = documents.filter(doc =>
+        doc.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (loading) {
+        return <div className="text-center py-5">Loading documents...</div>;
     }
 
     return (
         <Container fluid className="drive-page">
-            {/* Header */}
             <div className="drive-header">
                 <Link to="/dashboard/folders" className="btn btn-outline-primary back-btn">
                     <FontAwesomeIcon icon={faArrowLeft} /> Back
@@ -83,7 +85,6 @@ const DrivePage = () => {
                 </div>
             </div>
 
-            {/* Search */}
             <div className="drive-search">
                 <div className="search-wrapper">
                     <FontAwesomeIcon icon={faSearch} className="search-icon" />
@@ -97,13 +98,12 @@ const DrivePage = () => {
                 </div>
             </div>
 
-            {/* Tabs */}
             <Tabs
                 activeKey={activeTab}
                 onSelect={(k) => setActiveTab(k)}
                 className="drive-tabs"
             >
-                <Tab eventKey="theory" title={`Theory Docs (${theoryDocs.length})`}>
+                <Tab eventKey="theory" title={`Theory Docs`}>
                     <div className="doc-list">
                         {filteredDocs.length === 0 ? (
                             <p className="text-muted text-center py-4">No documents found.</p>
@@ -123,10 +123,23 @@ const DrivePage = () => {
                                             </Badge>
                                         </div>
                                         <div className="doc-actions">
-                                            <Button variant="outline-primary" size="sm" className="me-1">
+                                            <Button 
+                                                variant="outline-primary" 
+                                                size="sm" 
+                                                className="me-1"
+                                                onClick={() => window.open(doc.url || doc.file_path, '_blank')}
+                                            >
                                                 <FontAwesomeIcon icon={faEye} /> View
                                             </Button>
-                                            <Button variant="primary" size="sm">
+                                            <Button 
+                                                variant="primary" 
+                                                size="sm"
+                                                onClick={() => {
+                                                    if (doc.file_path) {
+                                                        window.open(`/storage/${doc.file_path}`, '_blank');
+                                                    }
+                                                }}
+                                            >
                                                 <FontAwesomeIcon icon={faDownload} /> Download
                                             </Button>
                                         </div>
@@ -136,7 +149,7 @@ const DrivePage = () => {
                         )}
                     </div>
                 </Tab>
-                <Tab eventKey="lab" title={`Lab Docs (${labDocs.length})`}>
+                <Tab eventKey="lab" title={`Lab Docs`}>
                     <div className="doc-list">
                         {filteredDocs.length === 0 ? (
                             <p className="text-muted text-center py-4">No lab documents found.</p>
@@ -156,10 +169,23 @@ const DrivePage = () => {
                                             </Badge>
                                         </div>
                                         <div className="doc-actions">
-                                            <Button variant="outline-primary" size="sm" className="me-1">
+                                            <Button 
+                                                variant="outline-primary" 
+                                                size="sm" 
+                                                className="me-1"
+                                                onClick={() => window.open(doc.url || doc.file_path, '_blank')}
+                                            >
                                                 <FontAwesomeIcon icon={faEye} /> View
                                             </Button>
-                                            <Button variant="primary" size="sm">
+                                            <Button 
+                                                variant="primary" 
+                                                size="sm"
+                                                onClick={() => {
+                                                    if (doc.file_path) {
+                                                        window.open(`/storage/${doc.file_path}`, '_blank');
+                                                    }
+                                                }}
+                                            >
                                                 <FontAwesomeIcon icon={faDownload} /> Download
                                             </Button>
                                         </div>

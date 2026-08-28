@@ -2,41 +2,47 @@ import React, { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import api from '../../services/api';
 import './ManageMarks.css';
 
 const ManageMarks = () => {
     const [marks, setMarks] = useState([]);
+    const [students, setStudents] = useState([]);
+    const [courses, setCourses] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editingMark, setEditingMark] = useState(null);
     const [formData, setFormData] = useState({
-        id: '', studentId: '', courseCode: '', semester: '1.1',
+        student_id: '', course_id: '', semester: '1.1',
         quiz: 0, mid: 0, online: 0, final: 0
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const stored = localStorage.getItem('admin_marks');
-        if (stored) {
-            setMarks(JSON.parse(stored));
-        } else {
-            const initial = [
-                { id: 1, studentId: '2023-12345', courseCode: 'CSE 1101', semester: '1.1', quiz: 20, mid: 25, online: 8, final: 27 },
-                { id: 2, studentId: '2023-12345', courseCode: 'CSE 1103', semester: '1.1', quiz: 18, mid: 22, online: 7, final: 24 },
-            ];
-            setMarks(initial);
-            localStorage.setItem('admin_marks', JSON.stringify(initial));
-        }
+        fetchData();
     }, []);
 
-    const saveMarks = (newMarks) => {
-        setMarks(newMarks);
-        localStorage.setItem('admin_marks', JSON.stringify(newMarks));
+    const fetchData = async () => {
+        try {
+            const [marksRes, studentsRes, coursesRes] = await Promise.all([
+                api.get('/marks'),
+                api.get('/students'),
+                api.get('/courses'),
+            ]);
+            if (marksRes.data.success) setMarks(marksRes.data.data);
+            if (studentsRes.data.success) setStudents(studentsRes.data.data);
+            if (coursesRes.data.success) setCourses(coursesRes.data.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleAdd = () => {
         setEditingMark(null);
-        setFormData({ id: '', studentId: '', courseCode: '', semester: '1.1', quiz: 0, mid: 0, online: 0, final: 0 });
+        setFormData({ student_id: '', course_id: '', semester: '1.1', quiz: 0, mid: 0, online: 0, final: 0 });
         setError('');
         setShowModal(true);
     };
@@ -48,33 +54,61 @@ const ManageMarks = () => {
         setShowModal(true);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('Are you sure?')) {
-            const newMarks = marks.filter(m => m.id !== id);
-            saveMarks(newMarks);
-            setSuccess('Marks deleted.');
-            setTimeout(() => setSuccess(''), 3000);
+            try {
+                await api.delete(`/marks/${id}`);
+                setSuccess('Marks deleted.');
+                fetchData();
+                setTimeout(() => setSuccess(''), 3000);
+            } catch (error) {
+                setError('Failed to delete marks.');
+            }
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.studentId || !formData.courseCode) {
-            setError('Student ID and Course Code are required.');
+        setError('');
+        setLoading(true);
+
+        if (!formData.student_id || !formData.course_id) {
+            setError('Student and Course are required.');
+            setLoading(false);
             return;
         }
-        if (editingMark) {
-            const updated = marks.map(m => m.id === editingMark.id ? { ...formData } : m);
-            saveMarks(updated);
-            setSuccess('Marks updated.');
-        } else {
-            const newId = marks.length ? Math.max(...marks.map(m => m.id)) + 1 : 1;
-            saveMarks([...marks, { ...formData, id: newId }]);
-            setSuccess('Marks added.');
+
+        try {
+            if (editingMark) {
+                await api.put(`/marks/${editingMark.id}`, formData);
+                setSuccess('Marks updated.');
+            } else {
+                await api.post('/marks', formData);
+                setSuccess('Marks added.');
+            }
+            setShowModal(false);
+            fetchData();
+            setTimeout(() => setSuccess(''), 3000);
+        } catch (error) {
+            setError(error.response?.data?.message || 'Operation failed.');
+        } finally {
+            setLoading(false);
         }
-        setShowModal(false);
-        setTimeout(() => setSuccess(''), 3000);
     };
+
+    const getStudentName = (id) => {
+        const student = students.find(s => s.id === id);
+        return student ? student.name : 'N/A';
+    };
+
+    const getCourseCode = (id) => {
+        const course = courses.find(c => c.id === id);
+        return course ? course.code : 'N/A';
+    };
+
+    if (loading && marks.length === 0) {
+        return <div className="text-center py-5">Loading...</div>;
+    }
 
     return (
         <Container fluid className="manage-marks">
@@ -97,8 +131,8 @@ const ManageMarks = () => {
                                 return (
                                     <tr key={mark.id}>
                                         <td>{mark.id}</td>
-                                        <td>{mark.studentId}</td>
-                                        <td>{mark.courseCode}</td>
+                                        <td>{getStudentName(mark.student_id)}</td>
+                                        <td>{getCourseCode(mark.course_id)}</td>
                                         <td>{mark.semester}</td>
                                         <td>{mark.quiz}</td>
                                         <td>{mark.mid}</td>
@@ -124,8 +158,18 @@ const ManageMarks = () => {
                 <Modal.Header closeButton><Modal.Title>{editingMark ? 'Edit Marks' : 'Add Marks'}</Modal.Title></Modal.Header>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Body>
-                        <Form.Group className="mb-3"><Form.Label>Student ID</Form.Label><Form.Control type="text" value={formData.studentId} onChange={(e) => setFormData({ ...formData, studentId: e.target.value })} required /></Form.Group>
-                        <Form.Group className="mb-3"><Form.Label>Course Code</Form.Label><Form.Control type="text" value={formData.courseCode} onChange={(e) => setFormData({ ...formData, courseCode: e.target.value })} required /></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Student</Form.Label>
+                            <Form.Select value={formData.student_id} onChange={(e) => setFormData({ ...formData, student_id: parseInt(e.target.value) })} required>
+                                <option value="">Select Student</option>
+                                {students.map(s => <option key={s.id} value={s.id}>{s.name} ({s.student_id})</option>)}
+                            </Form.Select>
+                        </Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Course</Form.Label>
+                            <Form.Select value={formData.course_id} onChange={(e) => setFormData({ ...formData, course_id: parseInt(e.target.value) })} required>
+                                <option value="">Select Course</option>
+                                {courses.map(c => <option key={c.id} value={c.id}>{c.code} - {c.name}</option>)}
+                            </Form.Select>
+                        </Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Semester</Form.Label>
                             <Form.Select value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })}>
                                 {['1.1', '1.2', '2.1', '2.2', '3.1', '3.2', '4.1', '4.2'].map(s => <option key={s} value={s}>{s}</option>)}
@@ -138,7 +182,7 @@ const ManageMarks = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-                        <Button variant="primary" type="submit">Save</Button>
+                        <Button variant="primary" type="submit" disabled={loading}>Save</Button>
                     </Modal.Footer>
                 </Form>
             </Modal>

@@ -1,6 +1,5 @@
-
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import React, { useState, useEffect, useContext } from 'react';
+import { Container, Row, Col, Card, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -15,57 +14,44 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { dailyRoutine, courses, quickStats } from '../data/mockData';
+import { AuthContext } from '../context/AuthContext';
+import api from '../services/api';
 import './DashboardHome.css';
 
 const DashboardHome = () => {
-    // --- Existing states ---
-    const [routine, setRoutine] = useState(dailyRoutine);
-    const [doneTopics, setDoneTopics] = useState(
-        courses.reduce((acc, course) => {
-            acc[course.id] = new Array(course.topics.length).fill(false);
-            return acc;
-        }, {})
-    );
-
-    // --- New states for Notices, Attendance, Library ---
-    const [notices, setNotices] = useState([]);
-    const [attendance, setAttendance] = useState([]);
-    const [books, setBooks] = useState([]);
+    const { user } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true);
+    const [dashboardData, setDashboardData] = useState({
+        stats: { upcoming_quizzes: 0, pending_assignments: 0, current_cgpa: 0 },
+        notices: [],
+        routine: [],
+        courses: [],
+        attendance: { percentage: 0, total: 0, present: 0 },
+        library: { available_books: 0 }
+    });
+    const [doneTopics, setDoneTopics] = useState({});
 
     useEffect(() => {
-        // Load notices from localStorage or default
-        const storedNotices = localStorage.getItem('notices');
-        if (storedNotices) {
-            setNotices(JSON.parse(storedNotices));
-        } else {
-            setNotices([
-                { id: 1, title: 'Midterm Exam Schedule', content: 'Midterm exams will start from 15th August.', date: '2026-08-10', type: 'exam' },
-                { id: 2, title: 'Library Renovation', content: 'The library will remain closed from 20th to 25th August.', date: '2026-08-08', type: 'general' },
-            ]);
-        }
-
-        // Mock Attendance data
-        setAttendance([
-            { id: 1, course: 'CSE 1101', date: '2026-08-01', status: 'present' },
-            { id: 2, course: 'CSE 1101', date: '2026-08-03', status: 'present' },
-            { id: 3, course: 'CSE 1101', date: '2026-08-05', status: 'absent' },
-            { id: 4, course: 'CSE 1103', date: '2026-08-02', status: 'present' },
-        ]);
-
-        // Mock Library data
-        setBooks([
-            { id: 1, title: 'Introduction to Algorithms', author: 'Thomas H. Cormen', status: 'available' },
-            { id: 2, title: 'Clean Code', author: 'Robert C. Martin', status: 'available' },
-            { id: 3, title: 'Design Patterns', author: 'Erich Gamma', status: 'issued' },
-        ]);
+        fetchDashboardData();
     }, []);
 
-    // --- Existing functions ---
-    const toggleNotify = (id) => {
-        setRoutine(routine.map(item =>
-            item.id === id ? { ...item, notify: !item.notify } : item
-        ));
+    const fetchDashboardData = async () => {
+        try {
+            const response = await api.get('/dashboard');
+            if (response.data.success) {
+                setDashboardData(response.data.data);
+                // Initialize topic progress
+                const topics = {};
+                response.data.data.courses.forEach(course => {
+                    topics[course.id] = new Array(course.topics?.length || 0).fill(false);
+                });
+                setDoneTopics(topics);
+            }
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleTopicToggle = (courseId, topicIndex) => {
@@ -79,16 +65,15 @@ const DashboardHome = () => {
 
     const getProgress = (courseId) => {
         const done = doneTopics[courseId] || [];
-        const total = courses.find(c => c.id === courseId)?.topics.length || 0;
+        const course = dashboardData.courses.find(c => c.id === courseId);
+        const total = course?.topics?.length || 0;
         if (total === 0) return 0;
         return Math.round((done.filter(Boolean).length / total) * 100);
     };
 
-    // --- New calculations ---
-    const totalClasses = attendance.length;
-    const presentClasses = attendance.filter(a => a.status === 'present').length;
-    const attendancePercentage = totalClasses > 0 ? Math.round((presentClasses / totalClasses) * 100) : 0;
-    const availableBooks = books.filter(b => b.status === 'available').length;
+    if (loading) {
+        return <div className="text-center py-5">Loading...</div>;
+    }
 
     return (
         <Container fluid className="dashboard-home">
@@ -96,18 +81,18 @@ const DashboardHome = () => {
             <Row>
                 <Col>
                     <h2 className="page-title">Dashboard</h2>
-                    <p className="text-muted">Welcome back! Here's your academic overview.</p>
+                    <p className="text-muted">Welcome back, {user?.name}! Here's your academic overview.</p>
                 </Col>
             </Row>
 
-            {/* Quick Stats (Existing) */}
+            {/* Quick Stats */}
             <Row className="stats-row">
                 <Col md={4} className="mb-3">
                     <Card className="stat-card">
                         <Card.Body>
                             <div className="stat-icon"><FontAwesomeIcon icon={faCalendarCheck} /></div>
                             <h5>Upcoming Quizzes</h5>
-                            <h2>{quickStats.upcomingQuizzes}</h2>
+                            <h2>{dashboardData.stats.upcoming_quizzes}</h2>
                         </Card.Body>
                     </Card>
                 </Col>
@@ -116,7 +101,7 @@ const DashboardHome = () => {
                         <Card.Body>
                             <div className="stat-icon"><FontAwesomeIcon icon={faBookOpen} /></div>
                             <h5>Pending Assignments</h5>
-                            <h2>{quickStats.pendingAssignments}</h2>
+                            <h2>{dashboardData.stats.pending_assignments}</h2>
                         </Card.Body>
                     </Card>
                 </Col>
@@ -125,13 +110,13 @@ const DashboardHome = () => {
                         <Card.Body>
                             <div className="stat-icon"><FontAwesomeIcon icon={faChartLine} /></div>
                             <h5>Current CGPA</h5>
-                            <h2>{quickStats.currentCGPA}</h2>
+                            <h2>{dashboardData.stats.current_cgpa}</h2>
                         </Card.Body>
                     </Card>
                 </Col>
             </Row>
 
-            {/* New Features Summary Cards */}
+            {/* Feature Summary Cards */}
             <Row className="mb-4">
                 <Col md={4} className="mb-3">
                     <Card className="shadow-sm border-0 h-100">
@@ -140,7 +125,7 @@ const DashboardHome = () => {
                                 <FontAwesomeIcon icon={faBullhorn} />
                             </div>
                             <h5>New Notices</h5>
-                            <h2 className="fw-bold">{notices.length}</h2>
+                            <h2 className="fw-bold">{dashboardData.notices.length}</h2>
                             <Link to="/dashboard/notice-board" className="btn btn-outline-primary btn-sm mt-2">
                                 View All <FontAwesomeIcon icon={faArrowRight} className="ms-1" />
                             </Link>
@@ -156,8 +141,8 @@ const DashboardHome = () => {
                             </div>
                             <h5>Attendance</h5>
                             <h2 className="fw-bold">
-                                <span className={attendancePercentage >= 75 ? "text-success" : "text-danger"}>
-                                    {attendancePercentage}%
+                                <span className={dashboardData.attendance.percentage >= 75 ? "text-success" : "text-danger"}>
+                                    {dashboardData.attendance.percentage}%
                                 </span>
                             </h2>
                             <Link to="/dashboard/attendance" className="btn btn-outline-primary btn-sm mt-2">
@@ -174,7 +159,7 @@ const DashboardHome = () => {
                                 <FontAwesomeIcon icon={faBook} />
                             </div>
                             <h5>Library</h5>
-                            <h2 className="fw-bold">{availableBooks} Available</h2>
+                            <h2 className="fw-bold">{dashboardData.library.available_books} Available</h2>
                             <Link to="/dashboard/library" className="btn btn-outline-primary btn-sm mt-2">
                                 Browse Books <FontAwesomeIcon icon={faArrowRight} className="ms-1" />
                             </Link>
@@ -183,41 +168,7 @@ const DashboardHome = () => {
                 </Col>
             </Row>
 
-            {/* Quick Drive Link (Existing) */}
-            <Row className="mt-3">
-                <Col>
-                    <Card className="quick-drive-card">
-                        <Card.Body className="d-flex align-items-center justify-content-between flex-wrap">
-                            <div>
-                                <h5>📁 Access Your Semester Documents</h5>
-                                <p className="text-muted mb-0">Browse all your course materials organized by semester.</p>
-                            </div>
-                            <Link to="/dashboard/folders" className="btn btn-primary mt-2 mt-sm-0">
-                                Go to Drive →
-                            </Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Profile Link */}
-            <Row className="mt-3">
-                <Col>
-                    <Card className="shadow-sm border-0">
-                        <Card.Body className="d-flex align-items-center justify-content-between flex-wrap">
-                            <div>
-                                <h5><FontAwesomeIcon icon={faUser} className="me-2" /> Update Your Profile</h5>
-                                <p className="text-muted mb-0">View and edit your personal information.</p>
-                            </div>
-                            <Link to="/dashboard/profile" className="btn btn-outline-secondary mt-2 mt-sm-0">
-                                Go to Profile <FontAwesomeIcon icon={faArrowRight} className="ms-1" />
-                            </Link>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Daily Routine + Topic Progress (Existing) */}
+            {/* Daily Routine + Topic Progress */}
             <Row className="mt-4">
                 <Col lg={7}>
                     <Card className="routine-card">
@@ -225,11 +176,11 @@ const DashboardHome = () => {
                             <h5><FontAwesomeIcon icon={faClock} className="me-2" /> Daily Routine</h5>
                         </Card.Header>
                         <Card.Body>
-                            {routine.map(item => (
+                            {dashboardData.routine.map(item => (
                                 <div key={item.id} className="routine-item">
                                     <div className="routine-time">{item.time}</div>
                                     <div className="routine-details">
-                                        <strong>{item.course}</strong> – {item.name}
+                                        <strong>{item.course_code}</strong> – {item.course_name}
                                         <br />
                                         <small className="text-muted">{item.room}</small>
                                     </div>
@@ -237,7 +188,7 @@ const DashboardHome = () => {
                                         type="switch"
                                         label="Notify"
                                         checked={item.notify}
-                                        onChange={() => toggleNotify(item.id)}
+                                        onChange={() => {/* API call to toggle */}}
                                         className="routine-notify"
                                     />
                                 </div>
@@ -252,7 +203,7 @@ const DashboardHome = () => {
                             <h5>📊 Topic Progress</h5>
                         </Card.Header>
                         <Card.Body>
-                            {courses.map(course => {
+                            {dashboardData.courses.map(course => {
                                 const progress = getProgress(course.id);
                                 return (
                                     <div key={course.id} className="course-progress mb-4">
@@ -274,7 +225,7 @@ const DashboardHome = () => {
                                             </div>
                                         </div>
                                         <div className="topic-list mt-2">
-                                            {course.topics.map((topic, idx) => (
+                                            {course.topics?.map((topic, idx) => (
                                                 <Form.Check
                                                     key={idx}
                                                     type="checkbox"

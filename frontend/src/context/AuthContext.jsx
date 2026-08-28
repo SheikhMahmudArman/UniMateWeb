@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { adminCredentials, studentCredentials } from '../data/mockData';
+import api from '../services/api';
 
 export const AuthContext = createContext();
 
@@ -9,47 +9,68 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const savedUser = localStorage.getItem('user');
-        if (savedUser) {
+        const token = localStorage.getItem('token');
+        if (savedUser && token) {
             setUser(JSON.parse(savedUser));
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         }
         setLoading(false);
     }, []);
 
-    const login = (email, password) => {
-        // Admin check
-        if (email === adminCredentials.email && password === adminCredentials.password) {
-            const userData = {
-                id: adminCredentials.id,
-                email: adminCredentials.email,
-                name: adminCredentials.name,
-                role: 'admin',
+    const login = async (email, password) => {
+        try {
+            const response = await api.post('/login', { email, password });
+            if (response.data.success) {
+                const { token, user: userData } = response.data;
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(userData));
+                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                setUser(userData);
+                return { success: true, role: userData.role };
+            }
+            return { success: false, error: 'Login failed' };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.response?.data?.message || 'Invalid credentials'
             };
-            setUser(userData);
-            localStorage.setItem('user', JSON.stringify(userData));
-            return { success: true, role: 'admin' };
         }
-        // Student check
-        if (email === studentCredentials.email && password === studentCredentials.password) {
-            const userData = {
-                id: studentCredentials.id,
-                email: studentCredentials.email,
-                name: studentCredentials.name,
-                role: 'student',
-            };
-            setUser(userData);
-            localStorage.setItem('user', JSON.stringify(userData));
-            return { success: true, role: 'student' };
-        }
-        return { success: false, error: 'Invalid credentials' };
     };
 
-    const logout = () => {
+    const register = async (userData) => {
+        try {
+            const response = await api.post('/register', userData);
+            if (response.data.success) {
+                const { token, user: userData } = response.data;
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(userData));
+                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                setUser(userData);
+                return { success: true };
+            }
+            return { success: false, error: 'Registration failed' };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.response?.data?.message || 'Registration failed'
+            };
+        }
+    };
+
+    const logout = async () => {
+        try {
+            await api.post('/logout');
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
         setUser(null);
+        localStorage.removeItem('token');
         localStorage.removeItem('user');
+        delete api.defaults.headers.common['Authorization'];
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     );

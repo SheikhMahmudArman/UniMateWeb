@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import api from '../../services/api';
 import './ManageFaculty.css';
 
 const ManageFaculty = () => {
@@ -9,33 +10,32 @@ const ManageFaculty = () => {
     const [showModal, setShowModal] = useState(false);
     const [editingFaculty, setEditingFaculty] = useState(null);
     const [formData, setFormData] = useState({
-        id: '', name: '', department: '', designation: '', email: '', room: '', consultationHours: ''
+        name: '', department: '', designation: '', email: '', room: '', consultation_hours: ''
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const stored = localStorage.getItem('admin_faculty');
-        if (stored) {
-            setFaculty(JSON.parse(stored));
-        } else {
-            const initial = [
-                { id: 1, name: 'Dr. Ahmed Hasan', department: 'CSE', designation: 'Professor & Head', email: 'ahmed.hasan@austmate.edu', room: 'Room 401', consultationHours: 'Mon/Wed 2:00 PM – 4:00 PM' },
-                { id: 2, name: 'Dr. Fatima Rahman', department: 'CSE', designation: 'Associate Professor', email: 'fatima.rahman@austmate.edu', room: 'Room 402', consultationHours: 'Tue/Thu 10:00 AM – 12:00 PM' },
-            ];
-            setFaculty(initial);
-            localStorage.setItem('admin_faculty', JSON.stringify(initial));
-        }
+        fetchFaculty();
     }, []);
 
-    const saveFaculty = (newFaculty) => {
-        setFaculty(newFaculty);
-        localStorage.setItem('admin_faculty', JSON.stringify(newFaculty));
+    const fetchFaculty = async () => {
+        try {
+            const response = await api.get('/faculty');
+            if (response.data.success) {
+                setFaculty(response.data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching faculty:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleAdd = () => {
         setEditingFaculty(null);
-        setFormData({ id: '', name: '', department: '', designation: '', email: '', room: '', consultationHours: '' });
+        setFormData({ name: '', department: '', designation: '', email: '', room: '', consultation_hours: '' });
         setError('');
         setShowModal(true);
     };
@@ -47,33 +47,51 @@ const ManageFaculty = () => {
         setShowModal(true);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('Are you sure?')) {
-            const newFaculty = faculty.filter(f => f.id !== id);
-            saveFaculty(newFaculty);
-            setSuccess('Faculty deleted.');
-            setTimeout(() => setSuccess(''), 3000);
+            try {
+                await api.delete(`/faculty/${id}`);
+                setSuccess('Faculty deleted.');
+                fetchFaculty();
+                setTimeout(() => setSuccess(''), 3000);
+            } catch (error) {
+                setError('Failed to delete faculty.');
+            }
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        setLoading(true);
+
         if (!formData.name || !formData.email) {
             setError('Name and Email are required.');
+            setLoading(false);
             return;
         }
-        if (editingFaculty) {
-            const updated = faculty.map(f => f.id === editingFaculty.id ? { ...formData } : f);
-            saveFaculty(updated);
-            setSuccess('Faculty updated.');
-        } else {
-            const newId = faculty.length ? Math.max(...faculty.map(f => f.id)) + 1 : 1;
-            saveFaculty([...faculty, { ...formData, id: newId }]);
-            setSuccess('Faculty added.');
+
+        try {
+            if (editingFaculty) {
+                await api.put(`/faculty/${editingFaculty.id}`, formData);
+                setSuccess('Faculty updated.');
+            } else {
+                await api.post('/faculty', formData);
+                setSuccess('Faculty added.');
+            }
+            setShowModal(false);
+            fetchFaculty();
+            setTimeout(() => setSuccess(''), 3000);
+        } catch (error) {
+            setError(error.response?.data?.message || 'Operation failed.');
+        } finally {
+            setLoading(false);
         }
-        setShowModal(false);
-        setTimeout(() => setSuccess(''), 3000);
     };
+
+    if (loading && faculty.length === 0) {
+        return <div className="text-center py-5">Loading...</div>;
+    }
 
     return (
         <Container fluid className="manage-faculty">
@@ -99,7 +117,7 @@ const ManageFaculty = () => {
                                     <td>{f.designation}</td>
                                     <td>{f.email}</td>
                                     <td>{f.room}</td>
-                                    <td>{f.consultationHours}</td>
+                                    <td>{f.consultation_hours}</td>
                                     <td>
                                         <Button variant="outline-primary" size="sm" onClick={() => handleEdit(f)} className="me-2">
                                             <FontAwesomeIcon icon={faEdit} />
@@ -127,11 +145,11 @@ const ManageFaculty = () => {
                         <Form.Group className="mb-3"><Form.Label>Designation</Form.Label><Form.Control type="text" value={formData.designation} onChange={(e) => setFormData({ ...formData, designation: e.target.value })} /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Email</Form.Label><Form.Control type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Room</Form.Label><Form.Control type="text" value={formData.room} onChange={(e) => setFormData({ ...formData, room: e.target.value })} /></Form.Group>
-                        <Form.Group className="mb-3"><Form.Label>Consultation Hours</Form.Label><Form.Control type="text" value={formData.consultationHours} onChange={(e) => setFormData({ ...formData, consultationHours: e.target.value })} placeholder="e.g., Mon/Wed 2-4 PM" /></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Consultation Hours</Form.Label><Form.Control type="text" value={formData.consultation_hours} onChange={(e) => setFormData({ ...formData, consultation_hours: e.target.value })} placeholder="e.g., Mon/Wed 2-4 PM" /></Form.Group>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-                        <Button variant="primary" type="submit">Save</Button>
+                        <Button variant="primary" type="submit" disabled={loading}>Save</Button>
                     </Modal.Footer>
                 </Form>
             </Modal>

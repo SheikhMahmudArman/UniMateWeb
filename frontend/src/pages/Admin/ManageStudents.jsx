@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import api from '../../services/api';
 import './ManageStudents.css';
 
 const ManageStudents = () => {
@@ -11,25 +12,23 @@ const ManageStudents = () => {
     const [formData, setFormData] = useState({ id: '', name: '', email: '', semester: '1.1', cgpa: 0 });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const stored = localStorage.getItem('admin_students');
-        if (stored) {
-            setStudents(JSON.parse(stored));
-        } else {
-            const initial = [
-                { id: '2023-12345', name: 'Student User', email: 'student@austmate.com', semester: '1.1', cgpa: 3.67 },
-                { id: '2023-67890', name: 'Jane Smith', email: 'jane@austmate.com', semester: '2.1', cgpa: 3.45 },
-                { id: '2024-11111', name: 'Bob Johnson', email: 'bob@austmate.com', semester: '1.2', cgpa: 3.12 },
-            ];
-            setStudents(initial);
-            localStorage.setItem('admin_students', JSON.stringify(initial));
-        }
+        fetchStudents();
     }, []);
 
-    const saveStudents = (newStudents) => {
-        setStudents(newStudents);
-        localStorage.setItem('admin_students', JSON.stringify(newStudents));
+    const fetchStudents = async () => {
+        try {
+            const response = await api.get('/students');
+            if (response.data.success) {
+                setStudents(response.data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching students:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleAdd = () => {
@@ -41,42 +40,68 @@ const ManageStudents = () => {
 
     const handleEdit = (student) => {
         setEditingStudent(student);
-        setFormData({ ...student });
+        setFormData({ id: student.student_id, name: student.name, email: student.email, semester: student.semester, cgpa: student.cgpa });
         setError('');
         setShowModal(true);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm(`Are you sure you want to delete student ${id}?`)) {
-            const newStudents = students.filter(s => s.id !== id);
-            saveStudents(newStudents);
-            setSuccess('Student deleted.');
-            setTimeout(() => setSuccess(''), 3000);
+            try {
+                await api.delete(`/students/${id}`);
+                setSuccess('Student deleted.');
+                fetchStudents();
+                setTimeout(() => setSuccess(''), 3000);
+            } catch (error) {
+                setError('Failed to delete student.');
+            }
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        setLoading(true);
+
         if (!formData.id || !formData.name || !formData.email) {
             setError('ID, Name, and Email are required.');
+            setLoading(false);
             return;
         }
-        // Check duplicate ID for new student
-        if (!editingStudent && students.some(s => s.id === formData.id)) {
-            setError('Student ID already exists.');
-            return;
+
+        try {
+            if (editingStudent) {
+                await api.put(`/students/${editingStudent.id}`, {
+                    student_id: formData.id,
+                    name: formData.name,
+                    email: formData.email,
+                    semester: formData.semester,
+                    cgpa: formData.cgpa,
+                });
+                setSuccess('Student updated.');
+            } else {
+                await api.post('/students', {
+                    student_id: formData.id,
+                    name: formData.name,
+                    email: formData.email,
+                    semester: formData.semester,
+                    cgpa: formData.cgpa,
+                });
+                setSuccess('Student added.');
+            }
+            setShowModal(false);
+            fetchStudents();
+            setTimeout(() => setSuccess(''), 3000);
+        } catch (error) {
+            setError(error.response?.data?.message || 'Operation failed.');
+        } finally {
+            setLoading(false);
         }
-        if (editingStudent) {
-            const updated = students.map(s => s.id === editingStudent.id ? { ...formData } : s);
-            saveStudents(updated);
-            setSuccess('Student updated.');
-        } else {
-            saveStudents([...students, { ...formData }]);
-            setSuccess('Student added.');
-        }
-        setShowModal(false);
-        setTimeout(() => setSuccess(''), 3000);
     };
+
+    if (loading && students.length === 0) {
+        return <div className="text-center py-5">Loading...</div>;
+    }
 
     return (
         <Container fluid className="manage-students">
@@ -96,7 +121,7 @@ const ManageStudents = () => {
                         <tbody>
                             {students.map(student => (
                                 <tr key={student.id}>
-                                    <td>{student.id}</td>
+                                    <td>{student.student_id}</td>
                                     <td>{student.name}</td>
                                     <td>{student.email}</td>
                                     <td>{student.semester}</td>
@@ -119,7 +144,7 @@ const ManageStudents = () => {
                 <Modal.Header closeButton><Modal.Title>{editingStudent ? 'Edit Student' : 'Add Student'}</Modal.Title></Modal.Header>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Body>
-                        <Form.Group className="mb-3"><Form.Label>Student ID</Form.Label><Form.Control type="text" value={formData.id} onChange={(e) => setFormData({ ...formData, id: e.target.value })} required disabled={!!editingStudent} /></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Student ID</Form.Label><Form.Control type="text" value={formData.id} onChange={(e) => setFormData({ ...formData, id: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Full Name</Form.Label><Form.Control type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Email</Form.Label><Form.Control type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Semester</Form.Label>
@@ -131,7 +156,7 @@ const ManageStudents = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-                        <Button variant="primary" type="submit">Save</Button>
+                        <Button variant="primary" type="submit" disabled={loading}>Save</Button>
                     </Modal.Footer>
                 </Form>
             </Modal>

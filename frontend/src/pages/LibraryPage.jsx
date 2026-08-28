@@ -1,25 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Table, Badge, Form, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faSearch } from '@fortawesome/free-solid-svg-icons';
+import api from '../services/api';
 
 const LibraryPage = () => {
-    const [books] = useState([
-        { id: 1, title: 'Introduction to Algorithms', author: 'Thomas H. Cormen', isbn: '978-0262033848', status: 'available' },
-        { id: 2, title: 'The Art of Computer Programming', author: 'Donald E. Knuth', isbn: '978-0321751041', status: 'issued' },
-        { id: 3, title: 'Clean Code', author: 'Robert C. Martin', isbn: '978-0132350884', status: 'available' },
-        { id: 4, title: 'Design Patterns', author: 'Erich Gamma', isbn: '978-0201633610', status: 'available' },
-        { id: 5, title: 'Computer Networks', author: 'Andrew S. Tanenbaum', isbn: '978-0132126953', status: 'issued' },
-        { id: 6, title: 'Operating System Concepts', author: 'Abraham Silberschatz', isbn: '978-1118063330', status: 'available' },
-    ]);
-
+    const [books, setBooks] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchBooks();
+    }, []);
+
+    const fetchBooks = async () => {
+        try {
+            const response = await api.get('/library');
+            if (response.data.success) {
+                setBooks(response.data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching books:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const filteredBooks = books.filter(book => 
         book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
         book.isbn.includes(searchTerm)
     );
+
+    if (loading) {
+        return <div className="text-center py-5">Loading...</div>;
+    }
 
     return (
         <Container fluid className="library-page" style={{ padding: '20px' }}>

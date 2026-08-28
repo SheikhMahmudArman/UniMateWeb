@@ -2,26 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Container, Card, Badge, Row, Col, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBullhorn, faClock } from '@fortawesome/free-solid-svg-icons';
+import api from '../services/api';
 
 const NoticeBoardPage = () => {
     const [notices, setNotices] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        
-        const storedNotices = localStorage.getItem('notices');
-        if (storedNotices) {
-            setNotices(JSON.parse(storedNotices));
-        } else {
-            
-            const defaultNotices = [
-                { id: 1, title: 'Midterm Exam Schedule', content: 'Midterm exams will start from 15th August. Please check the detailed schedule on the notice board.', date: '2026-08-10', type: 'exam' },
-                { id: 2, title: 'Library Renovation', content: 'The library will remain closed from 20th to 25th August for renovation.', date: '2026-08-08', type: 'general' },
-                { id: 3, title: 'CSE Department Seminar', content: 'A seminar on "AI in Modern World" will be held on 25th August at 10 AM in Room 401.', date: '2026-08-18', type: 'event' },
-            ];
-            setNotices(defaultNotices);
-            localStorage.setItem('notices', JSON.stringify(defaultNotices));
-        }
+        fetchNotices();
     }, []);
+
+    const fetchNotices = async () => {
+        try {
+            const response = await api.get('/notices');
+            if (response.data.success) {
+                setNotices(response.data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching notices:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const getTypeBadge = (type) => {
         switch (type) {
@@ -30,6 +32,10 @@ const NoticeBoardPage = () => {
             default: return <Badge bg="secondary">General</Badge>;
         }
     };
+
+    if (loading) {
+        return <div className="text-center py-5">Loading...</div>;
+    }
 
     return (
         <Container fluid className="notice-board-page" style={{ padding: '20px' }}>

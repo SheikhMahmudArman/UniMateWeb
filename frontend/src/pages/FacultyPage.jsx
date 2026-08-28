@@ -1,30 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faEnvelope, faClock, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
-import { facultyData, departments } from '../data/mockData';
+import api from '../services/api';
 import './FacultyPage.css';
 
 const FacultyPage = () => {
+    const [faculty, setFaculty] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedDepartment, setSelectedDepartment] = useState('All');
+    const [departments, setDepartments] = useState(['All']);
+    const [loading, setLoading] = useState(true);
 
-    // Filter faculty
-    const filteredFaculty = facultyData.filter((faculty) => {
+    useEffect(() => {
+        fetchFaculty();
+    }, []);
+
+    const fetchFaculty = async () => {
+        try {
+            const response = await api.get('/faculty');
+            if (response.data.success) {
+                setFaculty(response.data.data);
+                // Extract unique departments
+                const depts = ['All', ...new Set(response.data.data.map(f => f.department))];
+                setDepartments(depts);
+            }
+        } catch (error) {
+            console.error('Error fetching faculty:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filteredFaculty = faculty.filter((f) => {
         const matchesSearch =
-            faculty.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            faculty.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            faculty.department.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesDept = selectedDepartment === 'All' || faculty.department === selectedDepartment;
+            f.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            f.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            f.department.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesDept = selectedDepartment === 'All' || f.department === selectedDepartment;
         return matchesSearch && matchesDept;
     });
+
+    if (loading) {
+        return <div className="text-center py-5">Loading...</div>;
+    }
 
     return (
         <Container fluid className="faculty-page">
             <h2 className="page-title">👨‍🏫 Faculty Directory</h2>
             <p className="text-muted">Find contact details and consultation hours of your professors.</p>
 
-            {/* Search & Filter */}
             <Row className="mb-4 search-filter-row">
                 <Col md={7}>
                     <InputGroup>
@@ -55,7 +80,6 @@ const FacultyPage = () => {
                 </Col>
             </Row>
 
-            {/* Faculty Cards */}
             <Row>
                 {filteredFaculty.length === 0 ? (
                     <Col>
@@ -67,7 +91,7 @@ const FacultyPage = () => {
                             <Card className="faculty-card h-100">
                                 <Card.Body className="text-center">
                                     <div className="faculty-avatar">
-                                        {faculty.avatar}
+                                        {faculty.name?.charAt(0) || 'F'}
                                     </div>
                                     <h5 className="faculty-name">{faculty.name}</h5>
                                     <p className="faculty-designation">{faculty.designation}</p>
@@ -85,11 +109,11 @@ const FacultyPage = () => {
                                         </p>
                                         <p className="faculty-detail-item">
                                             <FontAwesomeIcon icon={faClock} className="me-2" />
-                                            {faculty.consultationHours}
+                                            {faculty.consultation_hours || 'Not specified'}
                                         </p>
                                         <p className="faculty-detail-item small text-muted">
                                             <FontAwesomeIcon icon={faUser} className="me-2" />
-                                            Room: {faculty.room}
+                                            Room: {faculty.room || 'N/A'}
                                         </p>
                                     </div>
                                     <Button

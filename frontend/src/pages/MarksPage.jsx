@@ -1,35 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Table, Badge } from 'react-bootstrap';
+import React, { useState, useEffect, useContext } from 'react';
+import { Container, Row, Col, Card, Form, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalculator, faChartLine, faSave } from '@fortawesome/free-solid-svg-icons';
-import { marksData, semestersList } from '../data/mockData';
+import { faCalculator, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { AuthContext } from '../context/AuthContext';
+import api from '../services/api';
 import './MarksPage.css';
 
 const MarksPage = () => {
+    const { user } = useContext(AuthContext);
     const [selectedSemester, setSelectedSemester] = useState('1.1');
-    const [semesterData, setSemesterData] = useState(null);
-    const [overallCGPA, setOverallCGPA] = useState(0);
+    const [semesterData, setSemesterData] = useState({ courses: [], cgpa: 0 });
+    const [semesters, setSemesters] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Load data for selected semester
-        const data = marksData[selectedSemester];
-        if (data) {
-            setSemesterData(data);
+        fetchSemesters();
+    }, []);
+
+    useEffect(() => {
+        if (semesters.length > 0) {
+            fetchMarks();
         }
-        // Calculate overall CGPA from all semesters
-        const total = Object.values(marksData).reduce((sum, sem) => sum + sem.cgpa, 0);
-        const count = Object.values(marksData).filter(sem => sem.cgpa > 0).length;
-        setOverallCGPA(count > 0 ? total / count : 0);
     }, [selectedSemester]);
 
-    const handleMarkChange = (courseIndex, component, value) => {
-        const newData = { ...semesterData };
-        newData.courses[courseIndex].marks[component] = parseFloat(value) || 0;
-        setSemesterData(newData);
+    const fetchSemesters = async () => {
+        try {
+            const response = await api.get('/semesters');
+            if (response.data.success) {
+                setSemesters(response.data.data);
+                if (response.data.data.length > 0) {
+                    setSelectedSemester(response.data.data[0].code);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching semesters:', error);
+        }
     };
 
-    const calculateTotal = (marks) => {
-        return marks.quiz + marks.mid + marks.online + marks.final;
+    const fetchMarks = async () => {
+        setLoading(true);
+        try {
+            // Get student
+            const studentResponse = await api.get('/students');
+            const student = studentResponse.data.data.find(s => s.user_id === user.id);
+            
+            if (student) {
+                const response = await api.get(`/marks?student_id=${student.id}&semester=${selectedSemester}`);
+                if (response.data.success) {
+                    // Process marks data
+                    const marks = response.data.data;
+                    const courses = marks.map(m => ({
+                        id: m.course_id,
+                        code: m.course?.code || 'N/A',
+                        name: m.course?.name || 'N/A',
+                        credits: m.course?.credits || 3,
+                        marks: {
+                            quiz: m.quiz || 0,
+                            mid: m.mid || 0,
+                            online: m.online || 0,
+                            final: m.final || 0,
+                        }
+                    }));
+                    
+                    // Calculate CGPA
+                    let totalPoints = 0;
+                    let totalCredits = 0;
+                    courses.forEach(course => {
+                        const total = course.marks.quiz + course.marks.mid + course.marks.online + course.marks.final;
+                        const gradePoint = calculateGradePoint(total);
+                        totalPoints += gradePoint * course.credits;
+                        totalCredits += course.credits;
+                    });
+                    const cgpa = totalCredits > 0 ? totalPoints / totalCredits : 0;
+                    
+                    setSemesterData({ courses, cgpa });
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching marks:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const calculateGradePoint = (total) => {
@@ -58,20 +109,9 @@ const MarksPage = () => {
         return 'F';
     };
 
-    const calculateSemesterCGPA = () => {
-        if (!semesterData) return 0;
-        let totalPoints = 0;
-        let totalCredits = 0;
-        semesterData.courses.forEach(course => {
-            const totalMarks = calculateTotal(course.marks);
-            const gradePoint = calculateGradePoint(totalMarks);
-            totalPoints += gradePoint * course.credits;
-            totalCredits += course.credits;
-        });
-        return totalCredits > 0 ? totalPoints / totalCredits : 0;
+    const calculateTotal = (marks) => {
+        return marks.quiz + marks.mid + marks.online + marks.final;
     };
-
-    const semesterCGPA = calculateSemesterCGPA();
 
     const getProgress = (course) => {
         const { quiz, mid, online, final } = course.marks;
@@ -83,10 +123,14 @@ const MarksPage = () => {
         return (filled / 4) * 100;
     };
 
+    if (loading) {
+        return <div className="text-center py-5">Loading...</div>;
+    }
+
     return (
         <Container fluid className="marks-page">
             <h2 className="page-title">📊 Marks & CGPA Tracker</h2>
-            <p className="text-muted">Enter your marks to calculate grade points and CGPA.</p>
+            <p className="text-muted">View your marks and grade points for each semester.</p>
 
             <Row className="mb-4">
                 <Col md={6}>
@@ -97,9 +141,9 @@ const MarksPage = () => {
                             onChange={(e) => setSelectedSemester(e.target.value)}
                             className="semester-select"
                         >
-                            {semestersList.map((sem) => (
-                                <option key={sem} value={sem}>
-                                    Semester {sem}
+                            {semesters.map((sem) => (
+                                <option key={sem.id} value={sem.code}>
+                                    {sem.name}
                                 </option>
                             ))}
                         </Form.Select>
@@ -107,12 +151,16 @@ const MarksPage = () => {
                 </Col>
                 <Col md={6} className="d-flex align-items-center justify-content-end">
                     <div className="cgpa-display">
-                        <h5>Semester CGPA: <Badge bg="primary" className="cgpa-badge">{semesterCGPA.toFixed(2)}</Badge></h5>
+                        <h5>Semester CGPA: <Badge bg="primary" className="cgpa-badge">{semesterData.cgpa.toFixed(2)}</Badge></h5>
                     </div>
                 </Col>
             </Row>
 
-            {semesterData && (
+            {semesterData.courses.length === 0 ? (
+                <Card className="text-center p-5">
+                    <p className="text-muted">No marks available for this semester.</p>
+                </Card>
+            ) : (
                 <>
                     {semesterData.courses.map((course, idx) => (
                         <Card key={idx} className="course-mark-card mb-4">
@@ -133,7 +181,7 @@ const MarksPage = () => {
                                                         min="0"
                                                         max="30"
                                                         value={course.marks.quiz}
-                                                        onChange={(e) => handleMarkChange(idx, 'quiz', e.target.value)}
+                                                        readOnly
                                                         className="mark-input"
                                                     />
                                                 </Form.Group>
@@ -146,7 +194,7 @@ const MarksPage = () => {
                                                         min="0"
                                                         max="30"
                                                         value={course.marks.mid}
-                                                        onChange={(e) => handleMarkChange(idx, 'mid', e.target.value)}
+                                                        readOnly
                                                         className="mark-input"
                                                     />
                                                 </Form.Group>
@@ -159,7 +207,7 @@ const MarksPage = () => {
                                                         min="0"
                                                         max="10"
                                                         value={course.marks.online}
-                                                        onChange={(e) => handleMarkChange(idx, 'online', e.target.value)}
+                                                        readOnly
                                                         className="mark-input"
                                                     />
                                                 </Form.Group>
@@ -172,7 +220,7 @@ const MarksPage = () => {
                                                         min="0"
                                                         max="30"
                                                         value={course.marks.final}
-                                                        onChange={(e) => handleMarkChange(idx, 'final', e.target.value)}
+                                                        readOnly
                                                         className="mark-input"
                                                     />
                                                 </Form.Group>
@@ -227,11 +275,11 @@ const MarksPage = () => {
                             <Row>
                                 <Col md={6}>
                                     <h5>Semester CGPA</h5>
-                                    <h2 className="display-4 cgpa-number">{semesterCGPA.toFixed(2)}</h2>
+                                    <h2 className="display-4 cgpa-number">{semesterData.cgpa.toFixed(2)}</h2>
                                 </Col>
                                 <Col md={6}>
                                     <h5>Overall CGPA</h5>
-                                    <h2 className="display-4 cgpa-number">{overallCGPA.toFixed(2)}</h2>
+                                    <h2 className="display-4 cgpa-number">{semesterData.cgpa.toFixed(2)}</h2>
                                 </Col>
                             </Row>
                         </Card.Body>

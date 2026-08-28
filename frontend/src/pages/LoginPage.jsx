@@ -19,7 +19,7 @@ const LoginPage = () => {
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -40,7 +40,7 @@ const LoginPage = () => {
             return;
         }
 
-        const result = login(gmail, password);
+        const result = await login(gmail, password);
         if (result.success) {
             navigate('/dashboard');
         } else {

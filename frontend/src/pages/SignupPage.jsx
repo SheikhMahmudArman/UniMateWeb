@@ -19,16 +19,15 @@ const SignupPage = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { login } = useContext(AuthContext);
+    const { register } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
         setLoading(true);
 
-        // Validation
         if (!studentId || !fullName || !gmail || !password || !confirmPassword) {
             setError('Please fill in all fields.');
             setLoading(false);
@@ -59,38 +58,22 @@ const SignupPage = () => {
             return;
         }
 
-        // Check if user already exists
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        if (users.some(user => user.email === gmail)) {
-            setError('User with this email already exists. Please login.');
-            setLoading(false);
-            return;
-        }
-
-        // Save user to localStorage
-        const newUser = {
-            id: studentId,
+        const result = await register({
+            student_id: studentId,
             name: fullName,
             email: gmail,
             password: password,
-            role: 'student',
-            createdAt: new Date().toISOString(),
-        };
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
+        });
 
-        // Auto-login the user
-        const loggedInUser = {
-            id: studentId,
-            name: fullName,
-            email: gmail,
-            role: 'student',
-        };
-        login(loggedInUser);
-        setSuccess('Account created successfully! Redirecting...');
-        setTimeout(() => {
-            navigate('/dashboard');
-        }, 1500);
+        if (result.success) {
+            setSuccess('Account created successfully! Redirecting...');
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 1500);
+        } else {
+            setError(result.error || 'Registration failed. Please try again.');
+            setLoading(false);
+        }
     };
 
     return (
@@ -100,7 +83,6 @@ const SignupPage = () => {
                     <Col md={8} lg={6} xl={5}>
                         <Card className="signup-card shadow-lg">
                             <Card.Body className="p-4 p-md-5">
-                                {/* Logo */}
                                 <div className="text-center mb-4">
                                     <img src={logo} alt="AUSTMATE" className="signup-logo" />
                                     <h1 className="signup-brand">AUSTMATE</h1>
