@@ -1,11 +1,74 @@
 .dashboard-layout {
-    display: flex;
     min-height: 100vh;
     background: #f8f9fa;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =========================
+   SIDEBAR
+   ========================= */
+
+.sidebar-wrapper {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 280px;
+    height: 100vh;
+
+    z-index: 1100;
+
+    transform: translateX(-100%);
+
+    transition: transform 0.3s ease;
+}
+
+.sidebar-wrapper.open {
+    transform: translateX(0);
+}
+
+.sidebar-wrapper.closed {
+    transform: translateX(-100%);
+}
+
+/* Dark overlay */
+.sidebar-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.35);
+
+    z-index: 1050;
+}
+
+/* =========================
+   MAIN CONTENT
+   ========================= */
+
+.main-wrapper {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.content-area {
+    flex: 1;
+
+    padding: 20px;
+
+    background: #f8f9fa;
+
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* --- Dark theme --- */
+/* =========================
+   DARK MODE
+   ========================= */
+
 .dashboard-layout.dark {
     background: #121212;
     color: #e0e0e0;
@@ -14,20 +77,6 @@
 .dashboard-layout.dark .content-area {
     background: #1e1e1e;
     color: #e0e0e0;
-}
-
-.dashboard-layout.dark .top-navbar {
-    background: #1e1e1e;
-    border-bottom: 1px solid #333;
-}
-
-.dashboard-layout.dark .top-navbar .navbar-brand,
-.dashboard-layout.dark .top-navbar .nav-icon-btn {
-    color: #e0e0e0;
-}
-
-.dashboard-layout.dark .top-navbar .nav-icon-btn:hover {
-    color: white;
 }
 
 .dashboard-layout.dark .stat-card,
@@ -84,58 +133,18 @@
     color: #1a1a2e;
 }
 
-/* ---- Sidebar in dark mode is already dark, keep as is ---- */
+/* =========================
+   PAGE TRANSITION
+   ========================= */
 
-.sidebar-wrapper {
-    flex-shrink: 0;
-}
-
-.main-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.content-area {
-    flex: 1;
-    padding: 20px;
-    background: #f8f9fa;
-    transition: background 0.3s ease, color 0.3s ease;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .sidebar-wrapper {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        z-index: 1050;
-        transition: transform 0.3s ease;
-    }
-
-    .sidebar-wrapper.closed {
-        transform: translateX(-100%);
-    }
-
-    .sidebar-wrapper.open {
-        transform: translateX(0);
-    }
-
-    .content-area {
-        padding: 15px;
-    }
-}
-
-/* Page transitions */
-.content-area>* {
-    animation: fadeSlideIn 0.4s ease forwards;
+.content-area > * {
+    animation: fadeSlideIn 0.3s ease forwards;
 }
 
 @keyframes fadeSlideIn {
     from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(8px);
     }
 
     to {
@@ -144,16 +153,9 @@
     }
 }
 
-/* Ensure smooth transitions for dark mode */
-.dashboard-layout {
-    transition: background-color var(--transition), color var(--transition);
-}
-
-.dashboard-layout.dark {
-    background-color: #121212;
-}
-
-/* ---- Responsive improvements ---- */
+/* =========================
+   RESPONSIVE
+   ========================= */
 
 @media (max-width: 992px) {
     .content-area {
@@ -166,12 +168,10 @@
         padding: 12px;
     }
 
-    /* Cards stack properly */
-    .row>[class*="col-"] {
+    .row > [class*="col-"] {
         margin-bottom: 16px;
     }
 
-    /* Smaller fonts on mobile */
     .page-title {
         font-size: 1.5rem;
     }
@@ -188,16 +188,15 @@
         font-size: 1.3rem !important;
     }
 
-    /* Better touch targets */
     .btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
+        padding: 9px 18px;
+        font-size: 0.85rem;
     }
 
     .form-control,
     .form-select {
         font-size: 0.9rem;
-        padding: 10px 14px;
+        padding: 9px 12px;
     }
 }
 
@@ -206,22 +205,64 @@
         padding: 8px;
     }
 
-    /* Full-width buttons on mobile */
     .btn-lg {
         width: 100%;
         text-align: center;
     }
 
-    /* Stack flex items properly */
     .d-flex.gap-3 {
         gap: 8px !important;
     }
+}
+.dashboard-layout.dark .dashboard-home {
+    color: #e0e0e0;
+}
 
-    .flex-wrap {
-        flex-direction: column;
-    }
+.dashboard-layout.dark .dashboard-home h1,
+.dashboard-layout.dark .dashboard-home h2,
+.dashboard-layout.dark .dashboard-home h3,
+.dashboard-layout.dark .dashboard-home h4,
+.dashboard-layout.dark .dashboard-home h5,
+.dashboard-layout.dark .dashboard-home h6 {
+    color: #e0e0e0;
+}
 
-    .flex-wrap .btn {
-        width: 100%;
-    }
+.dashboard-layout.dark .dashboard-home .text-muted {
+    color: #b5b5b5 !important;
+}
+
+/* Feature cards */
+.dashboard-layout.dark .dashboard-home .shadow-sm {
+    background: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .dashboard-home .shadow-sm h2,
+.dashboard-layout.dark .dashboard-home .shadow-sm h5 {
+    color: #e0e0e0;
+}
+
+/* Routine and progress cards */
+.dashboard-layout.dark .dashboard-home .routine-card,
+.dashboard-layout.dark .dashboard-home .progress-card {
+    background: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.dashboard-layout.dark .dashboard-home .routine-card .card-header,
+.dashboard-layout.dark .dashboard-home .progress-card .card-header {
+    background: #2d2d2d;
+    color: #e0e0e0;
+    border-bottom-color: #444;
+}
+
+/* Routine text */
+.dashboard-layout.dark .dashboard-home .routine-details,
+.dashboard-layout.dark .dashboard-home .routine-details strong {
+    color: #e0e0e0;
+}
+
+/* Checkbox labels */
+.dashboard-layout.dark .dashboard-home .form-check-label {
+    color: #e0e0e0;
 }

@@ -92,6 +92,109 @@
     background: white;
 }
 
+
+.dashboard-layout.dark .dashboard-home {
+    color: #e0e0e0;
+}
+
+/* Dashboard title */
+.dashboard-layout.dark .dashboard-home .page-title {
+    color: #ffffff !important;
+}
+
+/* Welcome text */
+.dashboard-layout.dark .dashboard-home > .row:first-child .text-muted {
+    color: #bdbdbd !important;
+}
+
+/* All dashboard headings */
+.dashboard-layout.dark .dashboard-home h1,
+.dashboard-layout.dark .dashboard-home h2,
+.dashboard-layout.dark .dashboard-home h3,
+.dashboard-layout.dark .dashboard-home h4,
+.dashboard-layout.dark .dashboard-home h5,
+.dashboard-layout.dark .dashboard-home h6 {
+    color: #eeeeee;
+}
+
+/* Stat cards */
+.dashboard-layout.dark .dashboard-home .stat-card {
+    background: #2d2d2d;
+    color: #eeeeee;
+}
+
+.dashboard-layout.dark .dashboard-home .stat-card h5 {
+    color: #eeeeee !important;
+}
+
+.dashboard-layout.dark .dashboard-home .stat-card h2 {
+    color: #0B4F6C !important;
+}
+
+/* New Notices / Attendance / Library cards */
+.dashboard-layout.dark .dashboard-home .shadow-sm {
+    background: #2d2d2d !important;
+    color: #eeeeee !important;
+}
+
+.dashboard-layout.dark .dashboard-home .shadow-sm h5,
+.dashboard-layout.dark .dashboard-home .shadow-sm h2 {
+    color: #eeeeee !important;
+}
+
+/* Routine */
+.dashboard-layout.dark .dashboard-home .routine-card,
+.dashboard-layout.dark .dashboard-home .progress-card {
+    background: #2d2d2d;
+    color: #eeeeee;
+}
+
+.dashboard-layout.dark .dashboard-home .routine-card .card-header,
+.dashboard-layout.dark .dashboard-home .progress-card .card-header {
+    background: #2d2d2d;
+    color: #eeeeee;
+    border-bottom-color: #444;
+}
+
+.dashboard-layout.dark .dashboard-home .routine-details {
+    color: #eeeeee;
+}
+
+.dashboard-layout.dark .dashboard-home .routine-details strong {
+    color: #ffffff;
+}
+
+/* Smaller secondary text */
+.dashboard-layout.dark .dashboard-home .text-muted,
+.dashboard-layout.dark .dashboard-home .small {
+    color: #bdbdbd !important;
+}
+
+/* Topic progress */
+.dashboard-layout.dark .dashboard-home .course-progress h6 {
+    color: #eeeeee;
+}
+
+.dashboard-layout.dark .dashboard-home .course-progress p {
+    color: #bdbdbd !important;
+}
+
+/* Form/check labels */
+.dashboard-layout.dark .dashboard-home .form-check-label {
+    color: #eeeeee;
+}
+
+/* Card buttons */
+.dashboard-layout.dark .dashboard-home .btn-outline-primary {
+    color: #4fc3f7;
+    border-color: #4fc3f7;
+}
+
+.dashboard-layout.dark .dashboard-home .btn-outline-primary:hover {
+    background: #4fc3f7;
+    color: #1e1e1e;
+}
+
 @media (max-width: 768px) {
     .routine-item {
         flex-wrap: wrap;

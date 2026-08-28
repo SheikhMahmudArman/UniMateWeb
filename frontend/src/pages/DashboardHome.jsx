@@ -7,8 +7,6 @@ import {
     faCalendarCheck, 
     faBookOpen, 
     faChartLine,
-    faBullhorn,
-    faBook,
     faUser,
     faArrowRight
 } from '@fortawesome/free-solid-svg-icons';
@@ -121,9 +119,6 @@ const DashboardHome = () => {
                 <Col md={4} className="mb-3">
                     <Card className="shadow-sm border-0 h-100">
                         <Card.Body className="text-center">
-                            <div style={{ fontSize: '2.5rem', color: '#0B4F6C', marginBottom: '10px' }}>
-                                <FontAwesomeIcon icon={faBullhorn} />
-                            </div>
                             <h5>New Notices</h5>
                             <h2 className="fw-bold">{dashboardData.notices.length}</h2>
                             <Link to="/dashboard/notice-board" className="btn btn-outline-primary btn-sm mt-2">
@@ -136,9 +131,6 @@ const DashboardHome = () => {
                 <Col md={4} className="mb-3">
                     <Card className="shadow-sm border-0 h-100">
                         <Card.Body className="text-center">
-                            <div style={{ fontSize: '2.5rem', color: '#1A759F', marginBottom: '10px' }}>
-                                <FontAwesomeIcon icon={faCalendarCheck} />
-                            </div>
                             <h5>Attendance</h5>
                             <h2 className="fw-bold">
                                 <span className={dashboardData.attendance.percentage >= 75 ? "text-success" : "text-danger"}>
@@ -155,11 +147,8 @@ const DashboardHome = () => {
                 <Col md={4} className="mb-3">
                     <Card className="shadow-sm border-0 h-100">
                         <Card.Body className="text-center">
-                            <div style={{ fontSize: '2.5rem', color: '#F4A261', marginBottom: '10px' }}>
-                                <FontAwesomeIcon icon={faBook} />
-                            </div>
                             <h5>Library</h5>
-                            <h2 className="fw-bold">{dashboardData.library.available_books} Available</h2>
+                            <h3 className="fw-bold">{dashboardData.library.available_books} Available</h3>
                             <Link to="/dashboard/library" className="btn btn-outline-primary btn-sm mt-2">
                                 Browse Books <FontAwesomeIcon icon={faArrowRight} className="ms-1" />
                             </Link>
@@ -200,7 +189,7 @@ const DashboardHome = () => {
                 <Col lg={5}>
                     <Card className="progress-card">
                         <Card.Header>
-                            <h5>📊 Topic Progress</h5>
+                            <h5>Topic Progress</h5>
                         </Card.Header>
                         <Card.Body>
                             {dashboardData.courses.map(course => {

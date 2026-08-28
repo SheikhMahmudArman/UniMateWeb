@@ -74,7 +74,7 @@ const LandingPage = () => {
                                 </small>
                             </div>
                             <div className="mt-4 d-flex gap-4 stats-mini">
-                                <span><strong>42k+</strong> Students</span>
+                                <span><strong>4200+</strong> Students</span>
                                 <span><strong>120+</strong> Courses</span>
                                 <span><strong>4.8★</strong> Rating</span>
                             </div>
@@ -86,9 +86,9 @@ const LandingPage = () => {
                                     <h4>Smart Dashboard Preview</h4>
                                     <p className="text-muted">All your academic data in one place</p>
                                     <div className="feature-pills">
-                                        <span className="pill">📚 Semester Docs</span>
-                                        <span className="pill">📊 CGPA Tracker</span>
-                                        <span className="pill">🔔 Smart Reminders</span>
+                                        <span className="pill">Semester Docs</span>
+                                        <span className="pill">CGPA Tracker</span>
+                                        <span className="pill">Smart Reminders</span>
                                     </div>
                                 </div>
                             </div>
@@ -102,7 +102,7 @@ const LandingPage = () => {
                 <Container>
                     <Row className="text-center">
                         <Col xs={6} md={3} className="mb-3 mb-md-0">
-                            <h3 className="display-6 fw-bold">42k+</h3>
+                            <h3 className="display-6 fw-bold">4200+</h3>
                             <p className="text-light">Active Students</p>
                         </Col>
                         <Col xs={6} md={3} className="mb-3 mb-md-0">
@@ -110,7 +110,7 @@ const LandingPage = () => {
                             <p className="text-light">University Courses</p>
                         </Col>
                         <Col xs={6} md={3} className="mb-3 mb-md-0">
-                            <h3 className="display-6 fw-bold">180k</h3>
+                            <h3 className="display-6 fw-bold">180+</h3>
                             <p className="text-light">Learner Reviews</p>
                         </Col>
                         <Col xs={6} md={3} className="mb-3 mb-md-0">
@@ -216,7 +216,7 @@ const LandingPage = () => {
                                 </li>
                                 <li>
                                     <FontAwesomeIcon icon={faStar} className="me-3 text-secondary" />
-                                    <span>Join 42,000+ students who have simplified their university journey</span>
+                                    <span>Join 4200+ students who have simplified their university journey</span>
                                 </li>
                             </ul>
                             <Link to="/signup" className="btn btn-primary mt-3">
