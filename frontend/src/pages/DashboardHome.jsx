@@ -8,6 +8,8 @@ import {
     faBookOpen, 
     faChartLine,
     faUser,
+    faBullhorn,
+    faBook,
     faArrowRight
 } from '@fortawesome/free-solid-svg-icons';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
@@ -119,6 +121,9 @@ const DashboardHome = () => {
                 <Col md={4} className="mb-3">
                     <Card className="shadow-sm border-0 h-100">
                         <Card.Body className="text-center">
+                            <div style={{ fontSize: '2rem', color: '#0B4F6C', marginBottom: '10px' }}>
+                                <FontAwesomeIcon icon={faBullhorn} />
+                            </div>
                             <h5>New Notices</h5>
                             <h2 className="fw-bold">{dashboardData.notices.length}</h2>
                             <Link to="/dashboard/notice-board" className="btn btn-outline-primary btn-sm mt-2">
@@ -131,9 +136,12 @@ const DashboardHome = () => {
                 <Col md={4} className="mb-3">
                     <Card className="shadow-sm border-0 h-100">
                         <Card.Body className="text-center">
+                            <div style={{ fontSize: '2rem', color: '#0B4F6C', marginBottom: '10px' }}>
+                                <FontAwesomeIcon icon={faCalendarCheck} />
+                            </div>
                             <h5>Attendance</h5>
                             <h2 className="fw-bold">
-                                <span className={dashboardData.attendance.percentage >= 75 ? "text-success" : "text-danger"}>
+                                <span className={dashboardData.attendance.percentage}>
                                     {dashboardData.attendance.percentage}%
                                 </span>
                             </h2>
@@ -147,6 +155,9 @@ const DashboardHome = () => {
                 <Col md={4} className="mb-3">
                     <Card className="shadow-sm border-0 h-100">
                         <Card.Body className="text-center">
+                            <div style={{ fontSize: '2rem', color: '#0B4F6C', marginBottom: '10px' }}>
+                                <FontAwesomeIcon icon={faBookOpen} />
+                            </div>
                             <h5>Library</h5>
                             <h3 className="fw-bold">{dashboardData.library.available_books} Available</h3>
                             <Link to="/dashboard/library" className="btn btn-outline-primary btn-sm mt-2">

@@ -1,32 +1,25 @@
 .top-navbar {
     height: 70px;
-
     background: white;
-
-    border-bottom: none;
-
+    border: none;
     display: flex;
     align-items: center;
-
     position: sticky;
     top: 0;
-
     z-index: 1000;
 }
 
 .top-navbar.dark {
     height: 70px;
-
     background: #1e1e1e;
-    border-bottom-color: none;
-
+    border: none;
     display: flex;
     align-items: center;
-
     position: sticky;
     top: 0;
     z-index: 1000;
 }
+
 /* Hamburger */
 .sidebar-toggle {
     display: flex !important;
@@ -40,7 +33,6 @@
     margin: 0 !important;
 
     border: none !important;
-    border-bottom: none !important;
     outline: none !important;
     box-shadow: none !important;
 
@@ -56,11 +48,6 @@
     border-radius: 8px;
 
     transition: background 0.2s ease;
-}
-
-.sidebar-toggle::before,
-.sidebar-toggle::after {
-    content: none !important;
 }
 
 .sidebar-toggle:hover {
@@ -81,16 +68,8 @@
     color: #e0e0e0 !important;
 }
 
-.sidebar-toggle:hover {
-    background: #f0f4f6;
-}
-
-.top-navbar.dark .sidebar-toggle {
-    color: #e0e0e0 !important;
-}
-
 .top-navbar.dark .sidebar-toggle:hover {
-    background: #333;
+    background: #333 !important;
 }
 
 /* Notification / theme buttons */
@@ -195,4 +174,40 @@
     .sidebar-toggle {
         font-size: 1.5rem;
     }
+}
+
+.profile-dropdown,
+.profile-dropdown:hover,
+.profile-dropdown:focus,
+.profile-dropdown:active {
+    text-decoration: none !important;
+    color: inherit !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.top-user-name,
+.top-user-role {
+    text-decoration: none !important;
+}
+
+/* Dark mode dropdown */
+.top-navbar.dark .dropdown-menu {
+    background: #2d2d2d !important;
+    border: 1px solid #444 !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+.top-navbar.dark .dropdown-item {
+    color: #e0e0e0 !important;
+}
+
+.top-navbar.dark .dropdown-item:hover,
+.top-navbar.dark .dropdown-item:focus {
+    background: #3a3a3a !important;
+    color: #ffffff !important;
+}
+
+.top-navbar.dark .dropdown-divider {
+    border-top-color: #555 !important;
 }

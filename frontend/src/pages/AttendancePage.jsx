@@ -63,7 +63,7 @@ const AttendancePage = () => {
                         <div><strong>Absent:</strong> {summary.absent}</div>
                         <div>
                             <strong>Attendance Percentage:</strong> 
-                            <span className={summary.percentage >= 75 ? "text-success" : "text-danger"}>
+                            <span className="attendance-percentage">
                                 {summary.percentage}%
                             </span>
                         </div>

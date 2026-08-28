@@ -21,9 +21,9 @@ const TopNavbar = ({ toggleSidebar, theme, toggleTheme }) => {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        logout();
-        navigate('/');
+    const handleLogout = async () => {
+        await logout();
+        navigate('/', { replace: true });
     };
 
     return (

@@ -40,9 +40,9 @@ const Sidebar = () => {
         administration: false
     });
 
-    const handleLogout = () => {
-        resetTheme();       logout();
-        navigate('/');
+    const handleLogout = async () => {
+        await logout();
+        navigate('/', { replace: true });
     };
 
     const toggleGroup = (group) => {
