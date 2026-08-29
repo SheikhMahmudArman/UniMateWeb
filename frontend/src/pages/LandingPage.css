@@ -477,3 +477,22 @@
         font-size: 2.2rem;
     }
 }
+
+/* Fix footer links not clickable */
+.footer a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+.footer .list-unstyled li a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+.landing-header a,
+.footer a {
+    position: relative;
+    z-index: 9999;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}

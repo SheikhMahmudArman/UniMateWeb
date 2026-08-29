@@ -21,6 +21,8 @@ import NoticeBoardPage from './pages/NoticeBoardPage';
 import AttendancePage from './pages/AttendancePage';
 import ProfilePage from './pages/ProfilePage';
 import LibraryPage from './pages/LibraryPage';
+import AboutUs from './pages/AboutUs';
+import NotificationsPage from './pages/NotificationsPage';
 // Admin pages
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import ManageCourses from './pages/Admin/ManageCourses';
@@ -39,6 +41,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route
               path="/dashboard"
               element={
@@ -47,8 +50,9 @@ function App() {
                 </ProtectedRoute>
               }
             >
+              <Route path="notifications" element={<NotificationsPage />} />
               <Route index element={<DashboardHome />} />
-              <Route path="notice-board" element={<NoticeBoardPage />} /> 
+              <Route path="notice-board" element={<NoticeBoardPage />} />
               <Route path="attendance" element={<AttendancePage />} />
               <Route path="folders" element={<FolderPage />} />
               <Route path="drive/:semesterId" element={<DrivePage />} />
@@ -58,7 +62,7 @@ function App() {
               <Route path="marks" element={<MarksPage />} />
               <Route path="cgpa" element={<CGPAPage />} />
               <Route path="faculty" element={<FacultyPage />} />
-              <Route path="library" element={<LibraryPage />} /> 
+              <Route path="library" element={<LibraryPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="settings" element={<SettingsPage />} />
               {/* Admin routes */}

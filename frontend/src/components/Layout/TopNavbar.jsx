@@ -47,6 +47,7 @@ const TopNavbar = ({ toggleSidebar, theme, toggleTheme }) => {
                     <Button
                         variant="link"
                         className="nav-icon-btn"
+                        onClick={() => navigate('/dashboard/notifications')}
                     >
                         <FontAwesomeIcon icon={faBell} />
                     </Button>
