@@ -8,9 +8,19 @@ use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::all();
+        $query = Course::query();
+
+        // Optional semester filter
+        if ($request->filled('semester')) {
+            $query->where('semester', $request->semester);
+        }
+
+        $courses = $query
+            ->orderBy('code')
+            ->get();
+
         return response()->json([
             'success' => true,
             'data' => $courses,
@@ -20,10 +30,13 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'code' => 'required|unique:courses',
+            'code' => 'required|unique:courses,code',
             'name' => 'required',
-            'credits' => 'required|integer|min:1|max:4',
-            'semester' => 'required',
+            'credits' => 'required|numeric|min:0|max:10',
+            'semester' => 'required|in:1.1,1.2,2.1,2.2,3.1,3.2,4.1,4.2',
+            'hours_per_week' => 'nullable|string',
+            'prerequisite' => 'nullable|string',
+            'content_page' => 'nullable|integer',
         ]);
 
         $course = Course::create($request->all());
@@ -38,6 +51,7 @@ class CourseController extends Controller
     public function show($id)
     {
         $course = Course::findOrFail($id);
+
         return response()->json([
             'success' => true,
             'data' => $course,
@@ -51,8 +65,11 @@ class CourseController extends Controller
         $request->validate([
             'code' => 'required|unique:courses,code,' . $id,
             'name' => 'required',
-            'credits' => 'required|integer|min:1|max:4',
-            'semester' => 'required',
+            'credits' => 'required|numeric|min:0|max:10',
+            'semester' => 'required|in:1.1,1.2,2.1,2.2,3.1,3.2,4.1,4.2',
+            'hours_per_week' => 'nullable|string',
+            'prerequisite' => 'nullable|string',
+            'content_page' => 'nullable|integer',
         ]);
 
         $course->update($request->all());

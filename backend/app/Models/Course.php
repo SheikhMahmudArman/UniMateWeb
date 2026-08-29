@@ -15,10 +15,15 @@ class Course extends Model
         'credits',
         'semester',
         'topics',
+        'hours_per_week',
+        'prerequisite',
+        'content_page',
     ];
 
     protected $casts = [
         'topics' => 'array',
+        'credits' => 'decimal:2',
+        'content_page' => 'integer',
     ];
 
     public function marks()

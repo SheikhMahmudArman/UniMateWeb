@@ -1,3 +1,134 @@
 .manage-courses {
     padding: 20px;
 }
+
+/* =========================
+   SEMESTER CARDS
+   ========================= */
+
+.semester-card {
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+    border-top: 4px solid #0B4F6C;
+}
+
+.semester-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.semester-icon {
+    font-size: 2.8rem;
+    color: #0B4F6C;
+    margin-bottom: 15px;
+}
+
+.semester-card h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #1A1A2E;
+}
+
+.semester-year {
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: #555;
+}
+
+.semester-name {
+    color: #777;
+    margin-bottom: 0;
+}
+
+
+/* =========================
+   COURSE TABLE
+   ========================= */
+
+.course-table-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.curriculum-table {
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.curriculum-table th {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.curriculum-table td {
+    vertical-align: middle;
+}
+
+.curriculum-table td:first-child {
+    white-space: nowrap;
+}
+
+
+/* =========================
+   EMPTY SEMESTER
+   ========================= */
+
+.empty-semester {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    color: #0B4F6C;
+    margin-bottom: 15px;
+}
+
+.empty-semester h5 {
+    margin-bottom: 8px;
+}
+
+.empty-semester p {
+    color: #777;
+}
+
+
+/* =========================
+   DARK MODE
+   ========================= */
+
+[data-theme="dark"] .semester-card,
+[data-theme="dark"] .course-table-card {
+    background: #1e1e2f;
+}
+
+[data-theme="dark"] .semester-card h3 {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .semester-year,
+[data-theme="dark"] .semester-name {
+    color: #bdbdbd;
+}
+
+[data-theme="dark"] .curriculum-table {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .curriculum-table th {
+    background: #29293d;
+}
+
+[data-theme="dark"] .curriculum-table td {
+    background: #1e1e2f;
+}
+
+[data-theme="dark"] .empty-semester p {
+    color: #bdbdbd;
+}
