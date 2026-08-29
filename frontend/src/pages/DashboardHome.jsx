@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, Row, Col, Card, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, ProgressBar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-    faClock, 
-    faCalendarCheck, 
-    faBookOpen, 
+import {
+    faClock,
+    faCalendarCheck,
+    faBookOpen,
     faChartLine,
     faUser,
     faBullhorn,
@@ -176,23 +176,37 @@ const DashboardHome = () => {
                             <h5><FontAwesomeIcon icon={faClock} className="me-2" /> Daily Routine</h5>
                         </Card.Header>
                         <Card.Body>
-                            {dashboardData.routine.map(item => (
-                                <div key={item.id} className="routine-item">
-                                    <div className="routine-time">{item.time}</div>
-                                    <div className="routine-details">
-                                        <strong>{item.course_code}</strong> – {item.course_name}
-                                        <br />
-                                        <small className="text-muted">{item.room}</small>
-                                    </div>
-                                    <Form.Check
-                                        type="switch"
-                                        label="Notify"
-                                        checked={item.notify}
-                                        onChange={() => {/* API call to toggle */}}
-                                        className="routine-notify"
-                                    />
+                            <div className="routine-item">
+                                <div>
+                                    <strong>08:00 AM </strong>
+                                    <span>Data Structures </span>
                                 </div>
-                            ))}
+                                <span className="routine-status completed"> Completed</span>
+                            </div>
+
+                            <div className="routine-item">
+                                <div>
+                                    <strong>10:00 AM </strong>
+                                    <span>Database Systems </span>
+                                </div>
+                                <span className="routine-status upcoming"> Upcoming</span>
+                            </div>
+
+                            <div className="routine-item">
+                                <div>
+                                    <strong>02:00 PM </strong>
+                                    <span>Computer Networks </span>
+                                </div>
+                                <span className="routine-status upcoming"> Upcoming</span>
+                            </div>
+
+                            <div className="routine-item">
+                                <div>
+                                    <strong>04:00 PM </strong>
+                                    <span>Web Engineering </span>
+                                </div>
+                                <span className="routine-status upcoming"> Upcoming</span>
+                            </div>
                         </Card.Body>
                     </Card>
                 </Col>
@@ -203,42 +217,37 @@ const DashboardHome = () => {
                             <h5>Topic Progress</h5>
                         </Card.Header>
                         <Card.Body>
-                            {dashboardData.courses.map(course => {
-                                const progress = getProgress(course.id);
-                                return (
-                                    <div key={course.id} className="course-progress mb-4">
-                                        <div className="d-flex align-items-center gap-3">
-                                            <div style={{ width: 70, height: 70 }}>
-                                                <CircularProgressbar
-                                                    value={progress}
-                                                    text={`${progress}%`}
-                                                    styles={buildStyles({
-                                                        textColor: '#0B4F6C',
-                                                        pathColor: '#0B4F6C',
-                                                        trailColor: '#e6e6e6',
-                                                    })}
-                                                />
-                                            </div>
-                                            <div>
-                                                <h6>{course.code}</h6>
-                                                <p className="text-muted small">{course.name}</p>
-                                            </div>
-                                        </div>
-                                        <div className="topic-list mt-2">
-                                            {course.topics?.map((topic, idx) => (
-                                                <Form.Check
-                                                    key={idx}
-                                                    type="checkbox"
-                                                    label={topic}
-                                                    checked={doneTopics[course.id]?.[idx] || false}
-                                                    onChange={() => handleTopicToggle(course.id, idx)}
-                                                    className="topic-check"
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                            <div className="topic-progress-item">
+                                <div className="d-flex justify-content-between mb-1">
+                                    <span>Data Structures</span>
+                                    <strong>85%</strong>
+                                </div>
+                                <ProgressBar now={85} />
+                            </div>
+
+                            <div className="topic-progress-item">
+                                <div className="d-flex justify-content-between mb-1">
+                                    <span>Database Systems</span>
+                                    <strong>70%</strong>
+                                </div>
+                                <ProgressBar now={70} />
+                            </div>
+
+                            <div className="topic-progress-item">
+                                <div className="d-flex justify-content-between mb-1">
+                                    <span>Computer Networks</span>
+                                    <strong>60%</strong>
+                                </div>
+                                <ProgressBar now={60} />
+                            </div>
+
+                            <div className="topic-progress-item">
+                                <div className="d-flex justify-content-between mb-1">
+                                    <span>Web Engineering</span>
+                                    <strong>90%</strong>
+                                </div>
+                                <ProgressBar now={90} />
+                            </div>
                         </Card.Body>
                     </Card>
                 </Col>
