@@ -36,6 +36,7 @@ const LandingPage = () => {
                             </div>
                         </Col>
                         <Col className="text-end">
+                            <Link to="/about" className="btn btn-outline-secondary me-2">About</Link>
                             <Link to="/login" className="btn btn-outline-primary me-2 me-md-3">Login</Link>
                             <Link to="/signup" className="btn btn-primary">Get Started</Link>
                         </Col>
@@ -273,13 +274,40 @@ const LandingPage = () => {
                         </Col>
                         <Col md={4} className="mb-3 mb-md-0">
                             <h6>Quick Links</h6>
+
                             <ul className="list-unstyled">
-                                <li><Link to="/" className="text-muted small">Home</Link></li>
-                                <li><Link to="/signup" className="text-muted small">Sign Up</Link></li>
-                                <li><Link to="/login" className="text-muted small">Login</Link></li>
-                                <li><Link to="#" className="text-muted small">About Us</Link></li>
-                                <li><Link to="#" className="text-muted small">Contact Us</Link></li>
+                                <li>
+                                    <Link to="/" className="text-muted small">
+                                        Home
+                                    </Link>
+                                </li>
+
+                                <li>
+                                    <Link to="/signup" className="text-muted small">
+                                        Sign Up
+                                    </Link>
+                                </li>
+
+                                <li>
+                                    <Link to="/login" className="text-muted small">
+                                        Login
+                                    </Link>
+                                </li>
+
+                                <li>
+                                    <Link to="/about" className="text-muted small">
+                                        About Us
+                                    </Link>
+                                </li>
+
+                                <li>
+                                    <Link to="#" className="text-muted small">
+                                        Contact Us
+                                    </Link>
+                                </li>
                             </ul>
+
+
                         </Col>
                         <Col md={4}>
                             <h6>Follow Us</h6>
