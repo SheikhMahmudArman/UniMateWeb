@@ -1,0 +1,48 @@
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: unimate_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      - mysql
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: unimate
+      DB_USERNAME: root
+      DB_PASSWORD: root
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: unimate_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  mysql:
+    image: mysql:8.0
+    container_name: unimate_mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: unimate
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
