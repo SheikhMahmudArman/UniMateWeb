@@ -35,8 +35,7 @@ class CourseController extends Controller
             'credits' => 'required|numeric|min:0|max:10',
             'semester' => 'required|in:1.1,1.2,2.1,2.2,3.1,3.2,4.1,4.2',
             'hours_per_week' => 'nullable|string',
-            'prerequisite' => 'nullable|string',
-            'content_page' => 'nullable|integer',
+            'prerequisite' => 'nullable|string'
         ]);
 
         $course = Course::create($request->all());
@@ -69,7 +68,6 @@ class CourseController extends Controller
             'semester' => 'required|in:1.1,1.2,2.1,2.2,3.1,3.2,4.1,4.2',
             'hours_per_week' => 'nullable|string',
             'prerequisite' => 'nullable|string',
-            'content_page' => 'nullable|integer',
         ]);
 
         $course->update($request->all());

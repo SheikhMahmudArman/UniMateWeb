@@ -35,8 +35,7 @@ const ManageCourses = () => {
         credits: 3,
         semester: '1.1',
         hours_per_week: '',
-        prerequisite: '',
-        content_page: ''
+        prerequisite: ''
     });
 
     const [error, setError] = useState('');
@@ -88,8 +87,7 @@ const ManageCourses = () => {
             credits: 3,
             semester: selectedSemester || '1.1',
             hours_per_week: '',
-            prerequisite: '',
-            content_page: ''
+            prerequisite: ''
         });
 
         setError('');
@@ -105,8 +103,7 @@ const ManageCourses = () => {
             credits: course.credits || '',
             semester: course.semester || selectedSemester,
             hours_per_week: course.hours_per_week || '',
-            prerequisite: course.prerequisite || '',
-            content_page: course.content_page || ''
+            prerequisite: course.prerequisite || ''
         });
 
         setError('');
@@ -145,10 +142,7 @@ const ManageCourses = () => {
         try {
             const data = {
                 ...formData,
-                credits: parseFloat(formData.credits),
-                content_page: formData.content_page
-                    ? parseInt(formData.content_page)
-                    : null
+                credits: parseFloat(formData.credits)
             };
 
             if (editingCourse) {
@@ -320,7 +314,6 @@ const ManageCourses = () => {
                                     <th>Hours/Week</th>
                                     <th>Credits</th>
                                     <th>Prerequisite</th>
-                                    <th>Content Page</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -348,10 +341,6 @@ const ManageCourses = () => {
 
                                         <td>
                                             {course.prerequisite || '—'}
-                                        </td>
-
-                                        <td>
-                                            {course.content_page || '—'}
                                         </td>
 
                                         <td>
@@ -537,25 +526,6 @@ const ManageCourses = () => {
                                 </Form.Group>
                             </Col>
 
-                            <Col md={6}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>
-                                        Content Page
-                                    </Form.Label>
-
-                                    <Form.Control
-                                        type="number"
-                                        min="1"
-                                        value={formData.content_page}
-                                        onChange={(e) =>
-                                            setFormData({
-                                                ...formData,
-                                                content_page: e.target.value
-                                            })
-                                        }
-                                    />
-                                </Form.Group>
-                            </Col>
                         </Row>
 
                     </Modal.Body>

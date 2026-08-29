@@ -22,8 +22,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.1',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => null,
-                'content_page' => 45,
+                'prerequisite' => null
             ],
 
             [
@@ -33,8 +32,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.1',
                 'topics' => [],
                 'hours_per_week' => '0-3',
-                'prerequisite' => null,
-                'content_page' => 45,
+                'prerequisite' => null
             ],
 
             [
@@ -44,8 +42,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.1',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => null,
-                'content_page' => 45,
+                'prerequisite' => null
             ],
 
             [
@@ -55,8 +52,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.1',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => null,
-                'content_page' => 46,
+                'prerequisite' => null
             ],
 
             [
@@ -66,8 +62,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.1',
                 'topics' => [],
                 'hours_per_week' => '0-3',
-                'prerequisite' => null,
-                'content_page' => 47,
+                'prerequisite' => null
             ],
 
             [
@@ -77,8 +72,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.1',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => null,
-                'content_page' => 47,
+                'prerequisite' => null
             ],
 
             [
@@ -88,8 +82,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.1',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => null,
-                'content_page' => 20,
+                'prerequisite' => null
             ],
 
             [
@@ -99,8 +92,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.1',
                 'topics' => [],
                 'hours_per_week' => '0-3',
-                'prerequisite' => null,
-                'content_page' => 20,
+                'prerequisite' => null
             ],
 
             [
@@ -110,8 +102,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.1',
                 'topics' => [],
                 'hours_per_week' => '0-3',
-                'prerequisite' => null,
-                'content_page' => 20,
+                'prerequisite' => null
             ],
 
 
@@ -126,8 +117,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.2',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => 'MATH1115',
-                'content_page' => 47,
+                'prerequisite' => 'MATH1115'
             ],
 
             [
@@ -137,8 +127,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.2',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => null,
-                'content_page' => 48,
+                'prerequisite' => null
             ],
 
             [
@@ -148,8 +137,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.2',
                 'topics' => [],
                 'hours_per_week' => '0-3/2',
-                'prerequisite' => null,
-                'content_page' => 48,
+                'prerequisite' => null
             ],
 
             [
@@ -159,8 +147,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.2',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => null,
-                'content_page' => 48,
+                'prerequisite' => null
             ],
 
             [
@@ -170,8 +157,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.2',
                 'topics' => [],
                 'hours_per_week' => '0-3',
-                'prerequisite' => null,
-                'content_page' => 48,
+                'prerequisite' => null
             ],
 
             [
@@ -181,8 +167,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.2',
                 'topics' => [],
                 'hours_per_week' => '0-3',
-                'prerequisite' => null,
-                'content_page' => 21,
+                'prerequisite' => null
             ],
 
             [
@@ -192,8 +177,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.2',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => null,
-                'content_page' => 21,
+                'prerequisite' => null
             ],
 
             [
@@ -203,8 +187,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.2',
                 'topics' => [],
                 'hours_per_week' => '3-0',
-                'prerequisite' => 'CSE1101',
-                'content_page' => 21,
+                'prerequisite' => 'CSE1101'
             ],
 
             [
@@ -214,8 +197,7 @@ class CourseSeeder extends Seeder
                 'semester' => '1.2',
                 'topics' => [],
                 'hours_per_week' => '0-3',
-                'prerequisite' => null,
-                'content_page' => 21,
+                'prerequisite' => null
             ],
         ];
 
