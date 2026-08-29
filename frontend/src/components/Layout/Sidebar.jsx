@@ -42,7 +42,7 @@ const Sidebar = () => {
 
     const handleLogout = async () => {
         await logout();
-        navigate('/', { replace: true });
+        window.location.href = '/';   // forces a full page reload to landing page
     };
 
     const toggleGroup = (group) => {
@@ -131,16 +131,14 @@ const Sidebar = () => {
 
                     <FontAwesomeIcon
                         icon={faChevronDown}
-                        className={`group-arrow ${
-                            openGroups[groupName] ? 'rotated' : ''
-                        }`}
+                        className={`group-arrow ${openGroups[groupName] ? 'rotated' : ''
+                            }`}
                     />
                 </button>
 
                 <div
-                    className={`sidebar-group-items ${
-                        openGroups[groupName] ? 'expanded' : ''
-                    }`}
+                    className={`sidebar-group-items ${openGroups[groupName] ? 'expanded' : ''
+                        }`}
                 >
                     {items.map(renderLink)}
                 </div>
@@ -151,9 +149,8 @@ const Sidebar = () => {
 
     return (
         <aside
-            className={`sidebar ${
-                user?.role === 'admin' ? 'admin-sidebar' : ''
-            }`}
+            className={`sidebar ${user?.role === 'admin' ? 'admin-sidebar' : ''
+                }`}
         >
 
             {/* Logo */}
