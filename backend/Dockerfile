@@ -17,13 +17,19 @@ RUN apt-get update && apt-get install -y \
     pcntl \
     bcmath \
     gd \
-    zip
+    zip \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
-RUN composer install
+RUN composer install --no-dev --optimize-autoloader
+
+RUN useradd -m -u 1000 -s /bin/bash appuser \
+    && chown -R appuser:appuser /var/www
+
+USER appuser
 
 EXPOSE 8000
 

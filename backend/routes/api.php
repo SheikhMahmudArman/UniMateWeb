@@ -1,5 +1,6 @@
 <?php
-
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\CourseController;
@@ -12,7 +13,6 @@ use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\LibraryController;
 use App\Http\Controllers\Api\RoutineController;
 use App\Http\Controllers\Api\ProfileController;
-use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
@@ -64,4 +64,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/routine/{id}', [RoutineController::class, 'update']);
     Route::delete('/routine/{id}', [RoutineController::class, 'destroy']);
     Route::patch('/routine/{id}/toggle-notify', [RoutineController::class, 'toggleNotify']);
+});
+Route::get('/health', function () {
+    try {
+        DB::connection()->getPdo();
+
+        return response()->json([
+            'status' => 'ok',
+            'database' => 'connected'
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'database' => 'disconnected'
+        ], 500);
+    }
 });
