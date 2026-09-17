@@ -8,13 +8,11 @@ import logo from '../assets/logo.png';
 import './LoginPage.css';
 
 const LoginPage = () => {
-    const [studentId, setStudentId] = useState('');
     const [gmail, setGmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
 
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -24,7 +22,7 @@ const LoginPage = () => {
         setError('');
         setLoading(true);
 
-        if (!studentId || !gmail || !password) {
+        if (!gmail || !password) {
             setError('Please fill in all fields.');
             setLoading(false);
             return;
@@ -42,7 +40,7 @@ const LoginPage = () => {
 
         const result = await login(gmail, password);
         if (result.success) {
-            navigate('/dashboard');
+            navigate(result.role === 'admin' ? '/dashboard/admin' : '/dashboard');
         } else {
             setError(result.error || 'Invalid credentials.');
             setLoading(false);
@@ -64,19 +62,6 @@ const LoginPage = () => {
                                 <h5 className="text-center mb-4">Welcome Back!</h5>
                                 {error && <Alert variant="danger" className="text-center">{error}</Alert>}
                                 <Form onSubmit={handleSubmit}>
-                                    <Form.Group className="mb-3">
-                                        <Form.Label>Student ID</Form.Label>
-                                        <div className="input-icon-wrapper">
-                                            <FontAwesomeIcon icon={faUser} className="input-icon" />
-                                            <Form.Control
-                                                type="text"
-                                                placeholder="e.g., 2023-12345"
-                                                value={studentId}
-                                                onChange={(e) => setStudentId(e.target.value)}
-                                                className="ps-5"
-                                            />
-                                        </div>
-                                    </Form.Group>
                                     <Form.Group className="mb-3">
                                         <Form.Label>Email Address</Form.Label>
                                         <div className="input-icon-wrapper">
@@ -111,13 +96,7 @@ const LoginPage = () => {
                                         </div>
                                     </Form.Group>
                                     <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <Form.Check
-                                            type="checkbox"
-                                            label="Remember Me"
-                                            checked={rememberMe}
-                                            onChange={(e) => setRememberMe(e.target.checked)}
-                                        />
-                                        <Link to="#" className="text-decoration-none small">Forgot Password?</Link>
+                                        <span className="small text-muted">Password recovery: contact your administrator.</span>
                                     </div>
                                     <Button type="submit" className="w-100 btn-login" disabled={loading}>
                                         {loading ? 'Logging in...' : 'Login'}
@@ -125,8 +104,7 @@ const LoginPage = () => {
                                 </Form>
                                 <div className="text-center mt-3">
                                     <small className="text-muted">
-                                        Demo: student@austmate.com / student123 <br />
-                                        Admin: admin@austmate.com / admin123
+                                        Use your own account. Ask your administrator if you cannot sign in.
                                     </small>
                                 </div>
                                 <div className="text-center mt-4">

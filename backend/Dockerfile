@@ -1,36 +1,14 @@
-FROM php:8.2-cli
-
+FROM php:8.3-fpm
 WORKDIR /var/www
-
-RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libzip-dev \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    default-mysql-client \
-    && docker-php-ext-install \
-    pdo_mysql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    zip \
+RUN apt-get update && apt-get install -y --no-install-recommends git unzip libzip-dev libonig-dev libxml2-dev libcurl4-openssl-dev \
+    && docker-php-ext-install pdo_mysql mbstring zip bcmath opcache curl dom \
     && rm -rf /var/lib/apt/lists/*
-
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
 COPY . .
-
-RUN composer install --no-dev --optimize-autoloader
-
-RUN useradd -m -u 1000 -s /bin/bash appuser \
-    && chown -R appuser:appuser /var/www
-
-USER appuser
-
-EXPOSE 8000
-
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader \
+    && mkdir -p storage/app/public storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
+COPY docker/php.ini /usr/local/etc/php/conf.d/unimate.ini
+USER www-data
+EXPOSE 9000
+CMD ["php-fpm", "-F"]

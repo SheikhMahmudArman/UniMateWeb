@@ -92,7 +92,7 @@ const DashboardHome = () => {
                         <Card.Body>
                             <div className="stat-icon"><FontAwesomeIcon icon={faCalendarCheck} /></div>
                             <h5>Upcoming Quizzes</h5>
-                            <h2>{dashboardData.stats.upcoming_quizzes}</h2>
+                            <h2>{dashboardData.stats.upcoming_quizzes ?? 'Not available yet'}</h2>
                         </Card.Body>
                     </Card>
                 </Col>
@@ -101,7 +101,7 @@ const DashboardHome = () => {
                         <Card.Body>
                             <div className="stat-icon"><FontAwesomeIcon icon={faBookOpen} /></div>
                             <h5>Pending Assignments</h5>
-                            <h2>{dashboardData.stats.pending_assignments}</h2>
+                            <h2>{dashboardData.stats.pending_assignments ?? 'Not available yet'}</h2>
                         </Card.Body>
                     </Card>
                 </Col>

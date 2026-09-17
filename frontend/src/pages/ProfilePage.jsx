@@ -6,7 +6,7 @@ import { faUser, faEnvelope, faIdCard, faSave } from '@fortawesome/free-solid-sv
 import api from '../services/api';
 
 const ProfilePage = () => {
-    const { user } = useContext(AuthContext);
+    const { user, updateUser } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         name: user?.name || '',
         email: user?.email || '',
@@ -67,7 +67,7 @@ const ProfilePage = () => {
                 setSuccess('Profile updated successfully!');
                 // Update local user data
                 const updatedUser = { ...user, name: formData.name, email: formData.email };
-                localStorage.setItem('user', JSON.stringify(updatedUser));
+                updateUser(updatedUser);
                 setTimeout(() => setSuccess(''), 3000);
             }
         } catch (error) {

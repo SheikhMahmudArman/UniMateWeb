@@ -15,8 +15,8 @@ use App\Http\Controllers\Api\RoutineController;
 use App\Http\Controllers\Api\ProfileController;
 
 // Public routes
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:3,1');
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -24,6 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 
+    Route::get('/semesters', function () {
+        return response()->json(['success' => true, 'data' => \App\Models\Semester::orderBy('code')->get()]);
+    });
+    Route::put('/attendance/{id}', [AttendanceController::class, 'update'])->middleware(\App\Http\Middleware\RequireAdmin::class);
+    Route::delete('/attendance/{id}', [AttendanceController::class, 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
@@ -33,37 +38,44 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile/change-password', [ProfileController::class, 'changePassword']);
 
     // Courses
-    Route::apiResource('courses', CourseController::class);
+    Route::apiResource('courses', CourseController::class)->only(['index', 'show']);
+    Route::apiResource('courses', CourseController::class)->only(['store', 'update', 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
 
     // Students (Admin only)
-    Route::apiResource('students', StudentController::class);
+    Route::apiResource('students', StudentController::class)->only(['index', 'show']);
+    Route::apiResource('students', StudentController::class)->only(['store', 'update', 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
 
     // Faculty
-    Route::apiResource('faculty', FacultyController::class);
+    Route::apiResource('faculty', FacultyController::class)->only(['index', 'show']);
+    Route::apiResource('faculty', FacultyController::class)->only(['store', 'update', 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
 
     // Documents
-    Route::apiResource('documents', DocumentController::class);
+    Route::apiResource('documents', DocumentController::class)->only(['index', 'show']);
+    Route::apiResource('documents', DocumentController::class)->only(['store', 'update', 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
 
     // Marks
-    Route::apiResource('marks', MarkController::class);
+    Route::apiResource('marks', MarkController::class)->only(['index', 'show']);
+    Route::apiResource('marks', MarkController::class)->only(['store', 'update', 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
 
     // Notices
-    Route::apiResource('notices', NoticeController::class);
+    Route::apiResource('notices', NoticeController::class)->only(['index', 'show']);
+    Route::apiResource('notices', NoticeController::class)->only(['store', 'update', 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
 
     // Attendance
     Route::get('/attendance', [AttendanceController::class, 'index']);
-    Route::post('/attendance', [AttendanceController::class, 'store']);
+    Route::post('/attendance', [AttendanceController::class, 'store'])->middleware(\App\Http\Middleware\RequireAdmin::class);
     Route::get('/attendance/summary', [AttendanceController::class, 'summary']);
 
     // Library
-    Route::apiResource('library', LibraryController::class);
+    Route::apiResource('library', LibraryController::class)->only(['index', 'show']);
+    Route::apiResource('library', LibraryController::class)->only(['store', 'update', 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
 
     // Routine
     Route::get('/routine', [RoutineController::class, 'index']);
-    Route::post('/routine', [RoutineController::class, 'store']);
-    Route::put('/routine/{id}', [RoutineController::class, 'update']);
-    Route::delete('/routine/{id}', [RoutineController::class, 'destroy']);
-    Route::patch('/routine/{id}/toggle-notify', [RoutineController::class, 'toggleNotify']);
+    Route::post('/routine', [RoutineController::class, 'store'])->middleware(\App\Http\Middleware\RequireAdmin::class);
+    Route::put('/routine/{id}', [RoutineController::class, 'update'])->middleware(\App\Http\Middleware\RequireAdmin::class);
+    Route::delete('/routine/{id}', [RoutineController::class, 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
+    Route::patch('/routine/{id}/toggle-notify', [RoutineController::class, 'toggleNotify'])->middleware(\App\Http\Middleware\RequireAdmin::class);
 });
 Route::get('/health', function () {
     try {

@@ -11,9 +11,11 @@ export const NotificationProvider = ({ children }) => {
     useEffect(() => {
         const saved = localStorage.getItem('notificationPrefs');
         if (saved) {
+            try {
             const prefs = JSON.parse(saved);
             setNotificationsEnabled(prefs.enabled);
             setReminderTime(prefs.time);
+            } catch { localStorage.removeItem('notificationPrefs'); }
         }
     }, []);
 

@@ -159,19 +159,19 @@ const ManageMarks = () => {
                 <Form onSubmit={handleSubmit}>
                     <Modal.Body>
                         <Form.Group className="mb-3"><Form.Label>Student</Form.Label>
-                            <Form.Select value={formData.student_id} onChange={(e) => setFormData({ ...formData, student_id: parseInt(e.target.value) })} required>
+                            <Form.Select disabled={Boolean(editingMark)} value={formData.student_id} onChange={(e) => setFormData({ ...formData, student_id: parseInt(e.target.value) })} required>
                                 <option value="">Select Student</option>
                                 {students.map(s => <option key={s.id} value={s.id}>{s.name} ({s.student_id})</option>)}
                             </Form.Select>
                         </Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Course</Form.Label>
-                            <Form.Select value={formData.course_id} onChange={(e) => setFormData({ ...formData, course_id: parseInt(e.target.value) })} required>
+                            <Form.Select disabled={Boolean(editingMark)} value={formData.course_id} onChange={(e) => setFormData({ ...formData, course_id: parseInt(e.target.value) })} required>
                                 <option value="">Select Course</option>
                                 {courses.map(c => <option key={c.id} value={c.id}>{c.code} - {c.name}</option>)}
                             </Form.Select>
                         </Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Semester</Form.Label>
-                            <Form.Select value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })}>
+                            <Form.Select disabled={Boolean(editingMark)} value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })}>
                                 {['1.1', '1.2', '2.1', '2.2', '3.1', '3.2', '4.1', '4.2'].map(s => <option key={s} value={s}>{s}</option>)}
                             </Form.Select>
                         </Form.Group>

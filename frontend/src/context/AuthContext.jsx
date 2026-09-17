@@ -1,77 +1,44 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import api from '../services/api';
-
 export const AuthContext = createContext();
-
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
+    const updateUser = data => {
+        setUser(data);
+        if (data) localStorage.setItem('user', JSON.stringify(data));
+        else localStorage.removeItem('user');
+    };
     useEffect(() => {
-        const savedUser = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
-        if (savedUser && token) {
-            setUser(JSON.parse(savedUser));
-            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        }
-        setLoading(false);
+        let active = true;
+        const clear = () => { setUser(null); };
+        window.addEventListener('unimate:logout', clear);
+        const restore = async () => {
+            try {
+                if (localStorage.getItem('token')) {
+                    const { data } = await api.get('/user');
+                    if (active) updateUser(data.user);
+                }
+            } catch { if (active) setUser(null); }
+            finally { if (active) setLoading(false); }
+        };
+        restore();
+        return () => { active = false; window.removeEventListener('unimate:logout', clear); };
     }, []);
-
-    const login = async (email, password) => {
+    const authenticate = async (path, payload) => {
         try {
-            const response = await api.post('/login', { email, password });
-            if (response.data.success) {
-                const { token, user: userData } = response.data;
-                localStorage.setItem('token', token);
-                localStorage.setItem('user', JSON.stringify(userData));
-                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                setUser(userData);
-                return { success: true, role: userData.role };
-            }
-            return { success: false, error: 'Login failed' };
+            const { data } = await api.post(path, payload);
+            localStorage.setItem('token', data.token);
+            updateUser(data.user);
+            return { success: true, role: data.user.role };
         } catch (error) {
-            return {
-                success: false,
-                error: error.response?.data?.message || 'Invalid credentials'
-            };
+            return { success: false, error: Object.values(error.response?.data?.errors || {}).flat()[0] || error.response?.data?.message || 'Cannot reach server. Please try again.' };
         }
     };
-
-    const register = async (userData) => {
-        try {
-            const response = await api.post('/register', userData);
-            if (response.data.success) {
-                const { token, user: userData } = response.data;
-                localStorage.setItem('token', token);
-                localStorage.setItem('user', JSON.stringify(userData));
-                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                setUser(userData);
-                return { success: true };
-            }
-            return { success: false, error: 'Registration failed' };
-        } catch (error) {
-            return {
-                success: false,
-                error: error.response?.data?.message || 'Registration failed'
-            };
-        }
-    };
-
     const logout = async () => {
-        try {
-            await api.post('/logout');
-        } catch (error) {
-            console.error('Logout error:', error);
-        }
-        setUser(null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        delete api.defaults.headers.common['Authorization'];
+        try { await api.post('/logout'); }
+        catch { /* Clear this browser even when the server cannot be reached. */ }
+        finally { localStorage.removeItem('token'); updateUser(null); }
     };
-
-    return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={{ user, loading, updateUser, login: (email, password) => authenticate('/login', { email, password }), register: data => authenticate('/register', data), logout }}>{children}</AuthContext.Provider>;
 };

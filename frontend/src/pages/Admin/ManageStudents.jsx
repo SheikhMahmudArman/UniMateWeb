@@ -80,18 +80,18 @@ const ManageStudents = () => {
                 });
                 setSuccess('Student updated.');
             } else {
-                await api.post('/students', {
+                const response = await api.post('/students', {
                     student_id: formData.id,
                     name: formData.name,
                     email: formData.email,
                     semester: formData.semester,
                     cgpa: formData.cgpa,
                 });
-                setSuccess('Student added.');
+                setSuccess(`Student added. Temporary password: ${response.data.temporary_password}. Copy it now and ask the student to change it in Settings.`);
             }
             setShowModal(false);
             fetchStudents();
-            setTimeout(() => setSuccess(''), 3000);
+            if (editingStudent) setTimeout(() => setSuccess(''), 3000);
         } catch (error) {
             setError(error.response?.data?.message || 'Operation failed.');
         } finally {
@@ -144,7 +144,7 @@ const ManageStudents = () => {
                 <Modal.Header closeButton><Modal.Title>{editingStudent ? 'Edit Student' : 'Add Student'}</Modal.Title></Modal.Header>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Body>
-                        <Form.Group className="mb-3"><Form.Label>Student ID</Form.Label><Form.Control type="text" value={formData.id} onChange={(e) => setFormData({ ...formData, id: e.target.value })} required /></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Student ID</Form.Label><Form.Control type="text" disabled={Boolean(editingStudent)} value={formData.id} onChange={(e) => setFormData({ ...formData, id: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Full Name</Form.Label><Form.Control type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Email</Form.Label><Form.Control type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Semester</Form.Label>

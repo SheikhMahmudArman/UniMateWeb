@@ -34,34 +34,10 @@ const AdminDashboard = () => {
 
     const fetchStats = async () => {
         try {
-            const [
-                students, courses, faculty, documents, 
-                notices, routines, quizzes, assignments, 
-                topics, attendance
-            ] = await Promise.all([
-                api.get('/students'),
-                api.get('/courses'),
-                api.get('/faculty'),
-                api.get('/documents'),
-                api.get('/notices'),
-                api.get('/routines'),
-                api.get('/quizzes'),
-                api.get('/assignments'),
-                api.get('/topics'),
-                api.get('/attendance'),
-            ]);
-            setStats({
-                students: students.data.data?.length || 0,
-                courses: courses.data.data?.length || 0,
-                faculty: faculty.data.data?.length || 0,
-                documents: documents.data.data?.length || 0,
-                notices: notices.data.data?.length || 0,
-                routines: routines.data.data?.length || 0,
-                quizzes: quizzes.data.data?.length || 0,
-                assignments: assignments.data.data?.length || 0,
-                topics: topics.data.data?.length || 0,
-                attendance: attendance.data.data?.length || 0,
-            });
+            const names = ['students', 'courses', 'faculty', 'documents', 'notices', 'routine', 'attendance'];
+            const responses = await Promise.all(names.map(name => api.get(`/${name}`)));
+            const counts = Object.fromEntries(names.map((name, i) => [name, responses[i].data.data.length]));
+            setStats({ ...counts, routines: counts.routine });
         } catch (error) {
             console.error('Error fetching stats:', error);
         } finally {
@@ -77,11 +53,7 @@ const AdminDashboard = () => {
         { title: 'Manage Marks', icon: faPen, path: '/dashboard/admin/marks', color: '#2A9D8F' },
         { title: 'Manage Notices', icon: faBullhorn, path: '/dashboard/admin/notices', color: '#6c757d', count: stats.notices },
         { title: 'Manage Routine', icon: faCalendarAlt, path: '/dashboard/admin/routine', color: '#E63946', count: stats.routines },
-        { title: 'Manage Quizzes', icon: faClock, path: '/dashboard/admin/quizzes', color: '#FF6B6B', count: stats.quizzes },
-        { title: 'Manage Assignments', icon: faTasks, path: '/dashboard/admin/assignments', color: '#4ECDC4', count: stats.assignments },
-        { title: 'Manage Topics', icon: faListCheck, path: '/dashboard/admin/topics', color: '#45B7D1', count: stats.topics },
         { title: 'Manage Attendance', icon: faCheckDouble, path: '/dashboard/admin/attendance', color: '#96CEB4', count: stats.attendance },
-        { title: 'Student CGPA', icon: faGraduationCap, path: '/dashboard/admin/cgpa', color: '#DDA0DD' },
     ];
 
     return (

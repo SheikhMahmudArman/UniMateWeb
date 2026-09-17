@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider } from './context/NotificationContext';
@@ -31,6 +31,9 @@ import ManageFaculty from './pages/Admin/ManageFaculty';
 import ManageDocuments from './pages/Admin/ManageDocuments';
 import ManageMarks from './pages/Admin/ManageMarks';
 import ManageNotices from './pages/Admin/ManageNotices';
+
+import ManageRoutine from './pages/Admin/ManageRoutine';
+import ManageAttendance from './pages/Admin/ManageAttendance';
 
 function App() {
   return (
@@ -65,15 +68,19 @@ function App() {
               <Route path="library" element={<LibraryPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="admin/notices" element={<ProtectedRoute adminOnly><ManageNotices /></ProtectedRoute>} />
+              <Route path="admin/routine" element={<ProtectedRoute adminOnly><ManageRoutine /></ProtectedRoute>} />
+              <Route path="admin/attendance" element={<ProtectedRoute adminOnly><ManageAttendance /></ProtectedRoute>} />
               {/* Admin routes */}
-              <Route path="admin" element={<AdminDashboard />} />
-              <Route path="admin/courses" element={<ManageCourses />} />
-              <Route path="admin/students" element={<ManageStudents />} />
-              <Route path="admin/faculty" element={<ManageFaculty />} />
-              <Route path="admin/documents" element={<ManageDocuments />} />
-              <Route path="admin/marks" element={<ManageMarks />} />
+              <Route path="admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+              <Route path="admin/courses" element={<ProtectedRoute adminOnly><ManageCourses /></ProtectedRoute>} />
+              <Route path="admin/students" element={<ProtectedRoute adminOnly><ManageStudents /></ProtectedRoute>} />
+              <Route path="admin/faculty" element={<ProtectedRoute adminOnly><ManageFaculty /></ProtectedRoute>} />
+              <Route path="admin/documents" element={<ProtectedRoute adminOnly><ManageDocuments /></ProtectedRoute>} />
+              <Route path="admin/marks" element={<ProtectedRoute adminOnly><ManageMarks /></ProtectedRoute>} />
             </Route>
 
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </NotificationProvider>
       </ThemeProvider>
