@@ -47,26 +47,30 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-            'student_id' => 'required|string|unique:students',
+            'password' => 'required|string|min:8',
+            'student_id' => 'required|string|max:255|unique:students|unique:users',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'student',
-            'student_id' => $request->student_id,
-        ]);
+        $user = \Illuminate\Support\Facades\DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => 'student',
+                'student_id' => $request->student_id,
+            ]);
 
-        Student::create([
-            'student_id' => $request->student_id,
-            'name' => $request->name,
-            'email' => $request->email,
-            'semester' => '1.1',
-            'cgpa' => 0,
-            'user_id' => $user->id,
-        ]);
+            Student::create([
+                'student_id' => $request->student_id,
+                'name' => $request->name,
+                'email' => $request->email,
+                'semester' => '1.1',
+                'cgpa' => 0,
+                'user_id' => $user->id,
+            ]);
+
+            return $user;
+        });
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -85,7 +89,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()?->delete();
 
         return response()->json([
             'success' => true,

@@ -35,10 +35,12 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'url' => 'nullable|url:http,https|max:2048',
+            'course_id' => 'nullable|exists:courses,id',
+            'name' => 'required|string|max:255',
             'type' => 'required',
             'semester' => 'required',
-            'file' => 'nullable|file|max:10240', // 10MB max
+            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,txt,jpg,jpeg,png|max:10240', // 10MB max
         ]);
 
         $data = $request->only(['name', 'type', 'semester', 'url', 'course_id']);
@@ -71,24 +73,25 @@ class DocumentController extends Controller
         $document = Document::findOrFail($id);
 
         $request->validate([
-            'name' => 'required',
+            'url' => 'nullable|url:http,https|max:2048',
+            'course_id' => 'nullable|exists:courses,id',
+            'name' => 'required|string|max:255',
             'type' => 'required',
             'semester' => 'required',
-            'file' => 'nullable|file|max:10240',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,txt,jpg,jpeg,png|max:10240',
         ]);
 
         $data = $request->only(['name', 'type', 'semester', 'url', 'course_id']);
 
         if ($request->hasFile('file')) {
-            // Delete old file
-            if ($document->file_path) {
-                Storage::disk('public')->delete($document->file_path);
-            }
             $path = $request->file('file')->store('documents', 'public');
             $data['file_path'] = $path;
         }
 
+        $oldPath = $document->file_path;
         $document->update($data);
+        if ($request->hasFile('file') && $oldPath)
+            Storage::disk('public')->delete($oldPath);
 
         return response()->json([
             'success' => true,

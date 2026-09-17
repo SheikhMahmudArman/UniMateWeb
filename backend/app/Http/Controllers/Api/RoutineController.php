@@ -20,15 +20,16 @@ class RoutineController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'time' => 'required',
+        $data = $request->validate([
+            'notify' => 'sometimes|boolean',
+            'time' => 'required|string|max:255',
             'course_code' => 'required',
             'course_name' => 'required',
             'room' => 'required',
             'day' => 'required',
         ]);
 
-        $routine = Routine::create($request->all());
+        $routine = Routine::create($data);
 
         return response()->json([
             'success' => true,
@@ -41,15 +42,16 @@ class RoutineController extends Controller
     {
         $routine = Routine::findOrFail($id);
 
-        $request->validate([
-            'time' => 'required',
+        $data = $request->validate([
+            'notify' => 'sometimes|boolean',
+            'time' => 'required|string|max:255',
             'course_code' => 'required',
             'course_name' => 'required',
             'room' => 'required',
             'day' => 'required',
         ]);
 
-        $routine->update($request->all());
+        $routine->update($data);
 
         return response()->json([
             'success' => true,

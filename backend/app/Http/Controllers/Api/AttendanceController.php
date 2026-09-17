@@ -11,7 +11,9 @@ class AttendanceController extends Controller
 {
     public function index(Request $request)
     {
-        $studentId = $request->query('student_id');
+        $studentId = $request->user()->role === 'admin'
+            ? $request->query('student_id')
+            : (Student::where('user_id', $request->user()->id)->value('id') ?? -1);
         $courseId = $request->query('course_id');
 
         $query = Attendance::with(['student', 'course']);
@@ -34,14 +36,17 @@ class AttendanceController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'student_id' => 'required|exists:students,id',
             'course_id' => 'required|exists:courses,id',
             'date' => 'required|date',
             'status' => 'required|in:present,absent',
         ]);
 
-        $attendance = Attendance::create($request->all());
+        $attendance = \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
+            Student::whereKey($data['student_id'])->lockForUpdate()->firstOrFail();
+            return Attendance::updateOrCreate(collect($data)->only(['student_id', 'course_id', 'date'])->all(), ['status' => $data['status']]);
+        });
 
         return response()->json([
             'success' => true,
@@ -50,9 +55,25 @@ class AttendanceController extends Controller
         ]);
     }
 
+    public function update(Request $request, $id)
+    {
+        $data = $request->validate(['status' => 'required|in:present,absent']);
+        $attendance = Attendance::findOrFail($id);
+        $attendance->update($data);
+        return response()->json(['success' => true, 'data' => $attendance]);
+    }
+
+    public function destroy($id)
+    {
+        Attendance::findOrFail($id)->delete();
+        return response()->json(['success' => true]);
+    }
+
     public function summary(Request $request)
     {
-        $studentId = $request->query('student_id');
+        $studentId = $request->user()->role === 'admin'
+            ? $request->query('student_id')
+            : (Student::where('user_id', $request->user()->id)->value('id') ?? -1);
 
         if (!$studentId) {
             return response()->json([
@@ -61,7 +82,7 @@ class AttendanceController extends Controller
             ], 400);
         }
 
-        $attendances = Attendance::where('student_id', $studentId)->get();
+        $attendances = Attendance::with('course')->where('student_id', $studentId)->get();
         $total = $attendances->count();
         $present = $attendances->where('status', 'present')->count();
         $percentage = $total > 0 ? round(($present / $total) * 100) : 0;

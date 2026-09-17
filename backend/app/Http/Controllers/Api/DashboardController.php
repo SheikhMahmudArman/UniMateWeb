@@ -21,8 +21,8 @@ class DashboardController extends Controller
 
         // Quick Stats
         $stats = [
-            'upcoming_quizzes' => 2,
-            'pending_assignments' => 3,
+            'upcoming_quizzes' => null,
+            'pending_assignments' => null,
             'current_cgpa' => $student ? $student->cgpa : 0,
         ];
 
@@ -45,7 +45,7 @@ class DashboardController extends Controller
                 'code' => $course->code,
                 'name' => $course->name,
                 'topics' => $topics,
-                'progress' => count($topics) > 0 ? rand(0, 100) : 0,
+                'progress' => 0,
             ];
         }
 

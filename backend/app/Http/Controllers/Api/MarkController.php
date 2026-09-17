@@ -11,7 +11,9 @@ class MarkController extends Controller
 {
     public function index(Request $request)
     {
-        $studentId = $request->query('student_id');
+        $studentId = $request->user()->role === 'admin'
+            ? $request->query('student_id')
+            : (Student::where('user_id', $request->user()->id)->value('id') ?? -1);
         $semester = $request->query('semester');
 
         $query = Mark::with(['student', 'course']);
@@ -34,17 +36,23 @@ class MarkController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'student_id' => 'required|exists:students,id',
             'course_id' => 'required|exists:courses,id',
             'semester' => 'required',
-            'quiz' => 'nullable|integer|min:0|max:30',
-            'mid' => 'nullable|integer|min:0|max:30',
-            'online' => 'nullable|integer|min:0|max:10',
-            'final' => 'nullable|integer|min:0|max:30',
+            'quiz' => 'sometimes|integer|min:0|max:30',
+            'mid' => 'sometimes|integer|min:0|max:30',
+            'online' => 'sometimes|integer|min:0|max:10',
+            'final' => 'sometimes|integer|min:0|max:30',
         ]);
 
-        $mark = Mark::create($request->all());
+        $mark = \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
+            Student::whereKey($data['student_id'])->lockForUpdate()->firstOrFail();
+            $exists = Mark::where('student_id', $data['student_id'])->where('course_id', $data['course_id'])->where('semester', $data['semester'])->exists();
+            if ($exists)
+                throw \Illuminate\Validation\ValidationException::withMessages(['course_id' => ['Marks already exist. Edit the existing row.']]);
+            return Mark::create($data);
+        });
 
         // Update student CGPA
         $this->updateStudentCGPA($request->student_id);
@@ -59,6 +67,7 @@ class MarkController extends Controller
     public function show($id)
     {
         $mark = Mark::with(['student', 'course'])->findOrFail($id);
+        abort_unless(request()->user()->role === 'admin' || $mark->student?->user_id === request()->user()->id, 403);
         return response()->json([
             'success' => true,
             'data' => $mark,
@@ -69,14 +78,14 @@ class MarkController extends Controller
     {
         $mark = Mark::findOrFail($id);
 
-        $request->validate([
-            'quiz' => 'nullable|integer|min:0|max:30',
-            'mid' => 'nullable|integer|min:0|max:30',
-            'online' => 'nullable|integer|min:0|max:10',
-            'final' => 'nullable|integer|min:0|max:30',
+        $data = $request->validate([
+            'quiz' => 'sometimes|integer|min:0|max:30',
+            'mid' => 'sometimes|integer|min:0|max:30',
+            'online' => 'sometimes|integer|min:0|max:10',
+            'final' => 'sometimes|integer|min:0|max:30',
         ]);
 
-        $mark->update($request->all());
+        $mark->update($data);
 
         // Update student CGPA
         $this->updateStudentCGPA($mark->student_id);
@@ -109,7 +118,7 @@ class MarkController extends Controller
         if (!$student)
             return;
 
-        $marks = Mark::where('student_id', $studentId)->get();
+        $marks = Mark::with('course')->where('student_id', $studentId)->get();
 
         if ($marks->isEmpty()) {
             $student->update(['cgpa' => 0]);

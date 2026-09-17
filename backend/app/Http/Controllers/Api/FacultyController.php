@@ -19,14 +19,16 @@ class FacultyController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
+        $data = $request->validate([
+            'room' => 'nullable|string|max:255',
+            'consultation_hours' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
             'department' => 'required',
             'designation' => 'required',
             'email' => 'required|email|unique:faculties',
         ]);
 
-        $faculty = Faculty::create($request->all());
+        $faculty = Faculty::create($data);
 
         return response()->json([
             'success' => true,
@@ -48,14 +50,16 @@ class FacultyController extends Controller
     {
         $faculty = Faculty::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required',
+        $data = $request->validate([
+            'room' => 'nullable|string|max:255',
+            'consultation_hours' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
             'department' => 'required',
             'designation' => 'required',
             'email' => 'required|email|unique:faculties,email,' . $id,
         ]);
 
-        $faculty->update($request->all());
+        $faculty->update($data);
 
         return response()->json([
             'success' => true,

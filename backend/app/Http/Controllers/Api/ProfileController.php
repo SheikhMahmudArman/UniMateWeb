@@ -35,23 +35,25 @@ class ProfileController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => ['required', 'email', \Illuminate\Validation\Rule::unique('users')->ignore($user->id), \Illuminate\Validation\Rule::unique('students')->ignore($user->student?->id)],
         ]);
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
-
-        // Update student record if exists
-        $student = Student::where('user_id', $user->id)->first();
-        if ($student) {
-            $student->update([
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $user) {
+            $user->update([
                 'name' => $request->name,
                 'email' => $request->email,
             ]);
-        }
 
+            // Update student record if exists
+            $student = Student::where('user_id', $user->id)->first();
+            if ($student) {
+                $student->update([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                ]);
+            }
+
+        });
         return response()->json([
             'success' => true,
             'data' => $user,
@@ -78,6 +80,9 @@ class ProfileController extends Controller
         $user->update([
             'password' => Hash::make($request->new_password),
         ]);
+
+        $currentTokenId = $user->currentAccessToken()?->id;
+        $user->tokens()->when($currentTokenId, fn($q) => $q->where('id', '!=', $currentTokenId))->delete();
 
         return response()->json([
             'success' => true,

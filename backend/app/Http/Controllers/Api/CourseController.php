@@ -29,16 +29,18 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'code' => 'required|unique:courses,code',
             'name' => 'required',
             'credits' => 'required|numeric|min:0|max:10',
             'semester' => 'required|in:1.1,1.2,2.1,2.2,3.1,3.2,4.1,4.2',
             'hours_per_week' => 'nullable|string',
+            'topics' => 'sometimes|array',
+            'topics.*' => 'string|max:255',
             'prerequisite' => 'nullable|string'
         ]);
 
-        $course = Course::create($request->all());
+        $course = Course::create($data);
 
         return response()->json([
             'success' => true,
@@ -61,16 +63,18 @@ class CourseController extends Controller
     {
         $course = Course::findOrFail($id);
 
-        $request->validate([
+        $data = $request->validate([
             'code' => 'required|unique:courses,code,' . $id,
             'name' => 'required',
             'credits' => 'required|numeric|min:0|max:10',
             'semester' => 'required|in:1.1,1.2,2.1,2.2,3.1,3.2,4.1,4.2',
             'hours_per_week' => 'nullable|string',
+            'topics' => 'sometimes|array',
+            'topics.*' => 'string|max:255',
             'prerequisite' => 'nullable|string',
         ]);
 
-        $course->update($request->all());
+        $course->update($data);
 
         return response()->json([
             'success' => true,

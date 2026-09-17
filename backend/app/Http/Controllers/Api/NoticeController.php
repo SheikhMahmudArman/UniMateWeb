@@ -10,7 +10,7 @@ class NoticeController extends Controller
 {
     public function index()
     {
-        $notices = Notice::where('is_published', true)
+        $notices = Notice::when(request()->user()->role !== 'admin', fn($q) => $q->where('is_published', true))
             ->orderBy('date', 'desc')
             ->get();
 
@@ -22,14 +22,15 @@ class NoticeController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
+        $data = $request->validate([
+            'is_published' => 'sometimes|boolean',
+            'title' => 'required|string|max:255',
             'content' => 'required',
             'type' => 'required|in:general,exam,event',
             'date' => 'required|date',
         ]);
 
-        $notice = Notice::create($request->all());
+        $notice = Notice::create($data);
 
         return response()->json([
             'success' => true,
@@ -41,6 +42,7 @@ class NoticeController extends Controller
     public function show($id)
     {
         $notice = Notice::findOrFail($id);
+        abort_unless(request()->user()->role === 'admin' || $notice->is_published, 404);
         return response()->json([
             'success' => true,
             'data' => $notice,
@@ -51,14 +53,15 @@ class NoticeController extends Controller
     {
         $notice = Notice::findOrFail($id);
 
-        $request->validate([
-            'title' => 'required',
+        $data = $request->validate([
+            'is_published' => 'sometimes|boolean',
+            'title' => 'required|string|max:255',
             'content' => 'required',
             'type' => 'required|in:general,exam,event',
             'date' => 'required|date',
         ]);
 
-        $notice->update($request->all());
+        $notice->update($data);
 
         return response()->json([
             'success' => true,
