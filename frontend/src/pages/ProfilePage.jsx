@@ -174,23 +174,23 @@ const ProfilePage = () => {
 
                                 <Form.Group className="mb-3">
                                     <Form.Label><FontAwesomeIcon icon={faUser} className="me-2" /> Full Name</Form.Label>
-                                    <Form.Control 
-                                        type="text" 
-                                        name="name" 
-                                        value={formData.name} 
-                                        onChange={handleChange} 
-                                        required 
+                                    <Form.Control
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
                                     />
                                 </Form.Group>
 
                                 <Form.Group className="mb-3">
                                     <Form.Label><FontAwesomeIcon icon={faEnvelope} className="me-2" /> Email Address</Form.Label>
-                                    <Form.Control 
-                                        type="email" 
-                                        name="email" 
-                                        value={formData.email} 
-                                        onChange={handleChange} 
-                                        required 
+                                    <Form.Control
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
                                     />
                                 </Form.Group>
 
