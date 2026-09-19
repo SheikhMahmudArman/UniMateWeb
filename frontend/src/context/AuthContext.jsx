@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import api from '../services/api';
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
@@ -35,10 +35,20 @@ export const AuthProvider = ({ children }) => {
             return { success: false, error: Object.values(error.response?.data?.errors || {}).flat()[0] || error.response?.data?.message || 'Cannot reach server. Please try again.' };
         }
     };
+    const authenticateWithGoogleToken = useCallback(token => {
+        localStorage.setItem('token', token);
+        return api.get('/user').then(({ data }) => {
+            updateUser(data.user);
+            return { success: true, role: data.user.role };
+        }).catch(() => {
+            localStorage.removeItem('token');
+            return { success: false, error: 'Google sign-in could not be completed.' };
+        });
+    }, []);
     const logout = async () => {
         try { await api.post('/logout'); }
         catch { /* Clear this browser even when the server cannot be reached. */ }
         finally { localStorage.removeItem('token'); updateUser(null); }
     };
-    return <AuthContext.Provider value={{ user, loading, updateUser, login: (email, password) => authenticate('/login', { email, password }), register: data => authenticate('/register', data), logout }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ user, loading, updateUser, login: (email, password) => authenticate('/login', { email, password }), loginWithGoogleToken: authenticateWithGoogleToken, register: data => authenticate('/register', data), logout }}>{children}</AuthContext.Provider>;
 };

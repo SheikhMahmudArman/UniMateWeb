@@ -8,10 +8,59 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
+    public function redirectToGoogle()
+    {
+        if (!config('services.google.client_id') || !config('services.google.client_secret')) {
+            return $this->googleError('Google sign-in is not configured yet. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to the root .env file.');
+        }
+
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+            $user = User::where('google_id', $googleUser->getId())
+                ->orWhere('email', $googleUser->getEmail())
+                ->first();
+
+            if (!$user) {
+                return $this->googleError('No UniMate account is linked to this Google email. Register with your student ID first.');
+            }
+
+            if (!$user->google_id) {
+                $user->forceFill([
+                    'google_id' => $googleUser->getId(),
+                ])->save();
+            }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return redirect($this->frontendLoginUrl() . '#google_token=' . rawurlencode($token));
+        } catch (\Throwable $exception) {
+            Log::warning('Google authentication failed.', ['message' => $exception->getMessage()]);
+
+            return $this->googleError('Google sign-in could not be completed. Please try again.');
+        }
+    }
+
+    private function frontendLoginUrl(): string
+    {
+        return rtrim((string) config('services.google.frontend_url'), '/') . '/login';
+    }
+
+    private function googleError(string $message)
+    {
+        return redirect($this->frontendLoginUrl() . '?google_error=' . rawurlencode($message));
+    }
+
     public function login(Request $request)
     {
         $request->validate([

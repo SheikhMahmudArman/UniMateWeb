@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faUser, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../context/AuthContext';
 import logo from '../assets/logo.png';
 import './LoginPage.css';
@@ -14,8 +14,35 @@ const LoginPage = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { login } = useContext(AuthContext);
+    const { login, loginWithGoogleToken } = useContext(AuthContext);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const googleError = params.get('google_error');
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+        const googleToken = hashParams.get('google_token');
+
+        if (googleError) {
+            setError(googleError);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        if (googleToken) {
+            setLoading(true);
+            loginWithGoogleToken(googleToken).then(result => {
+                if (result.success) navigate(result.role === 'admin' ? '/dashboard/admin' : '/dashboard');
+                else setError(result.error);
+                setLoading(false);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            });
+        }
+    }, [loginWithGoogleToken, navigate]);
+
+    const handleGoogleLogin = () => {
+        const apiBaseUrl = import.meta.env.VITE_API_URL || '/api';
+        window.location.href = `${apiBaseUrl.replace(/\/$/, '')}/auth/google/redirect`;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -102,6 +129,14 @@ const LoginPage = () => {
                                         {loading ? 'Logging in...' : 'Login'}
                                     </Button>
                                 </Form>
+                                <div className="d-flex align-items-center gap-2 my-3">
+                                    <hr className="flex-grow-1" />
+                                    <small className="text-muted">OR</small>
+                                    <hr className="flex-grow-1" />
+                                </div>
+                                <Button type="button" variant="outline-dark" className="w-100" onClick={handleGoogleLogin} disabled={loading}>
+                                    <strong className="me-2">G</strong> Continue with Google
+                                </Button>
                                 <div className="text-center mt-3">
                                     <small className="text-muted">
                                         Use your own account. Ask your administrator if you cannot sign in.
