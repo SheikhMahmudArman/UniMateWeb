@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Documents
     Route::apiResource('documents', DocumentController::class)->only(['index', 'show']);
+    Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('api.documents.download');
     Route::apiResource('documents', DocumentController::class)->only(['store', 'update', 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
 
     // Marks

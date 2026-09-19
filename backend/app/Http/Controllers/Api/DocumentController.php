@@ -24,7 +24,7 @@ class DocumentController extends Controller
             $query->where('course_id', $courseId);
         }
 
-        $documents = $query->get();
+        $documents = $query->get()->map(fn (Document $document) => $this->documentPayload($document));
 
         return response()->json([
             'success' => true,
@@ -54,7 +54,7 @@ class DocumentController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $document,
+            'data' => $this->documentPayload($document),
             'message' => 'Document created successfully',
         ]);
     }
@@ -64,8 +64,18 @@ class DocumentController extends Controller
         $document = Document::findOrFail($id);
         return response()->json([
             'success' => true,
-            'data' => $document,
+            'data' => $this->documentPayload($document),
         ]);
+    }
+
+    public function download(Document $document)
+    {
+        abort_unless($document->file_path, 404, 'This document has no uploaded file.');
+
+        $disk = Storage::disk('public');
+        abort_unless($disk->exists($document->file_path), 404, 'The uploaded file no longer exists.');
+
+        return $disk->download($document->file_path, $document->name);
     }
 
     public function update(Request $request, $id)
@@ -95,7 +105,7 @@ class DocumentController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $document,
+            'data' => $this->documentPayload($document),
             'message' => 'Document updated successfully',
         ]);
     }
@@ -114,5 +124,16 @@ class DocumentController extends Controller
             'success' => true,
             'message' => 'Document deleted successfully',
         ]);
+    }
+
+    private function documentPayload(Document $document): array
+    {
+        return [
+            ...$document->toArray(),
+            'has_file' => (bool) $document->file_path && Storage::disk('public')->exists($document->file_path),
+            'download_url' => $document->file_path
+                ? route('api.documents.download', $document)
+                : null,
+        ];
     }
 }
