@@ -1,0 +1,28 @@
+.admin-card-link {
+    text-decoration: none;
+}
+
+.admin-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: 0.3s ease;
+}
+
+.admin-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.admin-card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.admin-card h5 {
+    color: #1A1A2E;
+}
+
+[data-theme="dark"] .admin-card h5 {
+    color: #e0e0e0;
+}

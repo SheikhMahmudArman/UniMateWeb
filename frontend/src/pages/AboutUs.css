@@ -1,0 +1,204 @@
+/* About Us Page Styles */
+.about-page {
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.about-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.about-header .brand-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.about-header .brand-logo {
+    height: 40px;
+    width: auto;
+}
+
+.about-header .brand-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0B4F6C;
+}
+
+.about-hero {
+    padding: 60px 0;
+    background: linear-gradient(135deg, #0B4F6C, #1A759F);
+    color: white;
+}
+
+.about-hero h1 {
+    font-weight: 700;
+}
+
+.about-hero .lead {
+    font-size: 1.3rem;
+    opacity: 0.9;
+}
+
+.about-story {
+    padding: 60px 0;
+    background: white;
+}
+
+.about-story h2 {
+    color: #0B4F6C;
+    font-weight: 700;
+}
+
+.about-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #333;
+}
+
+.story-icon {
+    font-size: 8rem;
+    color: #0B4F6C;
+    opacity: 0.2;
+}
+
+.about-mission {
+    padding: 60px 0;
+    background: #f0f9ff;
+}
+
+.mission-card {
+    padding: 30px 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: 0.3s ease;
+}
+
+.mission-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.mission-icon {
+    font-size: 2.5rem;
+    color: #0B4F6C;
+    margin-bottom: 15px;
+}
+
+.mission-card h4 {
+    font-weight: 600;
+    color: #0B4F6C;
+}
+
+.mission-card p {
+    color: #555;
+}
+
+.about-team {
+    padding: 60px 0;
+    background: white;
+}
+
+.about-team h2 {
+    color: #0B4F6C;
+    font-weight: 700;
+}
+
+.team-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: 0.3s ease;
+    height: 100%;
+}
+
+.team-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.team-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0B4F6C, #1A759F);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 auto 15px;
+}
+
+.team-id {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.team-role {
+    font-weight: 500;
+    color: #0B4F6C;
+}
+
+.about-footer {
+    padding: 30px 0;
+    background: #1A1A2E;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Dark mode support */
+[data-theme="dark"] .about-page {
+    background: #121212;
+}
+
+[data-theme="dark"] .about-header {
+    background: rgba(30, 30, 30, 0.95);
+}
+
+[data-theme="dark"] .about-header .brand-text {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .about-story {
+    background: #1e1e1e;
+}
+
+[data-theme="dark"] .about-text {
+    color: #ccc;
+}
+
+[data-theme="dark"] .about-mission {
+    background: #1a1a2e;
+}
+
+[data-theme="dark"] .mission-card {
+    background: #2d2d2d;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .mission-card p {
+    color: #aaa;
+}
+
+[data-theme="dark"] .about-team {
+    background: #1e1e1e;
+}
+
+[data-theme="dark"] .team-card {
+    background: #2d2d2d;
+}
+
+[data-theme="dark"] .team-id {
+    color: #aaa;
+}
+
+[data-theme="dark"] .about-footer {
+    background: #0a0a0a;
+}

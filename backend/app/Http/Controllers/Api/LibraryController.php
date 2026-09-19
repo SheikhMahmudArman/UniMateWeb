@@ -1,0 +1,12 @@
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\AttendanceController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\AuthController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\CourseController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\DashboardController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\DocumentController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\FacultyController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\LibraryController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\MarkController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\NoticeController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\ProfileController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\RoutineController.php
+w:\SD_IV\UniMateGpt\G_1\UniMate_Repair_Pack\complete-project\UniMateWeb\backend\app\Http\Controllers\Api\StudentController.php

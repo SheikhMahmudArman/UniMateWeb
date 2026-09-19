@@ -1,0 +1,237 @@
+.dashboard-home {
+    padding: 0;
+}
+
+.page-title {
+    font-weight: 700;
+    color: #0B4F6C;
+}
+
+.stats-row .stat-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.stats-row .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: #0B4F6C;
+    margin-bottom: 10px;
+}
+
+.stat-card h2 {
+    font-weight: 700;
+    color: #0B4F6C;
+    margin-bottom: 0;
+}
+
+.routine-card,
+.progress-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.routine-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.routine-item:last-child {
+    border-bottom: none;
+}
+
+.routine-time {
+    font-weight: 600;
+    color: #0B4F6C;
+    width: 90px;
+    flex-shrink: 0;
+}
+
+.routine-details {
+    flex: 1;
+}
+
+.routine-notify {
+    margin-left: auto;
+}
+
+.course-progress {
+    border-bottom: 1px solid #f1f1f1;
+    padding-bottom: 15px;
+}
+
+.course-progress:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.topic-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+}
+
+.topic-check {
+    flex: 0 0 auto;
+}
+
+.quick-drive-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: white;
+}
+
+
+.dashboard-layout.dark .dashboard-home {
+    color: #e0e0e0;
+}
+
+/* Dashboard title */
+.dashboard-layout.dark .dashboard-home .page-title {
+    color: #ffffff !important;
+}
+
+/* Welcome text */
+.dashboard-layout.dark .dashboard-home>.row:first-child .text-muted {
+    color: #bdbdbd !important;
+}
+
+/* All dashboard headings */
+.dashboard-layout.dark .dashboard-home h1,
+.dashboard-layout.dark .dashboard-home h2,
+.dashboard-layout.dark .dashboard-home h3,
+.dashboard-layout.dark .dashboard-home h4,
+.dashboard-layout.dark .dashboard-home h5,
+.dashboard-layout.dark .dashboard-home h6 {
+    color: #eeeeee;
+}
+
+/* Stat cards */
+.dashboard-layout.dark .dashboard-home .stat-card {
+    background: #2d2d2d;
+    color: #eeeeee;
+}
+
+.dashboard-layout.dark .dashboard-home .stat-card h5 {
+    color: #eeeeee !important;
+}
+
+.dashboard-layout.dark .dashboard-home .stat-card h2 {
+    color: #0B4F6C !important;
+}
+
+/* New Notices / Attendance / Library cards */
+.dashboard-layout.dark .dashboard-home .shadow-sm {
+    background: #2d2d2d !important;
+    color: #eeeeee !important;
+}
+
+.dashboard-layout.dark .dashboard-home .shadow-sm h5,
+.dashboard-layout.dark .dashboard-home .shadow-sm h2 {
+    color: #eeeeee !important;
+}
+
+/* Routine */
+.dashboard-layout.dark .dashboard-home .routine-card,
+.dashboard-layout.dark .dashboard-home .progress-card {
+    background: #2d2d2d;
+    color: #eeeeee;
+}
+
+.dashboard-layout.dark .dashboard-home .routine-card .card-header,
+.dashboard-layout.dark .dashboard-home .progress-card .card-header {
+    background: #2d2d2d;
+    color: #eeeeee;
+    border-bottom-color: #444;
+}
+
+.dashboard-layout.dark .dashboard-home .routine-details {
+    color: #eeeeee;
+}
+
+.dashboard-layout.dark .dashboard-home .routine-details strong {
+    color: #ffffff;
+}
+
+/* Smaller secondary text */
+.dashboard-layout.dark .dashboard-home .text-muted,
+.dashboard-layout.dark .dashboard-home .small {
+    color: #bdbdbd !important;
+}
+
+/* Topic progress */
+.dashboard-layout.dark .dashboard-home .course-progress h6 {
+    color: #eeeeee;
+}
+
+.dashboard-layout.dark .dashboard-home .course-progress p {
+    color: #bdbdbd !important;
+}
+
+/* Form/check labels */
+.dashboard-layout.dark .dashboard-home .form-check-label {
+    color: #eeeeee;
+}
+
+/* Card buttons */
+.dashboard-layout.dark .dashboard-home .btn-outline-primary {
+    color: #4fc3f7;
+    border-color: #4fc3f7;
+}
+
+.dashboard-layout.dark .dashboard-home .btn-outline-primary:hover {
+    background: #4fc3f7;
+    color: #1e1e1e;
+}
+
+@media (max-width: 768px) {
+    .routine-item {
+        flex-wrap: wrap;
+    }
+
+    .routine-time {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+
+    .routine-notify {
+        margin-left: 0;
+        margin-top: 4px;
+    }
+}
+
+.empty-dashboard {
+    text-align: center;
+    padding: 25px 10px;
+    color: #9ecce0;
+}
+
+.empty-dashboard svg {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.empty-dashboard h6 {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.empty-dashboard p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.dashboard-home .progress-bar {
+    background-color: #0B4F6C !important;
+}

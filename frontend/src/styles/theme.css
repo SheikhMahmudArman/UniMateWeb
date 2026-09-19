@@ -1,0 +1,352 @@
+/* ========================================
+   GLOBAL CSS VARIABLES – Premium Theme
+   ======================================== */
+
+:root {
+    /* Primary Colors – Teal & Peach */
+    --primary: #0B4F6C;
+    --primary-light: #1A759F;
+    --primary-dark: #083A52;
+    --secondary: #F4A261;
+    --secondary-light: #F7C59F;
+    --accent: #F8F9FA;
+    --dark: #1A1A2E;
+    --dark-light: #2D2D44;
+
+    /* Text Colors */
+    --text-primary: #1A1A2E;
+    --text-secondary: #555;
+    --text-muted: #888;
+    --text-light: #f8f9fa;
+
+    /* Backgrounds */
+    --bg-body: #f8f9fa;
+    --bg-card: #ffffff;
+    --bg-sidebar: #0B4F6C;
+
+    /* Borders & Shadows */
+    --border-radius: 16px;
+    --border-radius-sm: 10px;
+    --border-radius-lg: 24px;
+    --box-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --box-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+    --box-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Typography */
+    --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-size-base: 1rem;
+    --line-height-base: 1.6;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+}
+
+/* ========================================
+   DARK THEME OVERRIDES
+   ======================================== */
+
+[data-theme="dark"] {
+    --bg-body: #121212;
+    --bg-card: #1e1e1e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-muted: #888;
+    --border-color: #333;
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --box-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4);
+    --box-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    transition: background-color var(--transition), color var(--transition);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-body);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* Links */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--primary-light);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 50px;
+    font-weight: 500;
+    padding: 10px 24px;
+    transition: all var(--transition);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: var(--primary);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+    box-shadow: 0 8px 25px rgba(11, 79, 108, 0.3);
+}
+
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    background: var(--bg-card);
+    box-shadow: var(--box-shadow);
+    transition: all var(--transition);
+}
+
+.card:hover {
+    box-shadow: var(--box-shadow-lg);
+}
+
+/* Badges */
+.badge {
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-weight: 500;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+}
+
+.bg-gradient-secondary {
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+}
+
+.shadow-hover {
+    transition: all var(--transition);
+}
+
+.shadow-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--box-shadow-lg);
+}
+
+/* Glass-morphism */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .glass {
+    background: rgba(30, 30, 30, 0.7);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* ========================================
+   GLOBAL DARK MODE FOR LOGIN & SIGNUP
+   ======================================== */
+
+[data-theme="dark"] .login-page,
+[data-theme="dark"] .signup-page {
+    background: #121212;
+}
+
+[data-theme="dark"] .login-card,
+[data-theme="dark"] .signup-card {
+    background: #1e1e1e;
+    color: #e0e0e0;
+    border: 1px solid #333;
+}
+
+[data-theme="dark"] .login-brand,
+[data-theme="dark"] .signup-brand {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .login-card .text-muted,
+[data-theme="dark"] .signup-card .text-muted {
+    color: #aaa !important;
+}
+
+[data-theme="dark"] .login-card .form-control,
+[data-theme="dark"] .signup-card .form-control {
+    background: #333;
+    color: #e0e0e0;
+    border-color: #555;
+}
+
+[data-theme="dark"] .login-card .form-control:focus,
+[data-theme="dark"] .signup-card .form-control:focus {
+    background: #333;
+    color: #e0e0e0;
+    border-color: #4fc3f7;
+    box-shadow: 0 0 0 0.2rem rgba(79, 195, 247, 0.25);
+}
+
+[data-theme="dark"] .login-card .form-label,
+[data-theme="dark"] .signup-card .form-label {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .login-card .input-icon,
+[data-theme="dark"] .signup-card .input-icon {
+    color: #aaa;
+}
+
+[data-theme="dark"] .login-card .password-toggle,
+[data-theme="dark"] .signup-card .password-toggle {
+    color: #aaa;
+}
+
+[data-theme="dark"] .login-card .password-toggle:hover,
+[data-theme="dark"] .signup-card .password-toggle:hover {
+    color: #4fc3f7;
+}
+
+[data-theme="dark"] .login-card .btn-login,
+[data-theme="dark"] .signup-card .btn-signup {
+    background: #1A759F;
+    border: none;
+}
+
+[data-theme="dark"] .login-card .btn-login:hover,
+[data-theme="dark"] .signup-card .btn-signup:hover {
+    background: #4fc3f7;
+    color: #1a1a2e;
+}
+
+[data-theme="dark"] .login-card a,
+[data-theme="dark"] .signup-card a {
+    color: #4fc3f7;
+}
+
+[data-theme="dark"] .login-card a:hover,
+[data-theme="dark"] .signup-card a:hover {
+    color: #81d4fa;
+}
+
+[data-theme="dark"] .login-card .alert-danger,
+[data-theme="dark"] .signup-card .alert-danger {
+    background: #2d1a1a;
+    border-color: #5a2a2a;
+    color: #f8d7da;
+}
+
+[data-theme="dark"] .login-card .alert-success,
+[data-theme="dark"] .signup-card .alert-success {
+    background: #1a2d1a;
+    border-color: #2a5a2a;
+    color: #d4edda;
+}
