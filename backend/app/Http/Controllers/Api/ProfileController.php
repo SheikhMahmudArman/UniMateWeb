@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -25,7 +26,58 @@ class ProfileController extends Controller
                 'student_id' => $user->student_id,
                 'semester' => $student ? $student->semester : null,
                 'cgpa' => $student ? $student->cgpa : null,
+                'has_profile_photo' => (bool) $user->profile_photo_path,
             ],
+        ]);
+    }
+
+    public function uploadPhoto(Request $request)
+    {
+        $request->validate([
+            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+        $oldPath = $user->profile_photo_path;
+        $path = $request->file('photo')->store('profile-photos', 'public');
+
+        $user->update(['profile_photo_path' => $path]);
+
+        if ($oldPath) {
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile picture updated successfully.',
+        ]);
+    }
+
+    public function photo(Request $request)
+    {
+        $path = $request->user()->profile_photo_path;
+        abort_unless($path && Storage::disk('public')->exists($path), 404, 'Profile picture not found.');
+
+        $disk = Storage::disk('public');
+
+        return response($disk->get($path), 200, [
+            'Content-Type' => $disk->mimeType($path) ?: 'application/octet-stream',
+            'Cache-Control' => 'private, max-age=300',
+        ]);
+    }
+
+    public function deletePhoto(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->profile_photo_path) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+            $user->update(['profile_photo_path' => null]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile picture removed successfully.',
         ]);
     }
 

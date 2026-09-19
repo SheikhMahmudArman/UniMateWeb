@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faEnvelope, faIdCard, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faEnvelope, faIdCard, faSave, faCamera, faTrash } from '@fortawesome/free-solid-svg-icons';
 import api from '../services/api';
 
 const ProfilePage = () => {
@@ -18,6 +18,8 @@ const ProfilePage = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(true);
+    const [photoUrl, setPhotoUrl] = useState('');
+    const [photoLoading, setPhotoLoading] = useState(false);
 
     useEffect(() => {
         fetchProfile();
@@ -36,11 +38,71 @@ const ProfilePage = () => {
                     semester: data.semester || '',
                     cgpa: data.cgpa || ''
                 });
+                if (data.has_profile_photo) await fetchPhoto();
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchPhoto = async () => {
+        try {
+            const response = await api.get('/profile/photo', { responseType: 'blob' });
+            const nextUrl = URL.createObjectURL(response.data);
+            setPhotoUrl(previousUrl => {
+                if (previousUrl) URL.revokeObjectURL(previousUrl);
+                return nextUrl;
+            });
+        } catch {
+            setPhotoUrl(previousUrl => {
+                if (previousUrl) URL.revokeObjectURL(previousUrl);
+                return '';
+            });
+        }
+    };
+
+    useEffect(() => () => {
+        if (photoUrl) URL.revokeObjectURL(photoUrl);
+    }, [photoUrl]);
+
+    const handlePhotoChange = async (e) => {
+        const photo = e.target.files?.[0];
+        if (!photo) return;
+        setError('');
+        setSuccess('');
+        setPhotoLoading(true);
+        try {
+            const data = new FormData();
+            data.append('photo', photo);
+            await api.post('/profile/photo', data);
+            await fetchPhoto();
+            window.dispatchEvent(new Event('unimate:profile-photo-updated'));
+            setSuccess('Profile picture updated successfully!');
+        } catch (error) {
+            setError(error.response?.data?.message || 'Could not upload profile picture.');
+        } finally {
+            setPhotoLoading(false);
+            e.target.value = '';
+        }
+    };
+
+    const handlePhotoDelete = async () => {
+        setPhotoLoading(true);
+        setError('');
+        try {
+            await api.delete('/profile/photo');
+            setPhotoUrl(previousUrl => {
+                if (previousUrl) URL.revokeObjectURL(previousUrl);
+                return '';
+            });
+            window.dispatchEvent(new Event('unimate:profile-photo-updated'));
+            setSuccess('Profile picture removed successfully!');
+        } catch (error) {
+            setError(error.response?.data?.message || 'Could not remove profile picture.');
+        } finally {
+            setPhotoLoading(false);
         }
     };
 
@@ -90,6 +152,19 @@ const ProfilePage = () => {
                         <Card.Body>
                             {error && <Alert variant="danger">{error}</Alert>}
                             {success && <Alert variant="success">{success}</Alert>}
+
+                            <div className="text-center mb-4">
+                                {photoUrl ? <img src={photoUrl} alt="Profile" className="rounded-circle" style={{ width: 120, height: 120, objectFit: 'cover' }} /> : <div className="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style={{ width: 120, height: 120, fontSize: 48 }}>{formData.name?.charAt(0)?.toUpperCase() || 'U'}</div>}
+                                <div className="mt-3 d-flex justify-content-center gap-2">
+                                    <Form.Label className="btn btn-outline-primary mb-0">
+                                        <FontAwesomeIcon icon={faCamera} className="me-2" />
+                                        {photoLoading ? 'Uploading...' : 'Change picture'}
+                                        <Form.Control type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} hidden disabled={photoLoading} />
+                                    </Form.Label>
+                                    {photoUrl && <Button variant="outline-danger" onClick={handlePhotoDelete} disabled={photoLoading}><FontAwesomeIcon icon={faTrash} /></Button>}
+                                </div>
+                                <small className="text-muted d-block mt-2">JPG, PNG, or WebP. Maximum 2 MB.</small>
+                            </div>
 
                             <Form onSubmit={handleSubmit}>
                                 <Form.Group className="mb-3">

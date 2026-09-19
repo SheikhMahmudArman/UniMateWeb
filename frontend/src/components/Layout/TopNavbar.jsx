@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Container, Navbar, Button, Dropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -13,13 +13,48 @@ import {
 
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 import './TopNavbar.css';
 
 const TopNavbar = ({ toggleSidebar, theme, toggleTheme }) => {
 
     const { user, logout } = useContext(AuthContext);
+    const [photoUrl, setPhotoUrl] = useState('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        let active = true;
+        const loadPhoto = async () => {
+            try {
+                const response = await api.get('/profile/photo', { responseType: 'blob' });
+                const nextUrl = URL.createObjectURL(response.data);
+                if (active) {
+                    setPhotoUrl(previousUrl => {
+                        if (previousUrl) URL.revokeObjectURL(previousUrl);
+                        return nextUrl;
+                    });
+                } else {
+                    URL.revokeObjectURL(nextUrl);
+                }
+            } catch {
+                if (active) setPhotoUrl(previousUrl => {
+                    if (previousUrl) URL.revokeObjectURL(previousUrl);
+                    return '';
+                });
+            }
+        };
+        loadPhoto();
+        window.addEventListener('unimate:profile-photo-updated', loadPhoto);
+        return () => {
+            active = false;
+            window.removeEventListener('unimate:profile-photo-updated', loadPhoto);
+            setPhotoUrl(previousUrl => {
+                if (previousUrl) URL.revokeObjectURL(previousUrl);
+                return '';
+            });
+        };
+    }, [user?.id]);
 
     const handleLogout = async () => {
         await logout();
@@ -69,9 +104,7 @@ const TopNavbar = ({ toggleSidebar, theme, toggleTheme }) => {
                             variant="link"
                             className="profile-dropdown"
                         >
-                            <div className="top-avatar">
-                                {user?.name?.charAt(0) || 'U'}
-                            </div>
+                            {photoUrl ? <img src={photoUrl} alt="Profile" className="top-avatar" /> : <div className="top-avatar">{user?.name?.charAt(0) || 'U'}</div>}
 
                             <div className="top-user-info">
                                 <span className="top-user-name">
