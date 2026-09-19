@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\RoutineController;
 use App\Http\Controllers\Api\ProfileController;
 
 // Public routes
+Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:3,1');
 
