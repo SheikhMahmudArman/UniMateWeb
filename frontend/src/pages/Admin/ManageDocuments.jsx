@@ -5,6 +5,16 @@ import { faPlus, faEdit, faTrash, faUpload } from '@fortawesome/free-solid-svg-i
 import api from '../../services/api';
 import './ManageDocuments.css';
 
+const downloadDocument = async (doc) => {
+    const response = await api.get(doc.download_url, { responseType: 'blob' });
+    const url = URL.createObjectURL(response.data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = doc.name;
+    link.click();
+    URL.revokeObjectURL(url);
+};
+
 const ManageDocuments = () => {
     const [docs, setDocs] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -128,8 +138,8 @@ const ManageDocuments = () => {
                                     <td>{doc.type}</td>
                                     <td>{doc.semester}</td>
                                     <td>
-                                        {doc.file_path ? (
-                                            <a href={`/storage/${doc.file_path}`} target="_blank" rel="noreferrer">View File</a>
+                                        {doc.download_url ? (
+                                            <Button variant="link" className="p-0" onClick={() => downloadDocument(doc)}>Download File</Button>
                                         ) : doc.url ? (
                                             <a href={doc.url} target="_blank" rel="noreferrer">Link</a>
                                         ) : 'N/A'}

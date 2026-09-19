@@ -35,8 +35,6 @@ services:
       - "127.0.0.1:${WEB_PORT:-8081}:8080"
     depends_on:
       - backend
-    volumes:
-      - uploads:/var/www/uploads:ro
   phpmyadmin:
     image: phpmyadmin:latest
     restart: unless-stopped
