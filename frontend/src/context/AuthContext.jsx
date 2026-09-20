@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     };
     useEffect(() => {
         let active = true;
-        const clear = () => { setUser(null); };
+        const clear = () => updateUser(null);
         window.addEventListener('unimate:logout', clear);
         const restore = async () => {
             try {
@@ -26,6 +26,10 @@ export const AuthProvider = ({ children }) => {
         return () => { active = false; window.removeEventListener('unimate:logout', clear); };
     }, []);
     const authenticate = async (path, payload) => {
+        // Never let a previous account remain active while a new account is
+        // being authenticated on this device.
+        localStorage.removeItem('token');
+        updateUser(null);
         try {
             const { data } = await api.post(path, payload);
             localStorage.setItem('token', data.token);
@@ -36,6 +40,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
     const authenticateWithGoogleToken = useCallback(token => {
+        localStorage.removeItem('token');
+        updateUser(null);
         localStorage.setItem('token', token);
         return api.get('/user').then(({ data }) => {
             updateUser(data.user);

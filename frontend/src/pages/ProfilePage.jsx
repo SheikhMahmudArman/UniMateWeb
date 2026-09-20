@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import { useCallback, useContext, useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,13 +19,32 @@ const ProfilePage = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(true);
     const [photoUrl, setPhotoUrl] = useState('');
+    const [photoUserId, setPhotoUserId] = useState(null);
     const [photoLoading, setPhotoLoading] = useState(false);
+    const userId = user?.id;
 
-    useEffect(() => {
-        fetchProfile();
-    }, []);
+    const fetchPhoto = useCallback(async () => {
+        try {
+            const response = await api.get('/profile/photo', {
+                params: { user: userId, v: Date.now() },
+                responseType: 'blob',
+            });
+            const nextUrl = URL.createObjectURL(response.data);
+            setPhotoUrl(previousUrl => {
+                if (previousUrl) URL.revokeObjectURL(previousUrl);
+                return nextUrl;
+            });
+            setPhotoUserId(userId);
+        } catch {
+            setPhotoUrl(previousUrl => {
+                if (previousUrl) URL.revokeObjectURL(previousUrl);
+                return '';
+            });
+            setPhotoUserId(null);
+        }
+    }, [userId]);
 
-    const fetchProfile = async () => {
+    const fetchProfile = useCallback(async () => {
         try {
             const response = await api.get('/profile');
             if (response.data.success) {
@@ -38,30 +57,22 @@ const ProfilePage = () => {
                     semester: data.semester || '',
                     cgpa: data.cgpa || ''
                 });
-                if (data.has_profile_photo) await fetchPhoto();
+                // Fetch independently of the metadata flag so this view stays
+                // consistent with the navbar if that flag is stale.
+                await fetchPhoto();
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
         } finally {
             setLoading(false);
         }
-    };
+    }, [fetchPhoto]);
 
-    const fetchPhoto = async () => {
-        try {
-            const response = await api.get('/profile/photo', { responseType: 'blob' });
-            const nextUrl = URL.createObjectURL(response.data);
-            setPhotoUrl(previousUrl => {
-                if (previousUrl) URL.revokeObjectURL(previousUrl);
-                return nextUrl;
-            });
-        } catch {
-            setPhotoUrl(previousUrl => {
-                if (previousUrl) URL.revokeObjectURL(previousUrl);
-                return '';
-            });
-        }
-    };
+    useEffect(() => {
+        // Profile loading is an external request triggered by the active account.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchProfile();
+    }, [fetchProfile]);
 
     useEffect(() => () => {
         if (photoUrl) URL.revokeObjectURL(photoUrl);
@@ -97,6 +108,7 @@ const ProfilePage = () => {
                 if (previousUrl) URL.revokeObjectURL(previousUrl);
                 return '';
             });
+            setPhotoUserId(null);
             window.dispatchEvent(new Event('unimate:profile-photo-updated'));
             setSuccess('Profile picture removed successfully!');
         } catch (error) {
@@ -154,14 +166,14 @@ const ProfilePage = () => {
                             {success && <Alert variant="success">{success}</Alert>}
 
                             <div className="text-center mb-4">
-                                {photoUrl ? <img src={photoUrl} alt="Profile" className="rounded-circle" style={{ width: 120, height: 120, objectFit: 'cover' }} /> : <div className="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style={{ width: 120, height: 120, fontSize: 48 }}>{formData.name?.charAt(0)?.toUpperCase() || 'U'}</div>}
+                                {photoUrl && photoUserId === user?.id ? <img src={photoUrl} alt="Profile" className="rounded-circle" style={{ width: 120, height: 120, objectFit: 'cover' }} /> : <div className="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style={{ width: 120, height: 120, fontSize: 48 }}>{formData.name?.charAt(0)?.toUpperCase() || 'U'}</div>}
                                 <div className="mt-3 d-flex justify-content-center gap-2">
                                     <Form.Label className="btn btn-outline-primary mb-0">
                                         <FontAwesomeIcon icon={faCamera} className="me-2" />
                                         {photoLoading ? 'Uploading...' : 'Change picture'}
                                         <Form.Control type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} hidden disabled={photoLoading} />
                                     </Form.Label>
-                                    {photoUrl && <Button variant="outline-danger" onClick={handlePhotoDelete} disabled={photoLoading}><FontAwesomeIcon icon={faTrash} /></Button>}
+                                    {photoUrl && photoUserId === user?.id && <Button variant="outline-danger" onClick={handlePhotoDelete} disabled={photoLoading}><FontAwesomeIcon icon={faTrash} /></Button>}
                                 </div>
                                 <small className="text-muted d-block mt-2">JPG, PNG, or WebP. Maximum 2 MB.</small>
                             </div>
