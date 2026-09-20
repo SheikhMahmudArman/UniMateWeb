@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Container, Navbar, Button, Dropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -21,19 +21,26 @@ const TopNavbar = ({ toggleSidebar, theme, toggleTheme }) => {
 
     const { user, logout } = useContext(AuthContext);
     const [photoUrl, setPhotoUrl] = useState('');
+    const [photoUserId, setPhotoUserId] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         let active = true;
         const loadPhoto = async () => {
+            if (!user?.id) return;
+
             try {
-                const response = await api.get('/profile/photo', { responseType: 'blob' });
+                const response = await api.get('/profile/photo', {
+                    params: { user: user.id, v: Date.now() },
+                    responseType: 'blob',
+                });
                 const nextUrl = URL.createObjectURL(response.data);
                 if (active) {
                     setPhotoUrl(previousUrl => {
                         if (previousUrl) URL.revokeObjectURL(previousUrl);
                         return nextUrl;
                     });
+                    setPhotoUserId(user.id);
                 } else {
                     URL.revokeObjectURL(nextUrl);
                 }
@@ -42,6 +49,7 @@ const TopNavbar = ({ toggleSidebar, theme, toggleTheme }) => {
                     if (previousUrl) URL.revokeObjectURL(previousUrl);
                     return '';
                 });
+                setPhotoUserId(null);
             }
         };
         loadPhoto();
@@ -53,6 +61,7 @@ const TopNavbar = ({ toggleSidebar, theme, toggleTheme }) => {
                 if (previousUrl) URL.revokeObjectURL(previousUrl);
                 return '';
             });
+            setPhotoUserId(null);
         };
     }, [user?.id]);
 
@@ -104,7 +113,7 @@ const TopNavbar = ({ toggleSidebar, theme, toggleTheme }) => {
                             variant="link"
                             className="profile-dropdown"
                         >
-                            {photoUrl ? <img src={photoUrl} alt="Profile" className="top-avatar" /> : <div className="top-avatar">{user?.name?.charAt(0) || 'U'}</div>}
+                            {photoUrl && photoUserId === user?.id ? <img src={photoUrl} alt="Profile" className="top-avatar" /> : <div className="top-avatar">{user?.name?.charAt(0) || 'U'}</div>}
 
                             <div className="top-user-info">
                                 <span className="top-user-name">

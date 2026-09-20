@@ -39,11 +39,15 @@ class ProfileController extends Controller
 
         $user = $request->user();
         $oldPath = $user->profile_photo_path;
-        $path = $request->file('photo')->store('profile-photos', 'public');
+        // Keep each account's files in its own directory. The authenticated
+        // user remains the only source of ownership for this upload.
+        $path = $request->file('photo')->store("profile-photos/{$user->id}", 'public');
 
         $user->update(['profile_photo_path' => $path]);
 
-        if ($oldPath) {
+        if ($oldPath && ! User::where('profile_photo_path', $oldPath)
+            ->where('id', '!=', $user->id)
+            ->exists()) {
             Storage::disk('public')->delete($oldPath);
         }
 
@@ -62,7 +66,11 @@ class ProfileController extends Controller
 
         return response($disk->get($path), 200, [
             'Content-Type' => $disk->mimeType($path) ?: 'application/octet-stream',
-            'Cache-Control' => 'private, max-age=300',
+            // This URL is shared by all accounts, so never let a browser or
+            // intermediary reuse one user's private image for another user.
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+            'Vary' => 'Authorization',
         ]);
     }
 
