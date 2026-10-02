@@ -1,0 +1,155 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: austmate-production
+  cancel-in-progress: false
+
+env:
+  DEPLOY_USER: s20230204011
+  DEPLOY_HOST: 187.52.122.100
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, pdo_mysql, dom, curl, xml, fileinfo
+          tools: composer:v2
+          coverage: none
+
+      - name: Install production PHP packages
+        working-directory: backend
+        run: |
+          composer install \
+            --no-dev \
+            --prefer-dist \
+            --no-interaction \
+            --optimize-autoloader
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build React
+        working-directory: frontend
+        env:
+          VITE_API_URL: /api
+        run: |
+          npm ci
+          npm run build
+          test -f ../backend/public/app/index.html
+
+      - name: Pack the Laravel release
+        run: |
+          tar -czf release.tar.gz \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.env' \
+            --exclude='.env.*' \
+            --exclude='./storage' \
+            --exclude='./bootstrap/cache/*.php' \
+            --exclude='./public/hot' \
+            --exclude='./public/storage' \
+            -C backend .
+
+          tar -tzf release.tar.gz > release-files.txt
+
+          if grep -Eq '(^|/)\.env([^/]*)(/|$)' release-files.txt; then
+            echo "ERROR: Release contains an environment file."
+            exit 1
+          fi
+
+          grep -Fx './vendor/autoload.php' release-files.txt
+          grep -Fx './public/app/index.html' release-files.txt
+
+      - name: Prepare SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          test -n "$SSH_PRIVATE_KEY"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" > ~/.ssh/known_hosts
+          test -s ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Copy release to VPS
+        run: |
+          scp \
+            -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            release.tar.gz \
+            "$DEPLOY_USER@$DEPLOY_HOST:release.tar.gz"
+
+      - name: Deploy Laravel on VPS
+        run: |
+          ssh \
+            -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" 'bash -se' <<'REMOTE'
+          set -euo pipefail
+
+          cd "$HOME/laravel"
+          test -f .env
+
+          tar -tzf "$HOME/release.tar.gz" > "$HOME/release-files.txt"
+
+          if grep -Eq '(^|/)\.env([^/]*)(/|$)' "$HOME/release-files.txt"; then
+            echo "ERROR: Release would overwrite an environment file."
+            exit 1
+          fi
+
+          tar --no-same-owner --no-same-permissions \
+            -xzf "$HOME/release.tar.gz" -C "$HOME/laravel"
+
+          mkdir -p \
+            storage/app/public \
+            storage/framework/cache/data \
+            storage/framework/sessions \
+            storage/framework/views \
+            storage/logs \
+            bootstrap/cache
+
+          chmod -R u+rwX storage bootstrap/cache
+
+          setfacl -m u:www-data:x "$HOME" "$HOME/laravel"
+          setfacl -R -m u:www-data:rX -m d:u:www-data:rX public
+          setfacl -m u:www-data:x storage storage/app
+          setfacl -R -m u:www-data:rX -m d:u:www-data:rX storage/app/public
+
+          php artisan optimize:clear
+          php artisan migrate --force
+
+          if [ ! -L public/storage ]; then
+            php artisan storage:link
+          fi
+
+          php artisan optimize
+
+          rm "$HOME/release.tar.gz" "$HOME/release-files.txt"
+          REMOTE

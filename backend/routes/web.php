@@ -1,2 +1,7 @@
 <?php
-// UniMate's UI is served from frontend/dist. The Laravel app provides /api routes.
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/{any?}', function () {
+    return response()->file(public_path('app/index.html'));
+})->where('any', '(?!api(?:/|$)|up$).*');
