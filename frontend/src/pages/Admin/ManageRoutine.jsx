@@ -10,14 +10,71 @@ const empty = {
     day: 'Sunday'
 };
 
-const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
+const days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday'
+];
+
+const timeOptions = [
+    '8:00 AM',
+    '8:50 AM',
+    '9:40 AM',
+    '10:30 AM',
+    '11:20 AM',
+    '12:10 PM',
+    '1:00 PM',
+    '1:50 PM',
+    '2:40 PM',
+    '3:30 PM',
+    '4:20 PM',
+    '5:10 PM',
+    '6:00 PM'
+];
+
+// Convert time such as "11:20 AM" to minutes
+const timeToMinutes = time => {
+    if (!time) return null;
+
+    const [timePart, period] = time.split(' ');
+    let [hours, minutes] = timePart.split(':').map(Number);
+
+    if (period === 'AM' && hours === 12) {
+        hours = 0;
+    }
+
+    if (period === 'PM' && hours !== 12) {
+        hours += 12;
+    }
+
+    return hours * 60 + minutes;
+};
+
+// Extract start/end from stored "start - end" value
+const getStoredTimes = time => {
+    if (!time) {
+        return {
+            start: '',
+            end: ''
+        };
+    }
+
+    const parts = time.split(' - ');
+
+    return {
+        start: parts[0] || '',
+        end: parts[1] || ''
+    };
+};
 
 export default function ManageRoutine() {
-    const [rows, setRows] = useState([]),
-        [form, setForm] = useState(empty),
-        [editing, setEditing] = useState(null),
-        [error, setError] = useState(''),
-        [busy, setBusy] = useState(false);
+    const [rows, setRows] = useState([]);
+    const [form, setForm] = useState(empty);
+    const [editing, setEditing] = useState(null);
+    const [error, setError] = useState('');
+    const [busy, setBusy] = useState(false);
 
     const load = async () => {
         try {
@@ -30,6 +87,38 @@ export default function ManageRoutine() {
     useEffect(() => {
         load();
     }, []);
+
+    const { start: startTime, end: endTime } =
+        getStoredTimes(form.time);
+
+    // End time must be at least 50 minutes after start time
+    const availableEndTimes = startTime
+        ? timeOptions.filter(
+              time =>
+                  timeToMinutes(time) >=
+                  timeToMinutes(startTime) + 50
+          )
+        : [];
+
+    const handleStartTimeChange = e => {
+        const newStart = e.target.value;
+
+        setForm({
+            ...form,
+            time: newStart ? `${newStart} - ` : ''
+        });
+    };
+
+    const handleEndTimeChange = e => {
+        const newEnd = e.target.value;
+
+        setForm({
+            ...form,
+            time: startTime
+                ? `${startTime} - ${newEnd}`
+                : ''
+        });
+    };
 
     const save = async e => {
         e.preventDefault();
@@ -48,7 +137,8 @@ export default function ManageRoutine() {
             await load();
         } catch (e) {
             setError(
-                e.response?.data?.message || 'Cannot save routine.'
+                e.response?.data?.message ||
+                    'Cannot save routine.'
             );
         } finally {
             setBusy(false);
@@ -66,56 +156,151 @@ export default function ManageRoutine() {
         }
     };
 
+    const editRow = row => {
+        setEditing(row.id);
+
+        setForm({
+            time: row.time || '',
+            course_code: row.course_code || '',
+            course_name: row.course_name || '',
+            room: row.room || '',
+            day: row.day || 'Sunday'
+        });
+    };
+
     return (
         <Container>
             <h2>Manage routine</h2>
 
             <p>
-                The current routine is shared by all students. Use the course
-                code to identify each class.
+                The current routine is shared by all students.
+                Use the course code to identify each class.
             </p>
 
-            {error && <Alert variant="danger">{error}</Alert>}
+            {error && (
+                <Alert variant="danger">
+                    {error}
+                </Alert>
+            )}
 
             <Form onSubmit={save}>
-                {Object.keys(empty).map(key => (
-                    <Form.Group className="mb-2" key={key}>
-                        <Form.Label>
-                            {key.replaceAll('_', ' ')}
-                        </Form.Label>
+                {/* Day */}
+                <Form.Group className="mb-2">
+                    <Form.Label>Day</Form.Label>
 
-                        {key === 'day' ? (
-                            <Form.Select
-                                required
-                                value={form[key]}
-                                onChange={e =>
-                                    setForm({
-                                        ...form,
-                                        [key]: e.target.value
-                                    })
-                                }
-                            >
-                                {days.map(day => (
-                                    <option key={day} value={day}>
-                                        {day}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        ) : (
-                            <Form.Control
-                                required
-                                maxLength={255}
-                                value={form[key]}
-                                onChange={e =>
-                                    setForm({
-                                        ...form,
-                                        [key]: e.target.value
-                                    })
-                                }
-                            />
-                        )}
-                    </Form.Group>
-                ))}
+                    <Form.Select
+                        required
+                        value={form.day}
+                        onChange={e =>
+                            setForm({
+                                ...form,
+                                day: e.target.value
+                            })
+                        }
+                    >
+                        {days.map(day => (
+                            <option key={day} value={day}>
+                                {day}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </Form.Group>
+
+                {/* Start Time */}
+                <Form.Group className="mb-2">
+                    <Form.Label>Start Time</Form.Label>
+
+                    <Form.Select
+                        required
+                        value={startTime}
+                        onChange={handleStartTimeChange}
+                    >
+                        <option value="">
+                            Select start time
+                        </option>
+
+                        {timeOptions.map(time => (
+                            <option key={time} value={time}>
+                                {time}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </Form.Group>
+
+                {/* End Time */}
+                <Form.Group className="mb-2">
+                    <Form.Label>End Time</Form.Label>
+
+                    <Form.Select
+                        required
+                        value={endTime}
+                        onChange={handleEndTimeChange}
+                        disabled={!startTime}
+                    >
+                        <option value="">
+                            {startTime
+                                ? 'Select end time'
+                                : 'Select start time first'}
+                        </option>
+
+                        {availableEndTimes.map(time => (
+                            <option key={time} value={time}>
+                                {time}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </Form.Group>
+
+                {/* Course Code */}
+                <Form.Group className="mb-2">
+                    <Form.Label>Course Code</Form.Label>
+
+                    <Form.Control
+                        required
+                        maxLength={255}
+                        value={form.course_code}
+                        onChange={e =>
+                            setForm({
+                                ...form,
+                                course_code: e.target.value
+                            })
+                        }
+                    />
+                </Form.Group>
+
+                {/* Course Name */}
+                <Form.Group className="mb-2">
+                    <Form.Label>Course Name</Form.Label>
+
+                    <Form.Control
+                        required
+                        maxLength={255}
+                        value={form.course_name}
+                        onChange={e =>
+                            setForm({
+                                ...form,
+                                course_name: e.target.value
+                            })
+                        }
+                    />
+                </Form.Group>
+
+                {/* Room */}
+                <Form.Group className="mb-2">
+                    <Form.Label>Room</Form.Label>
+
+                    <Form.Control
+                        required
+                        maxLength={255}
+                        value={form.room}
+                        onChange={e =>
+                            setForm({
+                                ...form,
+                                room: e.target.value
+                            })
+                        }
+                    />
+                </Form.Group>
 
                 <Button type="submit" disabled={busy}>
                     {editing ? 'Update' : 'Add'} class
@@ -123,6 +308,7 @@ export default function ManageRoutine() {
 
                 <Button
                     variant="secondary"
+                    type="button"
                     onClick={() => {
                         setEditing(null);
                         setForm(empty);
@@ -147,26 +333,21 @@ export default function ManageRoutine() {
                     {rows.map(row => (
                         <tr key={row.id}>
                             <td>{row.day}</td>
+
+                            {/* Combined Start Time - End Time */}
                             <td>{row.time}</td>
+
                             <td>
-                                {row.course_code} — {row.course_name}
+                                {row.course_code} —{' '}
+                                {row.course_name}
                             </td>
+
                             <td>{row.room}</td>
 
                             <td>
                                 <Button
                                     size="sm"
-                                    onClick={() => {
-                                        setEditing(row.id);
-                                        setForm(
-                                            Object.fromEntries(
-                                                Object.keys(empty).map(k => [
-                                                    k,
-                                                    row[k]
-                                                ])
-                                            )
-                                        );
-                                    }}
+                                    onClick={() => editRow(row)}
                                 >
                                     Edit
                                 </Button>{' '}
@@ -174,7 +355,9 @@ export default function ManageRoutine() {
                                 <Button
                                     variant="danger"
                                     size="sm"
-                                    onClick={() => remove(row.id)}
+                                    onClick={() =>
+                                        remove(row.id)
+                                    }
                                 >
                                     Delete
                                 </Button>

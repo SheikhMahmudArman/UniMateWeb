@@ -26,3 +26,87 @@
 [data-theme="dark"] .admin-card h5 {
     color: #e0e0e0;
 }
+
+
+/* ============================= */
+/* Admin Management Dropdown */
+/* ============================= */
+
+.admin-management {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+/* Keep the heading at h5 size */
+.admin-management h5 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #1A1A2E;
+}
+
+[data-theme="dark"] .admin-management h5 {
+    color: #e0e0e0;
+}
+
+
+/* Dropdown button */
+.admin-management-toggle {
+    min-width: 220px;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 1rem;
+}
+
+
+/* Dropdown menu */
+.admin-management-menu {
+    min-width: 300px;
+    padding: 8px;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+
+/* Individual dropdown item */
+.admin-management-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+
+/* Hover effect */
+.admin-management-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+
+/* Management icons */
+.admin-management-icon {
+    width: 20px;
+    font-size: 1.1rem;
+}
+
+
+/* Management title */
+.admin-management-title {
+    flex: 1;
+}
+
+
+/* Dark mode */
+[data-theme="dark"] .admin-management-menu {
+    background-color: #1f1f1f;
+}
+
+[data-theme="dark"] .admin-management-item {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .admin-management-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
