@@ -29,7 +29,6 @@ export default function MarksPage() {
     if (loading) return <p>Loading marks...</p>;
     return <Container fluid><h2>Marks and CGPA</h2>
         {error && <Alert variant="danger">{error}</Alert>}
-        <p>These results use the project's current 30 + 30 + 10 + 30 mark scheme. Confirm the scheme with your teacher.</p>
         <Form.Select aria-label="Semester" value={semester} onChange={e => setSemester(e.target.value)}>
             {semesters.map(s => <option key={s.id} value={s.code}>{s.name}</option>)}
         </Form.Select>
