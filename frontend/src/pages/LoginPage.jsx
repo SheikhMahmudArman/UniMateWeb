@@ -67,7 +67,10 @@ const LoginPage = () => {
 
         const result = await login(gmail, password);
         if (result.success) {
-            navigate(result.role === 'admin' ? '/dashboard/admin' : '/dashboard');
+            navigate(
+                result.role === 'admin' ? '/dashboard/admin' : '/dashboard',
+                { replace: true }
+            );
         } else {
             setError(result.error || 'Invalid credentials.');
             setLoading(false);
