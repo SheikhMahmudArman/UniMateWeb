@@ -3,6 +3,7 @@ import { Alert, Button, Container, Form, Table } from 'react-bootstrap';
 import api from '../../services/api';
 
 const empty = {
+    semester: '',
     time: '',
     course_code: '',
     course_name: '',
@@ -15,7 +16,7 @@ const days = [
     'Monday',
     'Tuesday',
     'Wednesday',
-    'Thursday'
+    'Thursday', 'Friday', 'Saturday'
 ];
 
 const timeOptions = [
@@ -70,19 +71,17 @@ const getStoredTimes = time => {
 };
 
 export default function ManageRoutine() {
+    const [semesters, setSemesters] = useState([]);
+    const [filter, setFilter] = useState('');
     const [rows, setRows] = useState([]);
     const [form, setForm] = useState(empty);
     const [editing, setEditing] = useState(null);
     const [error, setError] = useState('');
     const [busy, setBusy] = useState(false);
 
-    const load = async () => {
-        try {
-            setRows((await api.get('/routine')).data.data);
-        } catch {
-            setError('Cannot load routine.');
-        }
-    };
+    const load = () => Promise.all([api.get('/routine'), api.get('/semesters')])
+        .then(([r, s]) => { setRows(r.data.data); setSemesters(s.data.data); })
+        .catch(() => setError('Cannot load routine.'));
 
     useEffect(() => {
         load();
@@ -160,6 +159,7 @@ export default function ManageRoutine() {
         setEditing(row.id);
 
         setForm({
+            semester: row.semester || '',
             time: row.time || '',
             course_code: row.course_code || '',
             course_name: row.course_name || '',
@@ -173,7 +173,7 @@ export default function ManageRoutine() {
             <h2>Manage routine</h2>
 
             <p>
-                The current routine is shared by all students.
+                Create classes for each semester. Unassigned legacy classes need a semester before students can see them.
                 Use the course code to identify each class.
             </p>
 
@@ -183,7 +183,9 @@ export default function ManageRoutine() {
                 </Alert>
             )}
 
+            <Form.Label>Filter semester</Form.Label><Form.Select value={filter} onChange={e => setFilter(e.target.value)}><option value="">All semesters</option>{semesters.map(s => <option key={s.id} value={s.code}>{s.code}</option>)}</Form.Select>
             <Form onSubmit={save}>
+                <Form.Label>Semester</Form.Label><Form.Select required value={form.semester} onChange={e => setForm({...form, semester:e.target.value})}><option value="">Select semester</option>{semesters.map(s => <option key={s.id} value={s.code}>{s.code}</option>)}</Form.Select>
                 {/* Day */}
                 <Form.Group className="mb-2">
                     <Form.Label>Day</Form.Label>
@@ -321,7 +323,7 @@ export default function ManageRoutine() {
             <Table responsive className="mt-3">
                 <thead>
                     <tr>
-                        <th>Day</th>
+                        <th>Semester</th><th>Day</th>
                         <th>Time</th>
                         <th>Course</th>
                         <th>Room</th>
@@ -330,9 +332,9 @@ export default function ManageRoutine() {
                 </thead>
 
                 <tbody>
-                    {rows.map(row => (
+                    {rows.filter(row => !filter || row.semester === filter).map(row => (
                         <tr key={row.id}>
-                            <td>{row.day}</td>
+                            <td>{row.semester || 'Unassigned — edit to assign'}</td><td>{row.day}</td>
 
                             {/* Combined Start Time - End Time */}
                             <td>{row.time}</td>

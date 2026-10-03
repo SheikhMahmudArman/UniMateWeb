@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faUser, faEnvelope, faLock, faIdCard } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/auth';
 import logo from '../assets/logo.png';
 import './SignupPage.css';
 const SignupPage = () => {

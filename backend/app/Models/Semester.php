@@ -13,5 +13,6 @@ class Semester extends Model
         'code',
         'name',
         'is_active',
+        'drive_url',
     ];
 }

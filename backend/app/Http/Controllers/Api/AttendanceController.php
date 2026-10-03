@@ -25,6 +25,9 @@ class AttendanceController extends Controller
         if ($courseId) {
             $query->where('course_id', $courseId);
         }
+        if ($request->filled('semester')) {
+            $query->whereHas('course', fn ($q) => $q->where('semester', $request->query('semester')));
+        }
 
         $attendances = $query->orderBy('date', 'desc')->get();
 
@@ -39,10 +42,13 @@ class AttendanceController extends Controller
         $data = $request->validate([
             'student_id' => 'required|exists:students,id',
             'course_id' => 'required|exists:courses,id',
-            'date' => 'required|date',
+            'date' => 'required|date_format:Y-m-d',
             'status' => 'required|in:present,absent',
         ]);
 
+        if (Student::findOrFail($data['student_id'])->semester !== \App\Models\Course::findOrFail($data['course_id'])->semester) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['course_id' => 'Select a course in the student\'s semester.']);
+        }
         $attendance = \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
             Student::whereKey($data['student_id'])->lockForUpdate()->firstOrFail();
             return Attendance::updateOrCreate(collect($data)->only(['student_id', 'course_id', 'date'])->all(), ['status' => $data['status']]);

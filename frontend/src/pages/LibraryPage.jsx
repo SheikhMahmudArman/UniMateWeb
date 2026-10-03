@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Table, Badge, Form, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faSearch } from '@fortawesome/free-solid-svg-icons';
 import api from '../services/api';
+import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../context/auth';
 
 const LibraryPage = () => {
+    const { user } = useContext(AuthContext);
     const [books, setBooks] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchBooks();
-    }, []);
-
-    const fetchBooks = async () => {
+        async function fetchBooks() {
         try {
             const response = await api.get('/library');
             if (response.data.success) {
@@ -24,7 +25,9 @@ const LibraryPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+        }
+        fetchBooks();
+    }, []);
 
     const filteredBooks = books.filter(book => 
         book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -38,6 +41,7 @@ const LibraryPage = () => {
 
     return (
         <Container fluid className="library-page" style={{ padding: '20px' }}>
+            {user?.role === 'admin' && <Link className="btn btn-primary mb-3" to="/dashboard/admin/library">Add / edit library books</Link>}
             <h2 className="page-title"><FontAwesomeIcon icon={faBook} className="me-2" /> Library</h2>
             <p className="text-muted">Browse the library catalog and check book availability.</p>
 

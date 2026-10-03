@@ -1,85 +1,19 @@
 <?php
-
 use App\Models\User;
+use App\Models\Student;
+use Laravel\Sanctum\Sanctum;
 
-test('profile page is displayed', function () {
-    $user = User::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->get('/settings/profile');
-
-    $response->assertOk();
+test('profile updates stay synchronized and cannot change role or semester', function () {
+    $user = User::factory()->create(['role' => 'student']);
+    Student::create(['user_id' => $user->id, 'student_id' => 'S1', 'name' => $user->name, 'email' => $user->email, 'semester' => '1.1']);
+    Sanctum::actingAs($user);
+    $this->getJson('/api/profile')->assertOk();
+    $this->putJson('/api/profile', ['name' => 'New name', 'email' => 'new@example.com', 'role' => 'admin', 'semester' => '4.2'])->assertOk();
+    expect($user->fresh()->role)->toBe('student');
+    $this->assertDatabaseHas('students', ['user_id' => $user->id, 'name' => 'New name', 'email' => 'new@example.com', 'semester' => '1.1']);
 });
-
-test('profile information can be updated', function () {
-    $user = User::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->patch('/settings/profile', [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect('/settings/profile');
-
-    $user->refresh();
-
-    expect($user->name)->toBe('Test User');
-    expect($user->email)->toBe('test@example.com');
-    expect($user->email_verified_at)->toBeNull();
-});
-
-test('email verification status is unchanged when the email address is unchanged', function () {
-    $user = User::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->patch('/settings/profile', [
-            'name' => 'Test User',
-            'email' => $user->email,
-        ]);
-
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect('/settings/profile');
-
-    expect($user->refresh()->email_verified_at)->not->toBeNull();
-});
-
-test('user can delete their account', function () {
-    $user = User::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->delete('/settings/profile', [
-            'password' => 'password',
-        ]);
-
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect('/');
-
-    $this->assertGuest();
-    expect($user->fresh())->toBeNull();
-});
-
-test('correct password must be provided to delete account', function () {
-    $user = User::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->from('/settings/profile')
-        ->delete('/settings/profile', [
-            'password' => 'wrong-password',
-        ]);
-
-    $response
-        ->assertSessionHasErrors('password')
-        ->assertRedirect('/settings/profile');
-
-    expect($user->fresh())->not->toBeNull();
+test('profile email must be unique', function () {
+    $other = User::factory()->create();
+    Sanctum::actingAs(User::factory()->create());
+    $this->putJson('/api/profile', ['name' => 'New name', 'email' => $other->email])->assertUnprocessable();
 });

@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useContext, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
@@ -22,7 +22,7 @@ import {
     faRightFromBracket
 } from '@fortawesome/free-solid-svg-icons';
 
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/auth';
 import { menuItems } from '../../data/mockData';
 import logo from '../../assets/logo.png';
 
@@ -30,7 +30,7 @@ import './Sidebar.css';
 
 const Sidebar = () => {
     const { user, logout } = useContext(AuthContext);
-    const navigate = useNavigate();
+
 
     // Dropdown states
     const [openGroups, setOpenGroups] = useState({
@@ -179,7 +179,7 @@ const Sidebar = () => {
                     faChartSimple,
                     'academic',
                     [
-                        'quiz',
+                        'quiz', 'assignments', 'topics',
                         'mid',
                         'final',
                         'marks',
@@ -221,7 +221,7 @@ const Sidebar = () => {
                         'manage-faculty',
                         'manage-documents',
                         'manage-marks',
-                        'manage-notices'
+                        'manage-notices', 'manage-routine', 'manage-attendance', 'manage-quizzes', 'manage-assignments', 'manage-topics', 'manage-library', 'manage-semesters'
                     ]
                 )}
 

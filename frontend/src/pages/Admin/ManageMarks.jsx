@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -19,26 +19,15 @@ const ManageMarks = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(true);
 
+    function fetchData() {
+        return Promise.all([api.get('/marks'),api.get('/students'),api.get('/courses')]).then(([marks, students, courses]) => { setMarks(marks.data.data); setStudents(students.data.data); setCourses(courses.data.data); })
+            .catch(() => setError('Cannot load records. Please reload.'))
+            .finally(() => setLoading(false));
+    }
+
     useEffect(() => {
         fetchData();
     }, []);
-
-    const fetchData = async () => {
-        try {
-            const [marksRes, studentsRes, coursesRes] = await Promise.all([
-                api.get('/marks'),
-                api.get('/students'),
-                api.get('/courses'),
-            ]);
-            if (marksRes.data.success) setMarks(marksRes.data.data);
-            if (studentsRes.data.success) setStudents(studentsRes.data.data);
-            if (coursesRes.data.success) setCourses(coursesRes.data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleAdd = () => {
         setEditingMark(null);
@@ -61,7 +50,7 @@ const ManageMarks = () => {
                 setSuccess('Marks deleted.');
                 fetchData();
                 setTimeout(() => setSuccess(''), 3000);
-            } catch (error) {
+            } catch {
                 setError('Failed to delete marks.');
             }
         }

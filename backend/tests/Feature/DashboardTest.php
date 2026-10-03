@@ -1,13 +1,11 @@
 <?php
-
 use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 
-test('guests are redirected to the login page', function () {
-    $this->get('/dashboard')->assertRedirect('/login');
+test('dashboard API requires authentication', function () {
+    $this->getJson('/api/dashboard')->assertUnauthorized();
 });
-
-test('authenticated users can visit the dashboard', function () {
-    $this->actingAs($user = User::factory()->create());
-
-    $this->get('/dashboard')->assertOk();
+test('dashboard handles an account without a student profile', function () {
+    Sanctum::actingAs(User::factory()->create(['role' => 'student']));
+    $this->getJson('/api/dashboard')->assertOk()->assertJsonCount(0, 'data.courses')->assertJsonPath('data.stats.upcoming_quizzes', 0);
 });

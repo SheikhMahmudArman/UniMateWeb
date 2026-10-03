@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../context/theme';
 import Sidebar from '../components/Layout/Sidebar';
 import TopNavbar from '../components/Layout/TopNavbar';
 import './DashboardLayout.css';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -16,22 +16,15 @@ const ManageFaculty = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(true);
 
+    function fetchFaculty() {
+        return api.get('/faculty').then((response) => { setFaculty(response.data.data); })
+            .catch(() => setError('Cannot load records. Please reload.'))
+            .finally(() => setLoading(false));
+    }
+
     useEffect(() => {
         fetchFaculty();
     }, []);
-
-    const fetchFaculty = async () => {
-        try {
-            const response = await api.get('/faculty');
-            if (response.data.success) {
-                setFaculty(response.data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching faculty:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleAdd = () => {
         setEditingFaculty(null);
@@ -54,7 +47,7 @@ const ManageFaculty = () => {
                 setSuccess('Faculty deleted.');
                 fetchFaculty();
                 setTimeout(() => setSuccess(''), 3000);
-            } catch (error) {
+            } catch {
                 setError('Failed to delete faculty.');
             }
         }

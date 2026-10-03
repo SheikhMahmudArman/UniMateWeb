@@ -30,15 +30,15 @@ class LibraryController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'author' => 'required',
-            'isbn' => 'required|unique:libraries',
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'isbn' => 'required|string|max:255|unique:libraries',
             'status' => 'required|in:available,issued',
-            'quantity' => 'required|integer|min:1',
+            'quantity' => 'required|integer|min:1|max:100000',
         ]);
 
-        $book = Library::create($request->all());
+        $book = Library::create($data);
 
         return response()->json([
             'success' => true,
@@ -60,15 +60,15 @@ class LibraryController extends Controller
     {
         $book = Library::findOrFail($id);
 
-        $request->validate([
-            'title' => 'required',
-            'author' => 'required',
-            'isbn' => 'required|unique:libraries,isbn,' . $id,
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'isbn' => 'required|string|max:255|unique:libraries,isbn,' . $id,
             'status' => 'required|in:available,issued',
-            'quantity' => 'required|integer|min:1',
+            'quantity' => 'required|integer|min:1|max:100000',
         ]);
 
-        $book->update($request->all());
+        $book->update($data);
 
         return response()->json([
             'success' => true,

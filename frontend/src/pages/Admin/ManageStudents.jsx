@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -6,6 +6,7 @@ import api from '../../services/api';
 import './ManageStudents.css';
 
 const ManageStudents = () => {
+    const [semesters, setSemesters] = useState([]);
     const [students, setStudents] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editingStudent, setEditingStudent] = useState(null);
@@ -14,22 +15,15 @@ const ManageStudents = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(true);
 
+    function fetchStudents() {
+        return Promise.all([api.get('/students'),api.get('/semesters')]).then(([response, terms]) => { setStudents(response.data.data); setSemesters(terms.data.data); })
+            .catch(() => setError('Cannot load records. Please reload.'))
+            .finally(() => setLoading(false));
+    }
+
     useEffect(() => {
         fetchStudents();
     }, []);
-
-    const fetchStudents = async () => {
-        try {
-            const response = await api.get('/students');
-            if (response.data.success) {
-                setStudents(response.data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching students:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleAdd = () => {
         setEditingStudent(null);
@@ -52,7 +46,7 @@ const ManageStudents = () => {
                 setSuccess('Student deleted.');
                 fetchStudents();
                 setTimeout(() => setSuccess(''), 3000);
-            } catch (error) {
+            } catch {
                 setError('Failed to delete student.');
             }
         }
@@ -149,7 +143,7 @@ const ManageStudents = () => {
                         <Form.Group className="mb-3"><Form.Label>Email</Form.Label><Form.Control type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required /></Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Semester</Form.Label>
                             <Form.Select value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })}>
-                                {['1.1', '1.2', '2.1', '2.2', '3.1', '3.2', '4.1', '4.2'].map(s => <option key={s} value={s}>{s}</option>)}
+                                {semesters.map(s => <option key={s.id} value={s.code}>{s.code}</option>)}
                             </Form.Select>
                         </Form.Group>
                         <Form.Group className="mb-3"><Form.Label>CGPA</Form.Label><Form.Control type="number" min="0" max="4" step="0.01" value={formData.cgpa} onChange={(e) => setFormData({ ...formData, cgpa: parseFloat(e.target.value) || 0 })} /></Form.Group>

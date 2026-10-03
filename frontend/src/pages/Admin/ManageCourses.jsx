@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -11,18 +11,11 @@ import {
 import api from '../../services/api';
 import './ManageCourses.css';
 
-const semesters = [
-    { id: '1.1', year: 'Year 1', semester: 'Semester 1' },
-    { id: '1.2', year: 'Year 1', semester: 'Semester 2' },
-    { id: '2.1', year: 'Year 2', semester: 'Semester 1' },
-    { id: '2.2', year: 'Year 2', semester: 'Semester 2' },
-    { id: '3.1', year: 'Year 3', semester: 'Semester 1' },
-    { id: '3.2', year: 'Year 3', semester: 'Semester 2' },
-    { id: '4.1', year: 'Year 4', semester: 'Semester 1' },
-    { id: '4.2', year: 'Year 4', semester: 'Semester 2' },
-];
-
 const ManageCourses = () => {
+    const [semesters, setSemesters] = useState([]);
+    useEffect(() => {
+        api.get('/semesters').then(r => setSemesters(r.data.data.map(s => ({ id: s.code, year: s.name, semester: s.code })))).catch(() => setError('Cannot load semesters.'));
+    }, []);
     const [courses, setCourses] = useState([]);
     const [selectedSemester, setSelectedSemester] = useState(null);
 
@@ -48,7 +41,7 @@ const ManageCourses = () => {
         }
     }, [selectedSemester]);
 
-    const fetchCourses = async (semester) => {
+    async function fetchCourses(semester) {
         setLoading(true);
 
         try {
@@ -63,11 +56,12 @@ const ManageCourses = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }
 
     const handleSemesterClick = (semester) => {
         setError('');
         setSuccess('');
+        setLoading(true);
         setSelectedSemester(semester);
     };
 
@@ -122,7 +116,7 @@ const ManageCourses = () => {
             fetchCourses(selectedSemester);
 
             setTimeout(() => setSuccess(''), 3000);
-        } catch (error) {
+        } catch {
             setError('Failed to delete course.');
         }
     };
@@ -176,6 +170,7 @@ const ManageCourses = () => {
         return (
             <Container fluid className="manage-courses">
                 <h2 className="page-title"> Manage Courses</h2>
+                {error && <Alert variant="danger">{error}</Alert>}
 
                 <p className="text-muted">
                     Select a semester to view its course information.

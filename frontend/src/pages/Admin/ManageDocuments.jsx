@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faEdit, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import api from '../../services/api';
 import './ManageDocuments.css';
 
@@ -16,6 +16,7 @@ const downloadDocument = async (doc) => {
 };
 
 const ManageDocuments = () => {
+    const [semesters, setSemesters] = useState([]);
     const [docs, setDocs] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editingDoc, setEditingDoc] = useState(null);
@@ -25,22 +26,15 @@ const ManageDocuments = () => {
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
 
+    function fetchDocuments() {
+        return Promise.all([api.get('/documents'),api.get('/semesters')]).then(([response, terms]) => { setDocs(response.data.data); setSemesters(terms.data.data); })
+            .catch(() => setError('Cannot load records. Please reload.'))
+            .finally(() => setLoading(false));
+    }
+
     useEffect(() => {
         fetchDocuments();
     }, []);
-
-    const fetchDocuments = async () => {
-        try {
-            const response = await api.get('/documents');
-            if (response.data.success) {
-                setDocs(response.data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching documents:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleAdd = () => {
         setEditingDoc(null);
@@ -63,7 +57,7 @@ const ManageDocuments = () => {
                 setSuccess('Document deleted.');
                 fetchDocuments();
                 setTimeout(() => setSuccess(''), 3000);
-            } catch (error) {
+            } catch {
                 setError('Failed to delete document.');
             }
         }
@@ -90,7 +84,7 @@ const ManageDocuments = () => {
             data.append('name', formData.name);
             data.append('type', formData.type);
             data.append('semester', formData.semester);
-            if (formData.url) data.append('url', formData.url);
+            data.append('url', formData.url);
             if (formData.file) data.append('file', formData.file);
 
             if (editingDoc) {
@@ -139,7 +133,7 @@ const ManageDocuments = () => {
                                     <td>{doc.semester}</td>
                                     <td>
                                         {doc.download_url ? (
-                                            <Button variant="link" className="p-0" onClick={() => downloadDocument(doc)}>Download File</Button>
+                                            <Button variant="link" className="p-0" onClick={() => downloadDocument(doc).catch(() => setError('Cannot download this document.'))}>Download File</Button>
                                         ) : doc.url ? (
                                             <a href={doc.url} target="_blank" rel="noreferrer">Link</a>
                                         ) : 'N/A'}
@@ -170,7 +164,7 @@ const ManageDocuments = () => {
                         </Form.Group>
                         <Form.Group className="mb-3"><Form.Label>Semester</Form.Label>
                             <Form.Select value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })}>
-                                {['1.1', '1.2', '2.1', '2.2', '3.1', '3.2', '4.1', '4.2'].map(s => <option key={s} value={s}>{s}</option>)}
+                                {semesters.map(s => <option key={s.id} value={s.code}>{s.code}</option>)}
                             </Form.Select>
                         </Form.Group>
                         <Form.Group className="mb-3"><Form.Label>File (PDF, PPT, DOCX)</Form.Label>

@@ -18,11 +18,13 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         $student = Student::where('user_id', $user->id)->first();
+        $semester = $student?->semester;
+        $academic = fn ($query) => $user->role === 'admin' ? $query : $query->whereHas('course', fn ($q) => $q->where('semester', $semester ?? '__none__'));
 
         // Quick Stats
         $stats = [
-            'upcoming_quizzes' => null,
-            'pending_assignments' => null,
+            'upcoming_quizzes' => $academic(\App\Models\Quiz::query())->whereDate('date', '>=', today())->count(),
+            'pending_assignments' => $academic(\App\Models\Assignment::query())->whereDoesntHave('completedBy', fn ($q) => $q->where('users.id', $user->id))->count(),
             'current_cgpa' => $student ? $student->cgpa : 0,
         ];
 
@@ -33,19 +35,21 @@ class DashboardController extends Controller
             ->get();
 
         // Routine
-        $routine = Routine::all();
+        $routine = Routine::when($user->role !== 'admin', fn ($q) => $q->where('semester', $semester ?? '__none__'))->get();
 
         // Courses with progress
-        $courses = Course::where('semester', $student ? $student->semester : '1.1')->get();
+        $courses = Course::with(['topicItems.completedBy' => fn ($q) => $q->where('users.id', $user->id)])
+            ->when($user->role !== 'admin', fn ($q) => $q->where('semester', $semester ?? '__none__'))->get();
         $coursesData = [];
         foreach ($courses as $course) {
-            $topics = $course->topics ?? [];
+            $topics = $course->topicItems->map(fn ($topic) => ['id' => $topic->id, 'title' => $topic->title,
+                'description' => $topic->description, 'completed' => $topic->completedBy->isNotEmpty()]);
             $coursesData[] = [
                 'id' => $course->id,
                 'code' => $course->code,
                 'name' => $course->name,
                 'topics' => $topics,
-                'progress' => 0,
+                'progress' => $topics->count() ? round($topics->where('completed', true)->count() / $topics->count() * 100) : 0,
             ];
         }
 

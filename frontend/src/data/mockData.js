@@ -104,6 +104,15 @@ export const notifications = [
 // ---- Menu Items ----
 
 export const menuItems = [
+    { id: 'assignments', label: 'Assignments', path: '/dashboard/assignments', roles: ['student', 'admin'] },
+    { id: 'topics', label: 'Topics', path: '/dashboard/topics', roles: ['student', 'admin'] },
+    { id: 'manage-routine', label: 'Manage Routine', path: '/dashboard/admin/routine', roles: ['admin'] },
+    { id: 'manage-attendance', label: 'Manage Attendance', path: '/dashboard/admin/attendance', roles: ['admin'] },
+    { id: 'manage-quizzes', label: 'Manage Quizzes', path: '/dashboard/admin/quizzes', roles: ['admin'] },
+    { id: 'manage-assignments', label: 'Manage Assignments', path: '/dashboard/admin/assignments', roles: ['admin'] },
+    { id: 'manage-topics', label: 'Manage Topics', path: '/dashboard/admin/topics', roles: ['admin'] },
+    { id: 'manage-library', label: 'Manage Library', path: '/dashboard/admin/library', roles: ['admin'] },
+    { id: 'manage-semesters', label: 'Manage Semesters', path: '/dashboard/admin/semesters', roles: ['admin'] },
     { id: 'home', label: 'Dashboard', icon: 'faHouse', path: '/dashboard', roles: ['student', 'admin'] },
     { id: 'notice-board', label: 'Notice Board', icon: 'faBullhorn', path: '/dashboard/notice-board', roles: ['student', 'admin'] }, // নতুন
     { id: 'attendance', label: 'Attendance', icon: 'faCalendarCheck', path: '/dashboard/attendance', roles: ['student', 'admin'] }, // নতুন

@@ -29,15 +29,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
-          extensions: mbstring, pdo_mysql, dom, curl, xml, fileinfo
+          extensions: mbstring, pdo_mysql, pdo_sqlite, dom, curl, xml, fileinfo
           tools: composer:v2
           coverage: none
 
-      - name: Install production PHP packages
+      - name: Install PHP packages for tests
         working-directory: backend
         run: |
           composer install \
-            --no-dev \
             --prefer-dist \
             --no-interaction \
             --optimize-autoloader
@@ -55,8 +54,17 @@ jobs:
           VITE_API_URL: /api
         run: |
           npm ci
+          npm run lint
           npm run build
           test -f ../backend/public/app/index.html
+
+      - name: Test the API before publishing
+        working-directory: backend
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan test
+          composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
 
       - name: Pack the Laravel release
         run: |
@@ -124,6 +132,8 @@ jobs:
             exit 1
           fi
 
+          php artisan down --retry=60
+
           tar --no-same-owner --no-same-permissions \
             -xzf "$HOME/release.tar.gz" -C "$HOME/laravel"
 
@@ -150,6 +160,8 @@ jobs:
           fi
 
           php artisan optimize
+          php artisan up
+          php artisan migrate:status
 
           rm "$HOME/release.tar.gz" "$HOME/release-files.txt"
           REMOTE

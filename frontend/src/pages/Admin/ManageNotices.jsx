@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -13,22 +13,15 @@ const ManageNotices = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(true);
 
+    function fetchNotices() {
+        return api.get('/notices').then((response) => { setNotices(response.data.data); })
+            .catch(() => setError('Cannot load records. Please reload.'))
+            .finally(() => setLoading(false));
+    }
+
     useEffect(() => {
         fetchNotices();
     }, []);
-
-    const fetchNotices = async () => {
-        try {
-            const response = await api.get('/notices');
-            if (response.data.success) {
-                setNotices(response.data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching notices:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleAdd = () => {
         setEditingNotice(null);
@@ -51,7 +44,7 @@ const ManageNotices = () => {
                 setSuccess('Notice deleted.');
                 fetchNotices();
                 setTimeout(() => setSuccess(''), 3000);
-            } catch (error) {
+            } catch {
                 setError('Failed to delete notice.');
             }
         }

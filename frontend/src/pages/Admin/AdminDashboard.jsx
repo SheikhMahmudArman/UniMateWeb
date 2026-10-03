@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faBook,
@@ -30,13 +30,10 @@ const AdminDashboard = () => {
         attendance: 0
     });
 
-    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
-        fetchStats();
-    }, []);
-
-    const fetchStats = async () => {
+        async function fetchStats() {
         try {
             const names = [
                 'students',
@@ -65,12 +62,17 @@ const AdminDashboard = () => {
             });
         } catch (error) {
             console.error('Error fetching stats:', error);
-        } finally {
-            setLoading(false);
         }
-    };
+        }
+        fetchStats();
+    }, []);
 
     const adminCards = [
+        { title: 'Manage Quizzes', icon: faBook, path: '/dashboard/admin/quizzes', color: '#0B4F6C' },
+        { title: 'Manage Assignments', icon: faBook, path: '/dashboard/admin/assignments', color: '#0B4F6C' },
+        { title: 'Manage Topics', icon: faBook, path: '/dashboard/admin/topics', color: '#0B4F6C' },
+        { title: 'Manage Library', icon: faBook, path: '/dashboard/admin/library', color: '#0B4F6C' },
+        { title: 'Manage Semester Drives', icon: faBook, path: '/dashboard/admin/semesters', color: '#0B4F6C' },
         {
             title: 'Manage Courses',
             icon: faBook,

@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 
 class RoutineController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $routine = Routine::orderBy('day')->orderBy('time')->get();
+        $query = Routine::query();
+        $semester = $request->user()->role === 'admin' ? $request->query('semester') : $request->user()->student?->semester;
+        if ($semester) $query->where('semester', $semester);
+        elseif ($request->user()->role !== 'admin') $query->whereRaw('1 = 0');
+        $routine = $query->orderBy('day')->orderBy('time')->get();
 
         return response()->json([
             'success' => true,
@@ -21,12 +25,13 @@ class RoutineController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'semester' => 'required|string|exists:semesters,code',
             'notify' => 'sometimes|boolean',
             'time' => 'required|string|max:255',
-            'course_code' => 'required',
-            'course_name' => 'required',
-            'room' => 'required',
-            'day' => 'required',
+            'course_code' => 'required|string|max:255',
+            'course_name' => 'required|string|max:255',
+            'room' => 'required|string|max:255',
+            'day' => 'required|in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
         ]);
 
         $routine = Routine::create($data);
@@ -43,12 +48,13 @@ class RoutineController extends Controller
         $routine = Routine::findOrFail($id);
 
         $data = $request->validate([
+            'semester' => 'required|string|exists:semesters,code',
             'notify' => 'sometimes|boolean',
             'time' => 'required|string|max:255',
-            'course_code' => 'required',
-            'course_name' => 'required',
-            'room' => 'required',
-            'day' => 'required',
+            'course_code' => 'required|string|max:255',
+            'course_name' => 'required|string|max:255',
+            'room' => 'required|string|max:255',
+            'day' => 'required|in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
         ]);
 
         $routine->update($data);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faEnvelope, faClock, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
@@ -13,10 +13,7 @@ const FacultyPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchFaculty();
-    }, []);
-
-    const fetchFaculty = async () => {
+        async function fetchFaculty() {
         try {
             const response = await api.get('/faculty');
             if (response.data.success) {
@@ -30,7 +27,9 @@ const FacultyPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+        }
+        fetchFaculty();
+    }, []);
 
     const filteredFaculty = faculty.filter((f) => {
         const matchesSearch =

@@ -26,8 +26,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 
-    Route::get('/semesters', function () {
-        return response()->json(['success' => true, 'data' => \App\Models\Semester::orderBy('code')->get()]);
+    Route::get('/semesters', [\App\Http\Controllers\Api\SemesterController::class, 'index']);
+    Route::post('/semesters', [\App\Http\Controllers\Api\SemesterController::class, 'store'])->middleware(\App\Http\Middleware\RequireAdmin::class);
+    Route::put('/semesters/{id}', [\App\Http\Controllers\Api\SemesterController::class, 'update'])->middleware(\App\Http\Middleware\RequireAdmin::class);
+    Route::delete('/semesters/{id}', [\App\Http\Controllers\Api\SemesterController::class, 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
+
+    Route::prefix('{resource}')->where(['resource' => 'quizzes|assignments|topics'])->group(function () {
+        $controller = \App\Http\Controllers\Api\AcademicController::class;
+        Route::get('/', [$controller, 'index']);
+        Route::put('/{id}/completion', [$controller, 'complete']);
+        Route::get('/{id}/download', [$controller, 'download']);
+        Route::post('/', [$controller, 'store'])->middleware(\App\Http\Middleware\RequireAdmin::class);
+        Route::put('/{id}', [$controller, 'update'])->middleware(\App\Http\Middleware\RequireAdmin::class);
+        Route::delete('/{id}', [$controller, 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);
     });
     Route::put('/attendance/{id}', [AttendanceController::class, 'update'])->middleware(\App\Http\Middleware\RequireAdmin::class);
     Route::delete('/attendance/{id}', [AttendanceController::class, 'destroy'])->middleware(\App\Http\Middleware\RequireAdmin::class);

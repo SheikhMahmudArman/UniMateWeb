@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { Alert, Card, Container, Form, Table } from 'react-bootstrap';
 import api from '../services/api';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/auth';
 const grade = total => total >= 80 ? 4 : total >= 75 ? 3.75 : total >= 70 ? 3.5 : total >= 65 ? 3.25 : total >= 60 ? 3 : total >= 55 ? 2.75 : total >= 50 ? 2.5 : total >= 45 ? 2.25 : total >= 40 ? 2 : 0;
 const total = row => ['quiz', 'mid', 'online', 'final'].reduce((sum, key) => sum + Number(row[key] || 0), 0);
 const average = rows => {
@@ -24,7 +24,7 @@ export default function MarksPage() {
         }).catch(e => { if (active) setError(e.response?.data?.message || 'Cannot load marks. Please refresh.'); })
           .finally(() => { if (active) setLoading(false); });
         return () => { active = false; };
-    }, []);
+    }, [user.id]);
     const selected = rows.filter(row => row.semester === semester);
     if (loading) return <p>Loading marks...</p>;
     return <Container fluid><h2>Marks and CGPA</h2>

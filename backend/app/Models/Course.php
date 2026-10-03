@@ -29,6 +29,11 @@ class Course extends Model
         return $this->hasMany(Mark::class);
     }
 
+    public function topicItems()
+    {
+        return $this->hasMany(Topic::class)->orderBy('order')->orderBy('id');
+    }
+
     public function attendances()
     {
         return $this->hasMany(Attendance::class);

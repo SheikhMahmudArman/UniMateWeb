@@ -1,41 +1,20 @@
 <?php
-
 use App\Models\User;
 
-test('login screen can be rendered', function () {
-    $response = $this->get('/login');
-
-    $response->assertStatus(200);
-});
-
-test('users can authenticate using the login screen', function () {
+test('API login issues a token for valid credentials', function () {
     $user = User::factory()->create();
-
-    $response = $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
-
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response = $this->postJson('/api/login', ['email' => $user->email, 'password' => 'password']);
+    $response->assertOk()->assertJsonStructure(['token', 'user' => ['id', 'role']]);
+    expect($user->tokens()->count())->toBe(1);
 });
-
-test('users can not authenticate with invalid password', function () {
+test('API login rejects an invalid password', function () {
     $user = User::factory()->create();
-
-    $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'wrong-password',
-    ]);
-
-    $this->assertGuest();
+    $this->postJson('/api/login', ['email' => $user->email, 'password' => 'wrong-password'])->assertUnprocessable();
+    expect($user->tokens()->count())->toBe(0);
 });
-
-test('users can logout', function () {
+test('API logout revokes the current token', function () {
     $user = User::factory()->create();
-
-    $response = $this->actingAs($user)->post('/logout');
-
-    $this->assertGuest();
-    $response->assertRedirect('/');
+    $token = $user->createToken('test')->plainTextToken;
+    $this->withToken($token)->postJson('/api/logout')->assertOk();
+    expect($user->tokens()->count())->toBe(0);
 });

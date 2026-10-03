@@ -25,7 +25,7 @@ class StudentController extends Controller
             'student_id' => 'required|string|max:255|unique:students|unique:users',
             'name' => 'required',
             'email' => 'required|email|unique:users|unique:students',
-            'semester' => 'required',
+            'semester' => 'required|string|exists:semesters,code',
             'cgpa' => 'nullable|numeric|min:0|max:4',
         ]);
 
@@ -76,7 +76,7 @@ class StudentController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $student->user_id . '|unique:students,email,' . $student->id,
-            'semester' => 'required',
+            'semester' => 'required|string|exists:semesters,code',
             'cgpa' => 'nullable|numeric|min:0|max:4',
         ]);
 

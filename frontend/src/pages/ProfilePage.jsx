@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faIdCard, faSave, faCamera, faTrash } from '@fortawesome/free-solid-svg-icons';
 import api from '../services/api';

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Toast } from 'react-bootstrap';
-import { useTheme } from '../context/ThemeContext';
-import { useNotification } from '../context/NotificationContext';
+import { useTheme } from '../context/theme';
+import { useNotification } from '../context/notification';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun, faDesktop, faBell, faClock, faLock, faSave } from '@fortawesome/free-solid-svg-icons';
 import api from '../services/api';

@@ -39,7 +39,7 @@ class DocumentController extends Controller
             'course_id' => 'nullable|exists:courses,id',
             'name' => 'required|string|max:255',
             'type' => 'required',
-            'semester' => 'required',
+            'semester' => 'required|string|exists:semesters,code',
             'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,txt,jpg,jpeg,png|max:10240', // 10MB max
         ]);
 
@@ -87,7 +87,7 @@ class DocumentController extends Controller
             'course_id' => 'nullable|exists:courses,id',
             'name' => 'required|string|max:255',
             'type' => 'required',
-            'semester' => 'required',
+            'semester' => 'required|string|exists:semesters,code',
             'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,txt,jpg,jpeg,png|max:10240',
         ]);
 

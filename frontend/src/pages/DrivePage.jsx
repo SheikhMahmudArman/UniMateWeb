@@ -19,12 +19,15 @@ async function downloadDocument(doc) {
 }
 export default function DrivePage() {
     const { semesterId } = useParams();
+    return <SemesterDrive key={semesterId} semesterId={semesterId} />;
+}
+function SemesterDrive({ semesterId }) {
     const [documents, setDocuments] = useState([]);
     const [search, setSearch] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        let active = true; setLoading(true); setError('');
+        let active = true;
         api.get('/documents', { params: { semester: semesterId } }).then(r => { if (active) setDocuments(r.data.data); })
             .catch(() => { if (active) setError('Cannot load documents. Please refresh.'); })
             .finally(() => { if (active) setLoading(false); });
@@ -35,7 +38,7 @@ export default function DrivePage() {
         <Form.Control aria-label="Search documents" placeholder="Search documents" value={search} onChange={e => setSearch(e.target.value)} />
         {loading ? <p>Loading...</p> : <ListGroup className="mt-3">{documents.filter(d => d.name.toLowerCase().includes(search.toLowerCase())).map(doc => <ListGroup.Item key={doc.id}>
             <strong>{doc.name}</strong> ({doc.type}) {' '}
-            {doc.download_url ? <button type="button" className="btn btn-link p-0" onClick={() => downloadDocument(doc)}>Download</button> : documentLink(doc) ? <a href={documentLink(doc)} target="_blank" rel="noopener noreferrer">Open link</a> : <span>No file or link attached</span>}
+            {doc.download_url ? <button type="button" className="btn btn-link p-0" onClick={() => downloadDocument(doc).catch(() => setError('Cannot download this document.'))}>Download</button> : documentLink(doc) ? <a href={documentLink(doc)} target="_blank" rel="noopener noreferrer">Open link</a> : <span>No file or link attached</span>}
         </ListGroup.Item>)}</ListGroup>}
         {!loading && !documents.length && <p>No documents have been added yet.</p>}
     </Container>;

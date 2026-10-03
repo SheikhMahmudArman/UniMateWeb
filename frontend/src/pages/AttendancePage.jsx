@@ -1,22 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Container, Card, Table, Badge, Form, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/auth';
 import api from '../services/api';
+import { Link } from 'react-router-dom';
 
 const AttendancePage = () => {
     const { user } = useContext(AuthContext);
+    const [error, setError] = useState('');
     const [attendanceData, setAttendanceData] = useState([]);
     const [summary, setSummary] = useState({ total_classes: 0, present: 0, absent: 0, percentage: 0 });
     const [filter, setFilter] = useState('all');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchAttendance();
-    }, []);
-
-    const fetchAttendance = async () => {
+        async function fetchAttendance() {
         try {
             // Fetch student ID first
             const studentResponse = await api.get('/students');
@@ -30,11 +29,13 @@ const AttendancePage = () => {
                 }
             }
         } catch (error) {
-            console.error('Error fetching attendance:', error);
+            setError(error.response?.data?.message || 'Cannot load attendance.');
         } finally {
             setLoading(false);
         }
-    };
+        }
+        fetchAttendance();
+    }, [user.id]);
 
     const filteredData = filter === 'all' 
         ? attendanceData 
@@ -51,6 +52,8 @@ const AttendancePage = () => {
 
     return (
         <Container fluid className="attendance-page" style={{ padding: '20px' }}>
+            {error && <Alert variant="danger">{error}</Alert>}
+            {user?.role === 'admin' && <Link to="/dashboard/admin/attendance" className="btn btn-primary mb-3">Record / edit attendance</Link>}
             <h2 className="page-title"><FontAwesomeIcon icon={faCalendarCheck} className="me-2" /> Attendance</h2>
             <p className="text-muted">View your attendance records for all courses.</p>
 

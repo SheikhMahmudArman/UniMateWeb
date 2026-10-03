@@ -1,16 +1,15 @@
-import React, {
+import {
     useContext,
     useEffect,
     useRef,
     useState
 } from 'react';
 
-import { AuthContext } from '../context/AuthContext';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
+import { AuthContext } from '../context/auth';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { fab } from '@fortawesome/free-brands-svg-icons';
+import { faFacebook, faTwitter, faLinkedin, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import {
     faFolderOpen,
     faBell,
@@ -27,7 +26,6 @@ import {
 import logo from '../assets/logo.png';
 import './LandingPage.css';
 
-library.add(fab);
 
 const LandingPage = () => {
     const { user, loading: authLoading, logout } = useContext(AuthContext);
@@ -351,16 +349,16 @@ const LandingPage = () => {
                             <h6>Follow Us</h6>
                             <div className="d-flex gap-3 social-links">
                                 <a href="#" className="text-muted" aria-label="Facebook">
-                                    <FontAwesomeIcon icon={['fab', 'facebook']} />
+                                    <FontAwesomeIcon icon={faFacebook} />
                                 </a>
                                 <a href="#" className="text-muted" aria-label="Twitter">
-                                    <FontAwesomeIcon icon={['fab', 'twitter']} />
+                                    <FontAwesomeIcon icon={faTwitter} />
                                 </a>
                                 <a href="#" className="text-muted" aria-label="LinkedIn">
-                                    <FontAwesomeIcon icon={['fab', 'linkedin']} />
+                                    <FontAwesomeIcon icon={faLinkedin} />
                                 </a>
                                 <a href="#" className="text-muted" aria-label="Instagram">
-                                    <FontAwesomeIcon icon={['fab', 'instagram']} />
+                                    <FontAwesomeIcon icon={faInstagram} />
                                 </a>
                             </div>
                             <p className="text-muted small mt-3">© 2026 AUSTMATE. All rights reserved.</p>

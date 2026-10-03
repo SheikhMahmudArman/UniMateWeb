@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Card, Badge, Row, Col, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBullhorn, faClock } from '@fortawesome/free-solid-svg-icons';
@@ -9,10 +9,7 @@ const NoticeBoardPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchNotices();
-    }, []);
-
-    const fetchNotices = async () => {
+        async function fetchNotices() {
         try {
             const response = await api.get('/notices');
             if (response.data.success) {
@@ -23,7 +20,9 @@ const NoticeBoardPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+        }
+        fetchNotices();
+    }, []);
 
     const getTypeBadge = (type) => {
         switch (type) {

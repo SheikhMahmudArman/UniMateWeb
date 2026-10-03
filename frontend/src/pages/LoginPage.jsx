@@ -1,9 +1,9 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/auth';
 import logo from '../assets/logo.png';
 import './LoginPage.css';
 
@@ -11,8 +11,8 @@ const LoginPage = () => {
     const [gmail, setGmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(() => new URLSearchParams(window.location.search).get('google_error') || '');
+    const [loading, setLoading] = useState(() => new URLSearchParams(window.location.hash.slice(1)).has('google_token'));
 
     const {
         loading: authLoading,
@@ -28,12 +28,10 @@ const LoginPage = () => {
         const googleToken = hashParams.get('google_token');
 
         if (googleError) {
-            setError(googleError);
             window.history.replaceState({}, document.title, window.location.pathname);
         }
 
         if (googleToken) {
-            setLoading(true);
             loginWithGoogleToken(googleToken).then(result => {
                 if (result.success) navigate(result.role === 'admin' ? '/dashboard/admin' : '/dashboard');
                 else setError(result.error);

@@ -1,7 +1,5 @@
 <?php
 
-it('returns a successful response', function () {
-    $response = $this->get('/');
-
-    $response->assertStatus(200);
+test('unknown API routes return not found instead of the SPA', function () {
+    $this->getJson('/api/not-a-real-endpoint')->assertNotFound();
 });

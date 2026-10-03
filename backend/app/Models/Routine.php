@@ -11,6 +11,7 @@ class Routine extends Model
 
     protected $fillable = [
         'time',
+        'semester',
         'course_code',
         'course_name',
         'room',
