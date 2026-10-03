@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../context/AuthContext';
@@ -15,7 +15,6 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
 
     const {
-        user,
         loading: authLoading,
         login,
         loginWithGoogleToken
@@ -51,33 +50,45 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
-        setLoading(true);
+        if (loading) return;
 
-        if (!gmail || !password) {
+        setError('');
+
+        const email = gmail.trim();
+
+        if (!email || !password) {
             setError('Please fill in all fields.');
-            setLoading(false);
             return;
         }
-        if (!gmail.includes('@')) {
+
+        if (!email.includes('@')) {
             setError('Please enter a valid email address.');
-            setLoading(false);
             return;
         }
+
         if (password.length < 6) {
             setError('Password must be at least 6 characters.');
-            setLoading(false);
             return;
         }
 
-        const result = await login(gmail, password);
-        if (result.success) {
-            navigate(
-                result.role === 'admin' ? '/dashboard/admin' : '/dashboard',
-                { replace: true }
-            );
-        } else {
-            setError(result.error || 'Invalid credentials.');
+        setLoading(true);
+
+        try {
+            const result = await login(email, password);
+
+            if (result.success) {
+                navigate(
+                    result.role === 'admin'
+                        ? '/dashboard/admin'
+                        : '/dashboard',
+                    { replace: true }
+                );
+            } else {
+                setError(result.error || 'Invalid email or password.');
+            }
+        } catch {
+            setError('Login failed. Please try again.');
+        } finally {
             setLoading(false);
         }
     };
@@ -85,16 +96,7 @@ const LoginPage = () => {
         return <p>Loading your account...</p>;
     }
 
-    if (user && !loading) {
-        return (
-            <Navigate
-                to={user.role === 'admin'
-                    ? '/dashboard/admin'
-                    : '/dashboard'}
-                replace
-            />
-        );
-    }
+
     return (
         <div className="login-page">
             <Container>

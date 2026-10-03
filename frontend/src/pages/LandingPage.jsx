@@ -1,4 +1,11 @@
-import React from 'react';
+import React, {
+    useContext,
+    useEffect,
+    useRef,
+    useState
+} from 'react';
+
+import { AuthContext } from '../context/AuthContext';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,6 +30,37 @@ import './LandingPage.css';
 library.add(fab);
 
 const LandingPage = () => {
+    const { user, loading: authLoading, logout } = useContext(AuthContext);
+    const logoutStarted = useRef(false);
+    const [preparingHome, setPreparingHome] = useState(true);
+
+    useEffect(() => {
+        // Wait until AuthContext finishes checking the saved login.
+        if (authLoading || logoutStarted.current) return;
+
+        logoutStarted.current = true;
+
+        const prepareHome = async () => {
+            try {
+                if (user || localStorage.getItem('token')) {
+                    // Call the backend logout, then clear token and user.
+                    await logout();
+                } else {
+                    localStorage.removeItem('user');
+                }
+            } finally {
+                setPreparingHome(false);
+            }
+        };
+
+        void prepareHome();
+    }, [authLoading, user, logout]);
+
+    // Prevent a new login before the old logout finishes.
+    if (authLoading || preparingHome) {
+        return <p className="text-center py-5">Preparing home page...</p>;
+    }
+
     return (
         <>
             {/* Header */}
