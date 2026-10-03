@@ -132,7 +132,7 @@ const AdminDashboard = () => {
         <Container fluid className="admin-dashboard">
 
             {/* Page Heading */}
-            <h2 className="page-title">👑 Admin Panel</h2>
+            <h2 className="page-title"> Admin Panel</h2>
 
             <p className="text-muted">
                 Welcome, {user?.name}. Manage all aspects of the system.

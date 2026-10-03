@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../context/AuthContext';
@@ -14,7 +14,12 @@ const LoginPage = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { login, loginWithGoogleToken } = useContext(AuthContext);
+    const {
+        user,
+        loading: authLoading,
+        login,
+        loginWithGoogleToken
+    } = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -76,7 +81,20 @@ const LoginPage = () => {
             setLoading(false);
         }
     };
+    if (authLoading) {
+        return <p>Loading your account...</p>;
+    }
 
+    if (user && !loading) {
+        return (
+            <Navigate
+                to={user.role === 'admin'
+                    ? '/dashboard/admin'
+                    : '/dashboard'}
+                replace
+            />
+        );
+    }
     return (
         <div className="login-page">
             <Container>
