@@ -92,7 +92,7 @@ const ManageNotices = () => {
 
     return (
         <Container fluid className="manage-notices" style={{ padding: '20px' }}>
-            <h2 className="page-title">📢 Manage Notices</h2>
+            <h2 className="page-title"> Manage Notices</h2>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <p className="text-muted">Add, edit, or remove notices.</p>
                 <Button variant="primary" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} className="me-2" /> Add Notice</Button>

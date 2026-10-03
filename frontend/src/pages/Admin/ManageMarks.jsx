@@ -112,7 +112,7 @@ const ManageMarks = () => {
 
     return (
         <Container fluid className="manage-marks">
-            <h2 className="page-title">✏️ Manage Marks</h2>
+            <h2 className="page-title">Manage Marks</h2>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <p className="text-muted">Add, edit, or remove student marks.</p>
                 <Button variant="primary" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} className="me-2" /> Add Marks</Button>

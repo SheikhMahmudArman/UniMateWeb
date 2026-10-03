@@ -139,7 +139,7 @@ const ManageAssignments = () => {
 
     return (
         <Container fluid className="manage-assignments">
-            <h2 className="page-title">📋 Manage Assignments</h2>
+            <h2 className="page-title"> Manage Assignments</h2>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <p className="text-muted">Add, edit, or remove assignments.</p>
                 <Button variant="primary" onClick={handleAdd}>

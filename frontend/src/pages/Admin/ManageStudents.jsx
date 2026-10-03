@@ -105,7 +105,7 @@ const ManageStudents = () => {
 
     return (
         <Container fluid className="manage-students">
-            <h2 className="page-title">👨‍🎓 Manage Students</h2>
+            <h2 className="page-title"> Manage Students</h2>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <p className="text-muted">Add, edit, or remove students.</p>
                 <Button variant="primary" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} className="me-2" /> Add Student</Button>

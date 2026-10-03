@@ -117,7 +117,7 @@ const ManageDocuments = () => {
 
     return (
         <Container fluid className="manage-documents">
-            <h2 className="page-title">📄 Manage Documents</h2>
+            <h2 className="page-title"> Manage Documents</h2>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <p className="text-muted">Add, edit, or remove documents.</p>
                 <Button variant="primary" onClick={handleAdd}><FontAwesomeIcon icon={faPlus} className="me-2" /> Add Document</Button>

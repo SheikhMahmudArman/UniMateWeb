@@ -77,7 +77,7 @@ const SettingsPage = () => {
 
     return (
         <Container fluid className="settings-page">
-            <h2 className="page-title">⚙️ Settings</h2>
+            <h2 className="page-title"> Settings</h2>
             <p className="text-muted">Customize your app experience and account settings.</p>
 
             {/* Theme Section */}
