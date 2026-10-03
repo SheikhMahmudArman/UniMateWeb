@@ -119,7 +119,7 @@ const ManageQuizzes = () => {
 
     return (
         <Container fluid className="manage-quizzes">
-            <h2 className="page-title">📝 Manage Quizzes</h2>
+            <h2 className="page-title"> Manage Quizzes</h2>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <p className="text-muted">Add, edit, or remove quizzes.</p>
                 <Button variant="primary" onClick={handleAdd}>

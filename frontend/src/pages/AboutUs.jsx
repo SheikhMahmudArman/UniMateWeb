@@ -124,7 +124,7 @@ const AboutUs = () => {
             {/* Footer */}
             <footer className="about-footer">
                 <Container>
-                    <p className="text-center mb-0">&copy; 2026 AUSTMATE. All rights reserved. Built with ❤️ by Team AUSTMATE.</p>
+                    <p className="text-center mb-0">&copy; 2026 AUSTMATE. All rights reserved. Built with by Team AUSTMATE.</p>
                 </Container>
             </footer>
         </div>

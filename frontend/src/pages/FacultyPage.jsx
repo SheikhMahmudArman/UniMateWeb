@@ -47,7 +47,7 @@ const FacultyPage = () => {
 
     return (
         <Container fluid className="faculty-page">
-            <h2 className="page-title">👨‍🏫 Faculty Directory</h2>
+            <h2 className="page-title"> Faculty Directory</h2>
             <p className="text-muted">Find contact details and consultation hours of your professors.</p>
 
             <Row className="mb-4 search-filter-row">

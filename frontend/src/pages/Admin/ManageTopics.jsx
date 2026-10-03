@@ -129,7 +129,7 @@ const ManageTopics = () => {
 
     return (
         <Container fluid className="manage-topics">
-            <h2 className="page-title">📚 Manage Topics & Progress</h2>
+            <h2 className="page-title">Manage Topics & Progress</h2>
             <p className="text-muted">Add, edit, or remove topics for each course. Students can track their progress individually.</p>
 
             {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}

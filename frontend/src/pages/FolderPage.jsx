@@ -33,7 +33,7 @@ const FolderPage = () => {
 
     return (
         <Container fluid className="folder-page">
-            <h2 className="page-title">📁 Semester Folders</h2>
+            <h2 className="page-title"> Semester Folders</h2>
             <p className="text-muted">Click a folder to browse documents for that semester.</p>
             <Row className="folder-grid">
                 {semesters.map((sem) => (

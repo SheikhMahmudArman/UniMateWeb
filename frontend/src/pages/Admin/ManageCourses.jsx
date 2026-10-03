@@ -175,7 +175,7 @@ const ManageCourses = () => {
     if (!selectedSemester) {
         return (
             <Container fluid className="manage-courses">
-                <h2 className="page-title">📚 Manage Courses</h2>
+                <h2 className="page-title"> Manage Courses</h2>
 
                 <p className="text-muted">
                     Select a semester to view its course information.
